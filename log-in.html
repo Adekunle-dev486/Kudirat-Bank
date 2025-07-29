@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Kudirat Login</title>
+  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    .dark-login {
+  background: #1e1e1e;
+  color: white;
+  font-family: "Segoe UI", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.login-container {
+  text-align: center;
+  max-width: 350px;
+  width: 90%;
+}
+
+.opay-logo img {
+  width: 200px;
+  margin-bottom: 20px;
+}
+
+.profile-circle img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #333;
+  margin-bottom: 10px;
+}
+
+.user-label {
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.password-box {
+  background: #2e2e2e;
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.password-box input {
+  border: none;
+  background: none;
+  color: white;
+  width: 100%;
+  font-size: 16px;
+  outline: none;
+}
+
+.eye {
+  cursor: pointer;
+  font-size: 18px;
+  color: #aaa;
+  margin-left: 10px;
+}
+
+.forgot {
+  text-align: right;
+  margin: 8px 0 20px;
+}
+
+.forgot a {
+  color: #00ffae;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.login-btn {
+  background: #00b86b;
+  color: white;
+  width: 100%;
+  padding: 12px;
+  border: none;
+  font-size: 16px;
+  border-radius: 30px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.switch-account {
+  margin-top: 25px;
+  color: #00ffae;
+  font-size: 14px;
+}
+
+footer {
+  margin-top: 20px;
+  color: #888;
+  font-size: 13px;
+}
+
+  </style>
+</head>
+<body class="dark-login">
+  <div class="login-container">
+    <div class="opay-logo">
+      <img src="./kudirat-logo.png" alt="kudirat-logo" />
+    </div>
+    <div class="profile-circle">
+      <img src="avatar.png" alt="User Avatar">
+    </div>
+    <p class="user-label">ADEKUNLE(701****881)</p>
+
+    <div class="password-box">
+      <input type="password" id="password" maxlength="6" placeholder="Enter 6-digit Password" />
+      <span onclick="togglePassword()" class="eye">&#128065;</span>
+    </div>
+
+    <div class="forgot">
+      <a href="#">Forgot Password?</a>
+    </div>
+
+    <button onclick="login()" class="login-btn">Login</button>
+
+    <p class="switch-account">Switch Account</p>
+
+    <footer>
+      <small>Licensed by the <b>CBN</b> and insured by the <b>NDIC</b></small>
+    </footer>
+  </div>
+
+  <script>
+    function togglePassword() {
+      const pwd = document.getElementById("password");
+      pwd.type = pwd.type === "password" ? "text" : "password";
+    }
+
+    function login() {
+      const password = document.getElementById("password").value;
+      const email = "adekunlesuccess99@gmail.com"; // replace if needed
+
+      fetch("http://localhost:3000/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          localStorage.setItem("token", data.token);
+          localStorage.setItem("isAdmin", data.isAdmin);
+          window.location.href = "dashboard.html";
+        } else {
+          alert(data.message);
+        }
+      });
+    }
+  </script>
+</body>
+</html>

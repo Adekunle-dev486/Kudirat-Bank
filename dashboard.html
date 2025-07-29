@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kudirat Wallet Dashboard</title>
+  <style>
+    @keyframes fadeEye {
+      0% { transform: scale(1); opacity: 0.2; }
+      50% { transform: scale(1.3); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    body {
+      margin: 0;
+      background-color: #0e0e0e;
+      color: white;
+      font-family: "Segoe UI", sans-serif;
+    }
+    .container {
+      padding: 20px;
+      padding-bottom: 100px;
+    }
+    .top-section {
+      background-color: #1f1f1f;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+    }
+    .top-section h2 {
+      margin: 0;
+      font-size: 1rem;
+    }
+    .balance-card {
+      background-color: #0bb86b;
+      padding: 15px;
+      border-radius: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 15px;
+    }
+    .balance-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .balance-card span {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+    .action-row, .service-grid {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+      flex-wrap: wrap;
+    }
+    .action-btn, .service-btn {
+      background-color: #1e1e1e;
+      border-radius: 12px;
+      padding: 15px;
+      text-align: center;
+      width: 30%;
+      margin-bottom: 15px;
+      cursor: pointer;
+      color: white;
+      text-decoration: none;
+    }
+    .action-btn:hover, .service-btn:hover {
+      background-color: #333;
+    }
+    .alert-card, .bonus-card {
+      background-color: #2e2e2e;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 15px;
+    }
+    .bonus-card a {
+      color: #00ffae;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: #111;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      border-top: 1px solid #222;
+    }
+    .bottom-nav a {
+      color: white;
+      text-align: center;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    .icon {
+      font-size: 1.2rem;
+      display: block;
+      margin-bottom: 4px;
+    }
+    .eye-icon {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+  </style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+  <script>
+    // Redirect unauthenticated users
+    if (!localStorage.getItem("kudiratUser")) {
+      window.location.href = "login.html";
+    }
+  </script>
+  <div class="container">
+    <div class="top-section">
+      <h2>Hi, <span id="username">User</span></h2>
+      <div class="balance-card">
+        <div class="balance-info">
+          <span id="balance">****</span>
+          <button class="eye-icon" onclick="toggleBalance()" id="eyeBtn"><i class="far fa-eye"></i></button>
+        </div>
+        <button style="background:none;border:none;color:white;font-size:1rem;">+ Add Money</button>
+      </div>
+    </div>
+
+    <div class="action-row">
+      <a href="#" class="action-btn">To OPay</a>
+      <a href="#" class="action-btn">To Bank</a>
+      <a href="#" class="action-btn">Withdraw</a>
+    </div>
+
+    <div class="alert-card">
+      <strong>Your BVN and NIN info do not match</strong><br>
+      <small>Click to view more details</small>
+    </div>
+
+    <div class="service-grid">
+      <a href="airtime.html" class="service-btn">Airtime</a>
+      <a href="data.html" class="service-btn">Data</a>
+      <a href="betting.html" class="service-btn">Betting</a>
+      <a href="tv.html" class="service-btn">TV</a>
+      <a href="safebox.html" class="service-btn">Safebox</a>
+      <a href="loan.html" class="service-btn">Loan</a>
+      <a href="invitation.html" class="service-btn">Invitation</a>
+      <a href="more.html" class="service-btn">More</a>
+    </div>
+
+    <div class="bonus-card">
+      <strong>Cash up for grabs!</strong><br>
+      <small>Invite friends, earn up to ₦6,300 Bonus</small><br>
+      <a href="referral.html">Click here to refer friends</a>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <a href="#"><span class="icon">🏠</span>Home</a>
+    <a href="#"><span class="icon">🌟</span>Rewards</a>
+    <a href="#"><span class="icon">💳</span>Finance</a>
+    <a href="#"><span class="icon">🏅</span>Cards</a>
+    <a href="#"><span class="icon">👤</span>Me</a>
+  </div>
+
+  <script>
+    let isHidden = true;
+    function toggleBalance() {
+      const balance = document.getElementById("balance");
+      const eyeBtn = document.getElementById("eyeBtn");
+      if (isHidden) {
+        balance.textContent = "₦12,000.00";
+        eyeBtn.innerHTML = '<i class="far fa-eye-slash" style="animation: fadeEye 0.3s ease;"></i>';
+      } else {
+        balance.textContent = "****";
+        eyeBtn.innerHTML = '<i class="fas fa-eye" style="animation: fadeEye 0.3s ease;"></i>';
+      }
+      isHidden = !isHidden;
+    }
+
+    // Load user's name from storage
+    const username = localStorage.getItem("kudiratName") || "User";
+    document.getElementById("username").textContent = username;
+  </script>
+
+  
+</body>
+</html>

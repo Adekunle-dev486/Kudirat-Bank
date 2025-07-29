@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kudirat Wallet Dashboard</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #0e0e0e;
+      color: white;
+      font-family: "Segoe UI", sans-serif;
+    }
+    .container {
+      padding: 20px;
+      padding-bottom: 100px; /* Prevent content being hidden by bottom nav */
+    }
+    .top-section {
+      background-color: #1f1f1f;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+    }
+    .top-section h2 {
+      margin: 0;
+      font-size: 1rem;
+    }
+    .balance-card {
+      background-color: #0bb86b;
+      padding: 15px;
+      border-radius: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 15px;
+    }
+    .balance-card span {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+    .action-row, .service-grid {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+      flex-wrap: wrap;
+    }
+    .action-btn, .service-btn {
+      background-color: #1e1e1e;
+      border-radius: 12px;
+      padding: 15px;
+      text-align: center;
+      width: 30%;
+      margin-bottom: 15px;
+      cursor: pointer;
+    }
+    .action-btn:hover, .service-btn:hover {
+      background-color: #333;
+    }
+    .alert-card, .bonus-card {
+      background-color: #2e2e2e;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 15px;
+    }
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: #111;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      border-top: 1px solid #222;
+    }
+    .bottom-nav a {
+      color: white;
+      text-align: center;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    .icon {
+      font-size: 1.2rem;
+      display: block;
+      margin-bottom: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="top-section">
+      <h2>Hi, ADEKUNLE</h2>
+      <div class="balance-card">
+        <span>****</span>
+        <button style="background:none;border:none;color:white;font-size:1rem;">+ Add Money</button>
+      </div>
+    </div>
+
+    <div class="action-row">
+      <div class="action-btn">To OPay</div>
+      <div class="action-btn">To Bank</div>
+      <div class="action-btn">Withdraw</div>
+    </div>
+
+    <div class="alert-card">
+      <strong>Your BVN and NIN info do not match</strong><br>
+      <small>Click to view more details</small>
+    </div>
+
+    <div class="service-grid">
+      <div class="service-btn">Airtime</div>
+      <div class="service-btn">Data</div>
+      <div class="service-btn">Betting</div>
+      <div class="service-btn">TV</div>
+      <div class="service-btn">Safebox</div>
+      <div class="service-btn">Loan</div>
+      <div class="service-btn">Invitation</div>
+      <div class="service-btn">More</div>
+    </div>
+
+    <div class="bonus-card">
+      <strong>Cash up for grabs!</strong><br>
+      <small>Invite friends, earn up to ₦6,300 Bonus</small>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <a href="#"><span class="icon">🏠</span>Home</a>
+    <a href="#"><span class="icon">🌟</span>Rewards</a>
+    <a href="#"><span class="icon">💳</span>Finance</a>
+    <a href="#"><span class="icon">🏅</span>Cards</a>
+    <a href="#"><span class="icon">👤</span>Me</a>
+  </div>
+</body>
+</html>

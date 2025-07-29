@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kudirat Wallet - Register</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background-color: #1e1e1e;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .container {
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
+    .logo {
+      margin-bottom: 80px;
+    }
+    .logo img {
+      width: 300px;
+    }
+    h2 {
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+    }
+    .input-box {
+      background: #2e2e2e;
+      border: 1px solid #04B24D;
+      padding: 12px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      margin-bottom: 60px;
+    }
+    select {
+      background: transparent;
+      color: white;
+      border: none;
+      font-size: 16px;
+      outline: none;
+      margin-right: 10px;
+      appearance: none;
+    }
+    .input-box input {
+      background: none;
+      border: none;
+      outline: none;
+      color: white;
+      font-size: 16px;
+      flex: 1;
+    }
+    .invite-box {
+      background: #043d2b;
+      padding: 10px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      font-size: 14px;
+      color: #aaa;
+    }
+    .promo-btn {
+      background: #00ffae;
+      color: black;
+      font-weight: bold;
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 14px;
+      margin-bottom: 15px;
+      display: inline-block;
+    }
+    .signup-btn {
+      background: #00b86b;
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 30px;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-bottom: 15px;
+      opacity: 0.5;
+      pointer-events: none;
+    }
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      font-size: 13px;
+      margin-bottom: 20px;
+      color: #ccc;
+    }
+    .checkbox-label input {
+      margin-right: 8px;
+    }
+    .checkbox-label a {
+      color: #00ffae;
+      text-decoration: none;
+    }
+    .login-link {
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    .login-link a {
+      color: #00ffae;
+      text-decoration: none;
+    }
+    footer {
+      font-size: 12px;
+      color: #888;
+      margin-top: 30px;
+    }
+  </style>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const user = localStorage.getItem("kudiratUser");
+      if (user) {
+        window.location.href = "/dashboard.html";
+      }
+
+      const signUpBtn = document.querySelector(".signup-btn");
+      const input = document.querySelector(".input-box input");
+
+      input.addEventListener("input", () => {
+        if (input.value.trim().length >= 9) {
+          signUpBtn.disabled = false;
+          signUpBtn.style.opacity = "1";
+          signUpBtn.style.pointerEvents = "auto";
+        } else {
+          signUpBtn.disabled = true;
+          signUpBtn.style.opacity = "0.5";
+          signUpBtn.style.pointerEvents = "none";
+        }
+      });
+
+      signUpBtn.addEventListener("click", () => {
+        const phone = input.value.trim();
+        if (!phone || phone.length < 9) {
+          alert("Enter a valid phone number");
+          return;
+        }
+
+        const code = Math.floor(100000 + Math.random() * 900000);
+        localStorage.setItem("verificationCode", code.toString());
+        localStorage.setItem("phoneNumber", phone);
+
+        alert("Your Kudirat Wallet verification code is: " + code);
+
+        // Redirect to verify.html
+        window.location.href = "/verify.html";
+      });
+    });
+  </script>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">
+      <img src="./kudirat-logo.png" alt="Kudirat Logo" />
+    </div>
+    <h2>Get a Kudirat Account</h2>
+    <div class="input-box">
+      <select>
+        <option value="+234">🇳🇬 +234</option>
+        <option value="+233">🇬🇭 +233</option>
+        <option value="+44">🇬🇧 +44</option>
+        <option value="+1">🇺🇸 +1</option>
+      </select>
+      <input type="tel" placeholder="Phone number" />
+    </div>
+    <div class="invite-box">Have an Invitation Code? (Optional)</div>
+    <div class="promo-btn">Get ₦100 airtime for free</div>
+    <button class="signup-btn" disabled>Sign Up</button>
+
+    <label class="checkbox-label">
+      <input type="checkbox" checked />
+      I have read, understood and agreed to the <a href="#">Terms & Conditions</a> and <a href="#">Privacy Policy</a>
+    </label>
+
+    <div class="login-link">
+      Already have a Kudirat Account? <a href="login.html">Log in</a>
+    </div>
+
+    <footer>
+      Licensed by the CBN and insured by the NDIC
+    </footer>
+  </div>
+</body>
+</html>
