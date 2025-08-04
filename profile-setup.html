@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kudirat Wallet - Complete Profile</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background-color: #1e1e1e;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .container {
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
+    h2 {
+      margin-bottom: 20px;
+      font-size: 1.4rem;
+    }
+    input, select {
+      width: 100%;
+      padding: 14px;
+      margin-bottom: 15px;
+      border-radius: 10px;
+      border: none;
+      background: #2e2e2e;
+      color: white;
+      font-size: 1rem;
+    }
+    button {
+      width: 100%;
+      background-color: #00ffae;
+      color: #000;
+      border: none;
+      padding: 14px;
+      border-radius: 30px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    input[type="file"] {
+      background: transparent;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Complete Your Profile</h2>
+
+    <input type="text" id="fullname" placeholder="Full Name (required)" required />
+    <input type="password" id="pin" maxlength="4" placeholder="Set 4-digit PIN (required)" required />
+    <select id="gender">
+      <option value="">Select Gender (optional)</option>
+      <option value="Male">Male</option>
+      <option value="Female">Female</option>
+      <option value="Other">Other</option>
+    </select>
+    <input type="date" id="dob" placeholder="Date of Birth (optional)" />
+    <input type="email" id="email" placeholder="Email Address (optional)" />
+    <input type="text" id="bvn" placeholder="BVN (optional)" maxlength="11" />
+    <input type="text" id="nin" placeholder="NIN (optional)" maxlength="11" />
+    <input type="file" id="photo" accept="image/*" />
+
+    <button onclick="saveProfile()">Finish</button>
+  </div>
+
+  <script>
+    function generateAccountNumber() {
+      return '20' + Math.floor(10000000 + Math.random() * 90000000); // 20XXXXXXXX
+    }
+
+    function saveProfile() {
+      const fullName = document.getElementById('fullname').value.trim();
+      const pin = document.getElementById('pin').value.trim();
+      const gender = document.getElementById('gender').value;
+      const dob = document.getElementById('dob').value;
+      const email = document.getElementById('email').value;
+      const bvn = document.getElementById('bvn').value;
+      const nin = document.getElementById('nin').value;
+      const photoFile = document.getElementById('photo').files[0];
+
+      if (fullName.length < 3) return alert("Please enter your full name.");
+      if (!/^\d{4}$/.test(pin)) return alert("Please enter a 4-digit PIN.");
+
+      const phone = localStorage.getItem("phoneNumber");
+      if (!phone) {
+        alert("Missing phone number. Please restart registration.");
+        window.location.href = "register.html";
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const photoBase64 = photoFile ? reader.result : "https://i.pravatar.cc/150?img=3";
+        const accountNumber = phone; // 👈 Your phone is your account number
+
+        const user = {
+          name: fullName,
+          number: phone,
+          pin,
+          gender,
+          dob,
+          email,
+          bvn,
+          nin,
+          photo: photoBase64,
+          account: accountNumber,
+          balance: 0
+        };
+
+        // Save main user
+        localStorage.setItem("kudiratUser", JSON.stringify(user));
+
+        // Also store basic items separately for easy access
+        localStorage.setItem("accountNumber", accountNumber);
+        localStorage.setItem("firstName", fullName.split(" ")[0]);
+        localStorage.setItem("lastName", fullName.split(" ").slice(1).join(" "));
+        localStorage.setItem("photo", photoBase64);
+        localStorage.setItem("phone", phone);
+        localStorage.setItem("pin", pin);
+        localStorage.setItem("gender", gender);
+        localStorage.setItem("dob", dob);
+        localStorage.setItem("email", email);
+
+        // Save to list of all users
+        let users = JSON.parse(localStorage.getItem("kudiratUsers") || "[]");
+        if (!users.some(u => u.number === phone)) {
+          users.push(user);
+          localStorage.setItem("kudiratUsers", JSON.stringify(users));
+        }
+
+        alert("✅ Profile completed successfully!");
+        window.location.href = "dashboard.html";
+      };
+
+      if (photoFile) {
+        reader.readAsDataURL(photoFile);
+      } else {
+        reader.onloadend(); // fallback if no image
+      }
+    }
+  </script>
+</body>
+</html>

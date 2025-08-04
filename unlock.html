@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Kudirat Wallet Unlock</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background-color: #0e0e0e;
+      color: white;
+      font-family: "Segoe UI", sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    h2 {
+      margin-bottom: 20px;
+    }
+    input {
+      padding: 10px;
+      font-size: 1.2rem;
+      text-align: center;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+      width: 150px;
+      margin-bottom: 15px;
+      background-color: #1f1f1f;
+      color: white;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      background-color: #00ffae;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .error {
+      color: red;
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+    .forgot {
+      margin-top: 15px;
+    }
+    .forgot a {
+      color: #00ffae;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Enter your Wallet PIN</h2>
+  <input type="password" id="pinInput" maxlength="6" placeholder="••••••">
+  <button onclick="unlockWallet()">Unlock</button>
+  <div id="error" class="error"></div>
+
+  <div class="forgot">
+    <a href="forgot-pin.html">Forgot PIN?</a>
+  </div>
+
+  <script>
+    function unlockWallet() {
+      const enteredPIN = document.getElementById("pinInput").value.trim();
+      const savedPIN = localStorage.getItem("userPIN");
+      const maxTries = 3;
+      let tries = parseInt(localStorage.getItem("pinAttempts") || "0");
+
+      if (!savedPIN) {
+        document.getElementById("error").textContent = "No PIN set. Please set a new PIN.";
+        window.location.href = "set-pin.html";
+        return;
+      }
+
+      if (enteredPIN === savedPIN) {
+        localStorage.setItem("pinAttempts", "0"); // reset on success
+        window.location.href = "dashboard.html";
+      } else {
+        tries++;
+        localStorage.setItem("pinAttempts", tries);
+        if (tries >= maxTries) {
+          alert("Too many wrong attempts. Please reset your PIN.");
+          window.location.href = "forgot-pin.html";
+        } else {
+          const left = maxTries - tries;
+          document.getElementById("error").textContent = `Incorrect PIN! You have ${left} attempt(s) left.`;
+        }
+      }
+    }
+
+    // If not logged in, redirect to login
+    if (!localStorage.getItem("kudiratUser")) {
+      window.location.href = "login.html";
+    }
+  </script>
+
+</body>
+</html>

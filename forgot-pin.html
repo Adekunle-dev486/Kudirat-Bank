@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Reset PIN - Kudirat Wallet</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background-color: #0e0e0e;
+      color: white;
+      font-family: "Segoe UI", sans-serif;
+      padding: 20px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      background-color: #1f1f1f;
+      color: white;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #00b86b;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+
+    .note {
+      font-size: 14px;
+      color: #aaa;
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    .error {
+      color: red;
+      text-align: center;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Reset Your Wallet PIN</h2>
+
+  <div class="form-group">
+    <label for="phone">Confirm Your Phone Number</label>
+    <input type="text" id="phone" placeholder="e.g. 0701******81" maxlength="11">
+  </div>
+
+  <button onclick="verifyPhone()">Verify and Reset</button>
+
+  <p class="note">We'll verify and allow you to set a new PIN.</p>
+  <div class="error" id="error"></div>
+
+  <script>
+    function verifyPhone() {
+      const inputPhone = document.getElementById("phone").value.trim();
+      const savedPhone = localStorage.getItem("userPhone") || "";
+
+      if (!inputPhone || inputPhone.length !== 11) {
+        document.getElementById("error").textContent = "Enter a valid 11-digit phone number.";
+        return;
+      }
+
+      if (savedPhone && inputPhone !== savedPhone) {
+        document.getElementById("error").textContent = "Phone number does not match our records.";
+        return;
+      }
+
+      // Clear old PIN and go to set a new one
+      localStorage.removeItem("userPIN");
+
+      window.location.href = "set-pin.html";
+    }
+  </script>
+
+</body>
+</html>

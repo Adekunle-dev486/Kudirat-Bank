@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Transfer to Kudirat Account</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <script src="https://unpkg.com/html5-qrcode"></script>
+  <style>
+    body {
+      margin: 0; padding: 0;
+      background-color: #0e0e0e;
+      color: white;
+      font-family: "Segoe UI", sans-serif;
+    }
+    .header {
+      background-color: #1a1a1a;
+      padding: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #222;
+    }
+    .header h2 { margin: 0; font-size: 1rem; }
+    .header a {
+      color: #00ffae; text-decoration: none;
+      font-size: 0.9rem;
+    }
+    .input-section {
+      background-color: #1f1f1f;
+      margin: 12px;
+      padding: 14px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+    }
+    .input-section input {
+      background: #000;
+      border: none;
+      padding: 12px;
+      color: white;
+      flex: 1;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    .input-section i {
+      margin-left: 10px;
+      color: #00ffae;
+      cursor: pointer;
+    }
+    .tabs {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 12px;
+      background-color: #121212;
+    }
+    .tabs div {
+      flex: 1;
+      text-align: center;
+      padding: 10px;
+      cursor: pointer;
+    }
+    .tabs .active {
+      color: #00ffae;
+      border-bottom: 2px solid #00ffae;
+    }
+    .recents {
+      padding: 12px;
+    }
+    .contact {
+      padding: 10px 0;
+      border-bottom: 1px solid #333;
+      position: relative;
+    }
+    .contact span {
+      display: block;
+      font-size: 0.95rem;
+    }
+    .fav-star {
+      position: absolute;
+      right: 0;
+      top: 15px;
+      font-size: 1rem;
+      color: gray;
+      cursor: pointer;
+    }
+    .view-all {
+      text-align: center;
+      margin: 12px 0;
+    }
+    .see-others {
+      background-color: #1f1f1f;
+      margin: 12px;
+      padding: 12px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
+    .see-others i {
+      font-size: 1.5rem;
+      color: #00ffae;
+    }
+    #qrModal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.9);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    #qr-reader {
+      width: 90%;
+      max-width: 320px;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .close-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 1.5rem;
+      color: #fff;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <a href="dashboard.html"><i class="fas fa-arrow-left"></i></a>
+  <h2>Transfer to Kudirat Account</h2>
+  <a href="#">History</a>
+</div>
+
+<div class="input-section">
+  <input type="text" id="recipientInput" placeholder="Phone No./Kudirat Account No./Name">
+  <i class="fas fa-qrcode" onclick="openQRScanner()"></i>
+</div>
+
+<div class="tabs">
+  <div class="active" onclick="switchTab('recents')">Recents</div>
+  <div onclick="switchTab('favourites')">Favourites</div>
+</div>
+
+<div class="recents" id="contactList"></div>
+
+<div class="view-all">
+  <button onclick="viewAll()" style="background:#00ffae;color:#000;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;">View All</button>
+</div>
+
+<div class="see-others" onclick="alert('Accessing your contact list soon...')">
+  <i class="fas fa-address-book"></i>
+  <div>
+    <strong>See who else is using Kudirat</strong><br>
+    <small>Send money to your contacts for free</small>
+  </div>
+</div>
+
+<!-- QR Scanner Modal -->
+<div id="qrModal">
+  <div id="qr-reader"></div>
+  <i class="fas fa-times close-btn" onclick="closeQRScanner()"></i>
+</div>
+
+<script>
+  let currentTab = "recents";
+  let showAll = false;
+  const contactList = document.getElementById("contactList");
+  const input = document.getElementById("recipientInput");
+
+  input.addEventListener("input", function () {
+    const value = this.value.replace(/\s+/g, '');
+    const allUsers = JSON.parse(localStorage.getItem("kudiratUsers") || "[]");
+    const found = allUsers.find(user =>
+      user.number.replace(/\s+/g, '') === value || user.name.toLowerCase() === value.toLowerCase()
+    );
+
+    if (found) {
+      const confirmAmount = prompt(`Send to ${found.name}\nEnter Amount:`);
+      if (confirmAmount) {
+        const note = prompt("Add a note (optional):");
+        const pin = prompt("Enter your PIN:");
+
+        let user = JSON.parse(localStorage.getItem("kudiratUser"));
+        if (user && user.balance >= Number(confirmAmount)) {
+          user.balance -= Number(confirmAmount);
+          localStorage.setItem("kudiratUser", JSON.stringify(user));
+
+          let tx = JSON.parse(localStorage.getItem("kudiratTransfers") || "[]");
+          tx.unshift({ name: found.name, number: found.number, amount: confirmAmount, note, time: new Date().toLocaleString() });
+          localStorage.setItem("kudiratTransfers", JSON.stringify(tx));
+
+          alert(`✅ ₦${confirmAmount} sent to ${found.name}`);
+          input.value = "";
+        } else {
+          alert("❌ Insufficient balance");
+        }
+      }
+    }
+  });
+
+  function renderContacts(data) {
+    contactList.innerHTML = "";
+    const visibleContacts = showAll ? data : data.slice(0, 3);
+    if (visibleContacts.length === 0) {
+      contactList.innerHTML = "<p>No contacts yet.</p>";
+      return;
+    }
+    visibleContacts.forEach(c => {
+      const div = document.createElement("div");
+      div.className = "contact";
+      div.innerHTML = `
+        <strong>${c.name}</strong>
+        <span>${c.number}</span>
+        <i class="fas fa-star fav-star" onclick="addToFavourites('${c.name}', '${c.number}')"></i>
+      `;
+      contactList.appendChild(div);
+    });
+    const viewAllBtn = document.querySelector(".view-all");
+    viewAllBtn.style.display = data.length > 3 && !showAll ? "block" : "none";
+  }
+
+  function switchTab(tab) {
+    currentTab = tab;
+    showAll = false;
+    const tabs = document.querySelectorAll(".tabs div");
+    tabs.forEach(t => t.classList.remove("active"));
+    document.querySelector(`.tabs div:nth-child(${tab === 'recents' ? 1 : 2})`).classList.add("active");
+    const data = tab === 'recents'
+      ? JSON.parse(localStorage.getItem("kudiratTransfers") || "[]")
+      : JSON.parse(localStorage.getItem("kudiratFavourites") || "[]");
+    renderContacts(data);
+  }
+
+  function viewAll() {
+    showAll = true;
+    const data = currentTab === 'recents'
+      ? JSON.parse(localStorage.getItem("kudiratTransfers") || "[]")
+      : JSON.parse(localStorage.getItem("kudiratFavourites") || "[]");
+    renderContacts(data);
+  }
+
+  function addToFavourites(name, number) {
+    let favs = JSON.parse(localStorage.getItem("kudiratFavourites") || "[]");
+    if (!favs.find(f => f.number === number)) {
+      favs.push({ name, number });
+      localStorage.setItem("kudiratFavourites", JSON.stringify(favs));
+      if (currentTab === 'favourites') switchTab('favourites');
+      alert(`${name} added to favourites ✅`);
+    } else {
+      alert(`${name} is already in your favourites ⭐`);
+    }
+  }
+
+  let html5QrCode;
+  function openQRScanner() {
+    document.getElementById("qrModal").style.display = "flex";
+    html5QrCode = new Html5Qrcode("qr-reader");
+    html5QrCode.start(
+      { facingMode: "environment" },
+      { fps: 10, qrbox: 250 },
+      qrCodeMessage => {
+        input.value = qrCodeMessage;
+        input.dispatchEvent(new Event("input"));
+        closeQRScanner();
+      },
+      error => {}
+    );
+  }
+
+  function closeQRScanner() {
+    html5QrCode.stop().then(() => {
+      html5QrCode.clear();
+      document.getElementById("qrModal").style.display = "none";
+    });
+  }
+
+  switchTab("recents");
+</script>
+
+</body>
+</html>

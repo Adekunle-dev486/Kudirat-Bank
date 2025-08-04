@@ -104,28 +104,24 @@
     const phoneDisplay = document.getElementById("phoneDisplay");
     const smsPreview = document.getElementById("smsPreview");
 
-    // Show phone number if available
     const phone = localStorage.getItem("phoneNumber");
     const actualCode = localStorage.getItem("verificationCode");
 
-    // Redirect if no code present
-    if (!actualCode) {
-      alert("No verification code found. Please register again.");
+    // If no code or phone, force restart
+    if (!actualCode || !phone) {
+      alert("Missing info. Please register again.");
       window.location.href = "register.html";
     }
 
-    // Display masked phone and simulated SMS
-    if (phone) {
-      phoneDisplay.textContent = phone.replace(/(\d{3})(\d{3})(\d{4})/, '+234-$2-****');
-      smsPreview.textContent = `SMS: Your Kudirat Wallet verification code is ${actualCode}`;
-    }
+    // Show masked phone and code
+    phoneDisplay.textContent = phone.replace(/(\d{3})(\d{3})(\d{4})/, '+234-$2-****');
+    smsPreview.textContent = `SMS: Your Kudirat Wallet verification code is ${actualCode}`;
 
-    // Restrict input to numbers only
+    // Prevent non-numbers
     input.addEventListener("input", () => {
       input.value = input.value.replace(/\D/g, "");
     });
 
-    // Verify button click
     verifyBtn.addEventListener("click", () => {
       const enteredCode = input.value.trim();
 
@@ -142,16 +138,20 @@
 
         if (enteredCode === actualCode) {
           errorText.style.color = "#00ffae";
-          errorText.textContent = "✅ Verification successful! Redirecting...";
+          errorText.textContent = "✅ Verified! Redirecting...";
+
+          // Save verification status
           localStorage.setItem("kudiratUser", "true");
+
+          // Go to complete profile page
           setTimeout(() => {
-            window.location.href = "/dashboard.html";
+            window.location.href = "profile.html";
           }, 1500);
         } else {
           errorText.style.color = "#ff4c4c";
           errorText.textContent = "Invalid verification code. Please try again.";
         }
-      }, 1500); // Simulate verification delay
+      }, 1500);
     });
   </script>
 </body>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Set PIN – Kudirat Wallet</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background-color: #0e0e0e;
+      color: white;
+      font-family: "Segoe UI", sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    h2 {
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .pin-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .pin-boxes {
+      display: flex;
+      gap: 10px;
+    }
+
+    .pin-boxes input {
+      width: 40px;
+      height: 50px;
+      text-align: center;
+      font-size: 1.5rem;
+      border: none;
+      border-radius: 8px;
+      background-color: #1f1f1f;
+      color: white;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      background-color: #00b86b;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .error {
+      color: red;
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Set Your 6-Digit PIN</h2>
+
+  <div class="pin-section">
+    <div class="pin-boxes" id="pin1">
+      <input type="password" maxlength="1" oninput="moveNext(this, 0, 'pin1')">
+      <input type="password" maxlength="1" oninput="moveNext(this, 1, 'pin1')">
+      <input type="password" maxlength="1" oninput="moveNext(this, 2, 'pin1')">
+      <input type="password" maxlength="1" oninput="moveNext(this, 3, 'pin1')">
+      <input type="password" maxlength="1" oninput="moveNext(this, 4, 'pin1')">
+      <input type="password" maxlength="1" oninput="moveNext(this, 5, 'pin1')">
+    </div>
+
+    <h2 style="font-size: 18px;">Confirm PIN</h2>
+
+    <div class="pin-boxes" id="pin2">
+      <input type="password" maxlength="1" oninput="moveNext(this, 0, 'pin2')">
+      <input type="password" maxlength="1" oninput="moveNext(this, 1, 'pin2')">
+      <input type="password" maxlength="1" oninput="moveNext(this, 2, 'pin2')">
+      <input type="password" maxlength="1" oninput="moveNext(this, 3, 'pin2')">
+      <input type="password" maxlength="1" oninput="moveNext(this, 4, 'pin2')">
+      <input type="password" maxlength="1" oninput="moveNext(this, 5, 'pin2')">
+    </div>
+
+    <button onclick="savePIN()">Set PIN</button>
+    <div id="error" class="error"></div>
+  </div>
+
+  <script>
+    // Auto move to next input box
+    function moveNext(el, index, groupId) {
+      const inputs = document.querySelectorAll(`#${groupId} input`);
+      if (el.value && index < inputs.length - 1) {
+        inputs[index + 1].focus();
+      }
+    }
+
+    function savePIN() {
+      const pin1 = Array.from(document.querySelectorAll('#pin1 input')).map(i => i.value).join('');
+      const pin2 = Array.from(document.querySelectorAll('#pin2 input')).map(i => i.value).join('');
+      const error = document.getElementById("error");
+
+      if (pin1.length < 6 || pin2.length < 6) {
+        error.textContent = "Please enter all 6 digits in both fields.";
+        return;
+      }
+
+      if (pin1 !== pin2) {
+        error.textContent = "PINs do not match.";
+        return;
+      }
+
+      // Save the PIN and reset wrong attempts
+      localStorage.setItem("userPIN", pin1);
+      localStorage.setItem("pinAttempts", "0");
+
+      // Redirect to unlock.html
+      window.location.href = "unlock.html";
+    }
+
+    // ✅ Make sure profile info exists first
+    if (!localStorage.getItem("firstName")) {
+      window.location.href = "profile-setup.html";
+    }
+  </script>
+
+</body>
+</html>

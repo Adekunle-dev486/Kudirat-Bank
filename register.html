@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Kudirat Wallet - Register</title>
   <style>
     body {
@@ -22,10 +22,10 @@
       text-align: center;
     }
     .logo {
-      margin-bottom: 80px;
+      margin-bottom: 40px;
     }
     .logo img {
-      width: 300px;
+      width: 200px;
     }
     h2 {
       font-size: 1.2rem;
@@ -38,7 +38,7 @@
       border-radius: 10px;
       display: flex;
       align-items: center;
-      margin-bottom: 60px;
+      margin-bottom: 15px;
     }
     select {
       background: transparent;
@@ -119,13 +119,14 @@
   </style>
   <script>
     window.addEventListener('DOMContentLoaded', () => {
-      const user = localStorage.getItem("kudiratUser");
-      if (user) {
-        window.location.href = "/dashboard.html";
-      }
-
       const signUpBtn = document.querySelector(".signup-btn");
       const input = document.querySelector(".input-box input");
+
+      // Redirect if already logged in
+      const currentUser = localStorage.getItem("kudiratUser");
+      if (currentUser) {
+        window.location.href = "dashboard.html";
+      }
 
       input.addEventListener("input", () => {
         if (input.value.trim().length >= 9) {
@@ -142,18 +143,34 @@
       signUpBtn.addEventListener("click", () => {
         const phone = input.value.trim();
         if (!phone || phone.length < 9) {
-          alert("Enter a valid phone number");
+          alert("Please enter a valid phone number.");
           return;
         }
 
-        const code = Math.floor(100000 + Math.random() * 900000);
-        localStorage.setItem("verificationCode", code.toString());
-        localStorage.setItem("phoneNumber", phone);
+        // Save raw number
+        const fullNumber = "+234" + phone.slice(-10); // Nigeria default
+
+        // Check if already registered
+        const allUsers = JSON.parse(localStorage.getItem("kudiratUsers") || "[]");
+        const exists = allUsers.find(u => u.number === fullNumber);
+
+        if (exists) {
+          alert("This number is already registered. Please log in.");
+          window.location.href = "login.html";
+          return;
+        }
+
+        // Generate 6-digit code
+        const code = Math.floor(100000 + Math.random() * 900000).toString();
+
+        // Store verification session
+        localStorage.setItem("phoneNumber", fullNumber);
+        localStorage.setItem("verificationCode", code);
 
         alert("Your Kudirat Wallet verification code is: " + code);
 
-        // Redirect to verify.html
-        window.location.href = "/verify.html";
+        // Go to verify page
+        window.location.href = "verify.html";
       });
     });
   </script>
@@ -165,11 +182,8 @@
     </div>
     <h2>Get a Kudirat Account</h2>
     <div class="input-box">
-      <select>
-        <option value="+234">🇳🇬 +234</option>
-        <option value="+233">🇬🇭 +233</option>
-        <option value="+44">🇬🇧 +44</option>
-        <option value="+1">🇺🇸 +1</option>
+      <select disabled>
+        <option value="+234" selected>🇳🇬 +234</option>
       </select>
       <input type="tel" placeholder="Phone number" />
     </div>
@@ -179,7 +193,7 @@
 
     <label class="checkbox-label">
       <input type="checkbox" checked />
-      I have read, understood and agreed to the <a href="#">Terms & Conditions</a> and <a href="#">Privacy Policy</a>
+      I agree to the <a href="#">Terms & Conditions</a> and <a href="#">Privacy Policy</a>
     </label>
 
     <div class="login-link">
