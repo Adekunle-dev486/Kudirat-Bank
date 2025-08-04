@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Switch Account - Kudirat Wallet</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      background: #121212;
+      color: white;
+      font-family: "Segoe UI", sans-serif;
+      padding: 20px;
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    .user-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .user-card {
+      background: #1e1e1e;
+      padding: 15px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 300px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      cursor: pointer;
+    }
+
+    .user-card img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #00ffae;
+    }
+
+    .user-info {
+      text-align: left;
+    }
+
+    .add-new {
+      margin-top: 30px;
+      color: #00ffae;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h2>Choose an Account</h2>
+
+  <div class="user-list" id="userList"></div>
+
+  <div class="add-new" onclick="addNewUser()">Login with another number</div>
+
+  <script>
+    const users = JSON.parse(localStorage.getItem("kudiratUsers")) || [];
+
+    const userList = document.getElementById("userList");
+
+    if (users.length === 0) {
+      window.location.href = "register.html"; // no saved users, go register
+    }
+
+    users.forEach(user => {
+      const card = document.createElement("div");
+      card.className = "user-card";
+      card.innerHTML = `
+        <img src="${user.avatar || 'avatar.png'}" alt="avatar" />
+        <div class="user-info">
+          <strong>${user.name}</strong><br/>
+          <small>${user.phone}</small>
+        </div>
+      `;
+
+      card.onclick = () => {
+        localStorage.setItem("currentUserPhone", user.phone);
+        window.location.href = "login.html";
+      };
+
+      userList.appendChild(card);
+    });
+
+    function addNewUser() {
+      window.location.href = "register.html";
+    }
+  </script>
+</body>
+</html>

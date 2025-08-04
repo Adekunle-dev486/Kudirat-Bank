@@ -14,37 +14,31 @@
       color: #fff;
       transition: background-color 0.3s, color 0.3s;
     }
-
     .container {
       padding: 20px;
       max-width: 500px;
       margin: auto;
     }
-
     .header {
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
-
     .avatar {
       width: 60px;
       height: 60px;
       border-radius: 50%;
       border: 2px solid #00ffae;
     }
-
     .input-group {
       margin-top: 15px;
     }
-
     .input-group label {
       display: block;
       font-size: 14px;
       margin-bottom: 5px;
       color: #bbb;
     }
-
     .input-group input {
       width: 100%;
       padding: 10px;
@@ -53,7 +47,6 @@
       background-color: #1e1e1e;
       color: white;
     }
-
     .copy-btn {
       background: none;
       border: none;
@@ -61,7 +54,6 @@
       margin-left: 8px;
       cursor: pointer;
     }
-
     .save-btn {
       margin-top: 20px;
       background-color: #00b86b;
@@ -73,39 +65,29 @@
       border-radius: 8px;
       cursor: pointer;
     }
-
-    .save-btn:hover {
-      background-color: #00a55f;
-    }
-
     .readonly {
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
-
     .dark-toggle {
       margin-top: 30px;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
-
     .dark-toggle input {
       width: 20px;
       height: 20px;
     }
-
     body.light {
       background-color: #fff;
       color: #000;
     }
-
     body.light input {
       background-color: #f0f0f0;
       color: #000;
     }
-
     body.light .save-btn {
       background-color: #00b86b;
       color: white;
@@ -122,7 +104,7 @@
     <div class="input-group readonly">
       <div style="width: 100%;">
         <label>Account Number</label>
-        <input type="text" id="accountNumber" value="" readonly />
+        <input type="text" id="accountNumber" readonly />
       </div>
       <button class="copy-btn" onclick="copyAccount()">Copy</button>
     </div>
@@ -134,7 +116,7 @@
 
     <div class="input-group">
       <label>Full Name</label>
-      <input type="text" id="fullName" value="" readonly />
+      <input type="text" id="fullName" readonly />
     </div>
 
     <div class="input-group">
@@ -176,56 +158,67 @@
   </div>
 
   <script>
-    const get = (id) => document.getElementById(id);
-    const storage = localStorage;
+    const $ = (id) => document.getElementById(id);
+    const phone = localStorage.getItem("currentUserPhone");
+    const users = JSON.parse(localStorage.getItem("kudiratUsers") || "[]");
 
-    // Load values from localStorage
+    let currentUser = users.find(u => u.phone === phone);
+
+    if (!currentUser) {
+      alert("No user found. Please login.");
+      window.location.href = "login.html";
+    }
+
     function loadProfile() {
-      get("fullName").value = `${storage.getItem("firstName") || ""} ${storage.getItem("lastName") || ""}`.trim();
-      get("nickname").value = storage.getItem("nickname") || "";
-      get("mobile").value = storage.getItem("phone") || "";
-      get("email").value = storage.getItem("email") || "";
-      get("address").value = storage.getItem("address") || "";
-      get("gender").value = storage.getItem("gender") || "";
-      get("dob").value = storage.getItem("dob") || "";
-      get("accountNumber").value = storage.getItem("accountNumber") || "";
-      get("profilePic").src = storage.getItem("photo") || "https://i.pravatar.cc/150?img=3";
+      $("profilePic").src = currentUser.avatar || "avatar.png";
+      $("fullName").value = currentUser.name || "";
+      $("accountNumber").value = currentUser.account || "";
+      $("mobile").value = currentUser.phone || "";
+      $("nickname").value = currentUser.nickname || "";
+      $("gender").value = currentUser.gender || "";
+      $("dob").value = currentUser.dob || "";
+      $("email").value = currentUser.email || "";
+      $("address").value = currentUser.address || "";
 
-      // Dark mode
-      if (storage.getItem("theme") === "light") {
+      if (localStorage.getItem("theme") === "light") {
         document.body.classList.add("light");
-        get("darkMode").checked = false;
+        $("darkMode").checked = false;
       } else {
-        document.body.classList.remove("light");
-        get("darkMode").checked = true;
+        $("darkMode").checked = true;
       }
     }
 
-    // Save editable values
     function saveProfile() {
-      storage.setItem("nickname", get("nickname").value.trim());
-      storage.setItem("phone", get("mobile").value.trim());
-      storage.setItem("address", get("address").value.trim());
-      storage.setItem("gender", get("gender").value.trim());
-      storage.setItem("email", get("email").value.trim());
-      storage.setItem("dob", get("dob").value.trim());
-      alert("✅ Profile saved successfully.");
+      currentUser.nickname = $("nickname").value.trim();
+      currentUser.phone = $("mobile").value.trim();
+      currentUser.address = $("address").value.trim();
+      currentUser.gender = $("gender").value.trim();
+      currentUser.email = $("email").value.trim();
+      currentUser.dob = $("dob").value.trim();
+
+      // Update users array
+      const index = users.findIndex(u => u.phone === phone);
+      if (index !== -1) {
+        users[index] = currentUser;
+        localStorage.setItem("kudiratUsers", JSON.stringify(users));
+      }
+
+      alert("✅ Profile updated!");
     }
 
     function copyAccount() {
-      navigator.clipboard.writeText(get("accountNumber").value).then(() => {
-        alert("📋 Account number copied!");
-      });
+      navigator.clipboard.writeText($("accountNumber").value)
+        .then(() => alert("📋 Account number copied!"));
     }
 
     function toggleDarkMode() {
-      const isDark = get("darkMode").checked;
+      const isDark = $("darkMode").checked;
       if (isDark) {
         document.body.classList.remove("light");
-        storage.setItem("theme", "dark");
+        localStorage.setItem("theme", "dark");
       } else {
         document.body.classList.add("light");
-        storage.setItem("theme", "light");
+        localStorage.setItem("theme", "light");
       }
     }
 

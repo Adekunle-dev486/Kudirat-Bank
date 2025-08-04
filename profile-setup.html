@@ -63,8 +63,8 @@
       <option value="Female">Female</option>
       <option value="Other">Other</option>
     </select>
-    <input type="date" id="dob" placeholder="Date of Birth (optional)" />
-    <input type="email" id="email" placeholder="Email Address (optional)" />
+    <input type="date" id="dob" />
+    <input type="email" id="email" placeholder="Email Address" />
     <input type="text" id="bvn" placeholder="BVN (optional)" maxlength="11" />
     <input type="text" id="nin" placeholder="NIN (optional)" maxlength="11" />
     <input type="file" id="photo" accept="image/*" />
@@ -74,7 +74,7 @@
 
   <script>
     function generateAccountNumber() {
-      return '20' + Math.floor(10000000 + Math.random() * 90000000); // 20XXXXXXXX
+      return '20' + Math.floor(10000000 + Math.random() * 90000000);
     }
 
     function saveProfile() {
@@ -88,54 +88,49 @@
       const photoFile = document.getElementById('photo').files[0];
 
       if (fullName.length < 3) return alert("Please enter your full name.");
-      if (!/^\d{4}$/.test(pin)) return alert("Please enter a 4-digit PIN.");
+      if (!/^\d{4}$/.test(pin)) return alert("Enter a valid 4-digit PIN.");
 
       const phone = localStorage.getItem("phoneNumber");
       if (!phone) {
-        alert("Missing phone number. Please restart registration.");
+        alert("Missing phone number. Please start again.");
         window.location.href = "register.html";
         return;
       }
 
       const reader = new FileReader();
       reader.onloadend = () => {
-        const photoBase64 = photoFile ? reader.result : "https://i.pravatar.cc/150?img=3";
-        const accountNumber = phone; // 👈 Your phone is your account number
+        const avatar = photoFile ? reader.result : "avatar.png";
+        const account = generateAccountNumber();
 
         const user = {
           name: fullName,
-          number: phone,
+          phone,
           pin,
           gender,
           dob,
           email,
           bvn,
           nin,
-          photo: photoBase64,
-          account: accountNumber,
+          avatar,
+          account,
           balance: 0
         };
 
-        // Save main user
-        localStorage.setItem("kudiratUser", JSON.stringify(user));
-
-        // Also store basic items separately for easy access
-        localStorage.setItem("accountNumber", accountNumber);
-        localStorage.setItem("firstName", fullName.split(" ")[0]);
-        localStorage.setItem("lastName", fullName.split(" ").slice(1).join(" "));
-        localStorage.setItem("photo", photoBase64);
-        localStorage.setItem("phone", phone);
-        localStorage.setItem("pin", pin);
-        localStorage.setItem("gender", gender);
-        localStorage.setItem("dob", dob);
-        localStorage.setItem("email", email);
-
-        // Save to list of all users
+        // Store in kudiratUsers array
         let users = JSON.parse(localStorage.getItem("kudiratUsers") || "[]");
-        if (!users.some(u => u.number === phone)) {
+
+        const existingIndex = users.findIndex(u => u.phone === phone);
+        if (existingIndex >= 0) {
+          users[existingIndex] = user;
+        } else {
           users.push(user);
-          localStorage.setItem("kudiratUsers", JSON.stringify(users));
         }
+
+        localStorage.setItem("kudiratUsers", JSON.stringify(users));
+
+        // Mark current user
+        localStorage.setItem("currentUserPhone", phone);
+        localStorage.setItem("kudiratUser", "true");
 
         alert("✅ Profile completed successfully!");
         window.location.href = "dashboard.html";
@@ -144,7 +139,7 @@
       if (photoFile) {
         reader.readAsDataURL(photoFile);
       } else {
-        reader.onloadend(); // fallback if no image
+        reader.onloadend(); // trigger fallback
       }
     }
   </script>
