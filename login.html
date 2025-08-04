@@ -5,9 +5,7 @@
   <title>Kudirat Wallet Login</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: "Segoe UI", sans-serif;
@@ -120,7 +118,7 @@
   </div>
 
   <div class="avatar">
-    <img id="avatarImage" src="avatar.png" alt="User Avatar">
+    <img id="avatarImage" src="default-avatar.png" alt="User Avatar">
   </div>
 
   <div class="user-info" id="userLabel">Loading...</div>
@@ -146,12 +144,10 @@
 </div>
 
 <script>
-  // Check for selected user
   const currentPhone = localStorage.getItem("currentUserPhone");
   const users = JSON.parse(localStorage.getItem("kudiratUsers")) || [];
 
   if (!currentPhone || users.length === 0) {
-    // No user selected — go back to choose screen
     window.location.href = "choose-user.html";
   }
 
@@ -163,17 +159,20 @@
     window.location.href = "choose-user.html";
   }
 
-  // Display current user info
+  // Show user info
   document.getElementById("userLabel").textContent = `${currentUser.name} (${currentUser.phone})`;
-  document.getElementById("avatarImage").src = currentUser.avatar || "avatar.png";
 
-  // Toggle password visibility
+  const avatarImage = document.getElementById("avatarImage");
+  const avatarSrc = currentUser.avatar && currentUser.avatar.trim() !== ""
+    ? currentUser.avatar
+    : `https://i.pravatar.cc/150?u=${currentUser.phone}`;
+  avatarImage.src = avatarSrc;
+
   function togglePassword() {
     const input = document.getElementById("password");
     input.type = input.type === "password" ? "text" : "password";
   }
 
-  // Login logic
   function login() {
     const enteredPassword = document.getElementById("password").value;
 
@@ -190,7 +189,6 @@
     }
   }
 
-  // Switch to another account
   function switchAccount() {
     localStorage.removeItem("kudiratUser");
     localStorage.removeItem("currentUserPhone");

@@ -97,11 +97,10 @@
         return;
       }
 
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const avatar = photoFile ? reader.result : "avatar.png";
-        const account = generateAccountNumber();
+      const account = generateAccountNumber();
+      let users = JSON.parse(localStorage.getItem("kudiratUsers") || "[]");
 
+      const saveUser = (avatarBase64) => {
         const user = {
           name: fullName,
           phone,
@@ -111,13 +110,10 @@
           email,
           bvn,
           nin,
-          avatar,
+          avatar: avatarBase64 || `https://i.pravatar.cc/150?u=${phone}`,
           account,
           balance: 0
         };
-
-        // Store in kudiratUsers array
-        let users = JSON.parse(localStorage.getItem("kudiratUsers") || "[]");
 
         const existingIndex = users.findIndex(u => u.phone === phone);
         if (existingIndex >= 0) {
@@ -127,19 +123,19 @@
         }
 
         localStorage.setItem("kudiratUsers", JSON.stringify(users));
-
-        // Mark current user
         localStorage.setItem("currentUserPhone", phone);
         localStorage.setItem("kudiratUser", "true");
 
         alert("✅ Profile completed successfully!");
-        window.location.href = "dashboard.html";
+        window.location.href = "./set-pin.html";
       };
 
       if (photoFile) {
+        const reader = new FileReader();
+        reader.onloadend = () => saveUser(reader.result);
         reader.readAsDataURL(photoFile);
       } else {
-        reader.onloadend(); // trigger fallback
+        saveUser(""); // No image uploaded
       }
     }
   </script>

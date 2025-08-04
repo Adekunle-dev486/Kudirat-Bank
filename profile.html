@@ -156,73 +156,79 @@
       <input type="checkbox" id="darkMode" onchange="toggleDarkMode()" />
     </div>
   </div>
+<script>
+  const $ = (id) => document.getElementById(id);
 
-  <script>
-    const $ = (id) => document.getElementById(id);
-    const phone = localStorage.getItem("currentUserPhone");
-    const users = JSON.parse(localStorage.getItem("kudiratUsers") || "[]");
+  // Get current user phone and all users
+  const phone = localStorage.getItem("currentUserPhone");
+  const users = JSON.parse(localStorage.getItem("kudiratUsers") || "[]");
 
-    let currentUser = users.find(u => u.phone === phone);
+  // Find the matching user
+  let currentUser = users.find(u => u.phone === phone);
 
-    if (!currentUser) {
-      alert("No user found. Please login.");
-      window.location.href = "login.html";
+  if (!currentUser) {
+    alert("No user found. Please login.");
+    window.location.href = "login.html";
+  }
+
+  // Load profile into fields
+  function loadProfile() {
+    $("profilePic").src = currentUser.avatar || `https://i.pravatar.cc/150?u=${currentUser.phone}`;
+    $("fullName").value = currentUser.name || "";
+    $("accountNumber").value = currentUser.account || "";
+    $("mobile").value = currentUser.phone || "";
+    $("nickname").value = currentUser.nickname || "";
+    $("gender").value = currentUser.gender || "";
+    $("dob").value = currentUser.dob || "";
+    $("email").value = currentUser.email || "";
+    $("address").value = currentUser.address || "";
+
+    // Dark mode
+    if (localStorage.getItem("theme") === "light") {
+      document.body.classList.add("light");
+      $("darkMode").checked = false;
+    } else {
+      $("darkMode").checked = true;
+    }
+  }
+
+  // Save updated profile
+  function saveProfile() {
+    currentUser.nickname = $("nickname").value.trim();
+    currentUser.phone = $("mobile").value.trim();
+    currentUser.address = $("address").value.trim();
+    currentUser.gender = $("gender").value.trim();
+    currentUser.email = $("email").value.trim();
+    currentUser.dob = $("dob").value.trim();
+
+    const index = users.findIndex(u => u.phone === phone);
+    if (index !== -1) {
+      users[index] = currentUser;
+      localStorage.setItem("kudiratUsers", JSON.stringify(users));
     }
 
-    function loadProfile() {
-      $("profilePic").src = currentUser.avatar || "avatar.png";
-      $("fullName").value = currentUser.name || "";
-      $("accountNumber").value = currentUser.account || "";
-      $("mobile").value = currentUser.phone || "";
-      $("nickname").value = currentUser.nickname || "";
-      $("gender").value = currentUser.gender || "";
-      $("dob").value = currentUser.dob || "";
-      $("email").value = currentUser.email || "";
-      $("address").value = currentUser.address || "";
+    alert("✅ Profile updated!");
+  }
 
-      if (localStorage.getItem("theme") === "light") {
-        document.body.classList.add("light");
-        $("darkMode").checked = false;
-      } else {
-        $("darkMode").checked = true;
-      }
+  // Copy account number
+  function copyAccount() {
+    navigator.clipboard.writeText($("accountNumber").value)
+      .then(() => alert("📋 Account number copied!"));
+  }
+
+  // Toggle dark/light theme
+  function toggleDarkMode() {
+    const isDark = $("darkMode").checked;
+    if (isDark) {
+      document.body.classList.remove("light");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.body.classList.add("light");
+      localStorage.setItem("theme", "light");
     }
+  }
 
-    function saveProfile() {
-      currentUser.nickname = $("nickname").value.trim();
-      currentUser.phone = $("mobile").value.trim();
-      currentUser.address = $("address").value.trim();
-      currentUser.gender = $("gender").value.trim();
-      currentUser.email = $("email").value.trim();
-      currentUser.dob = $("dob").value.trim();
-
-      // Update users array
-      const index = users.findIndex(u => u.phone === phone);
-      if (index !== -1) {
-        users[index] = currentUser;
-        localStorage.setItem("kudiratUsers", JSON.stringify(users));
-      }
-
-      alert("✅ Profile updated!");
-    }
-
-    function copyAccount() {
-      navigator.clipboard.writeText($("accountNumber").value)
-        .then(() => alert("📋 Account number copied!"));
-    }
-
-    function toggleDarkMode() {
-      const isDark = $("darkMode").checked;
-      if (isDark) {
-        document.body.classList.remove("light");
-        localStorage.setItem("theme", "dark");
-      } else {
-        document.body.classList.add("light");
-        localStorage.setItem("theme", "light");
-      }
-    }
-
-    loadProfile();
-  </script>
+  loadProfile();
+</script>
 </body>
 </html>

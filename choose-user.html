@@ -2,43 +2,79 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Switch Account - Kudirat Wallet</title>
+  <title>Choose Account - Kudirat Wallet</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
+    * { box-sizing: border-box; }
     body {
-      background: #121212;
-      color: white;
+      margin: 0;
       font-family: "Segoe UI", sans-serif;
-      padding: 20px;
-      text-align: center;
+      background-color: #1e1e1e;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 20px;
+      min-height: 100vh;
+    }
+
+    .logo img {
+      width: 140px;
+      margin-top: 40px;
+      margin-bottom: 30px;
     }
 
     h2 {
+      margin: 10px 0 25px;
+      font-weight: normal;
+    }
+
+    .input-box {
+      background: #2a2a2a;
+      border-radius: 10px;
+      padding: 15px;
+      width: 100%;
+      max-width: 360px;
       margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-box input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 16px;
+      outline: none;
+    }
+
+    .input-box input::placeholder {
+      color: #888;
     }
 
     .user-list {
+      width: 100%;
+      max-width: 360px;
       display: flex;
       flex-direction: column;
-      gap: 20px;
-      align-items: center;
+      gap: 15px;
+      margin-bottom: 30px;
     }
 
     .user-card {
-      background: #1e1e1e;
-      padding: 15px;
+      background: #2a2a2a;
+      padding: 12px;
       border-radius: 10px;
-      width: 90%;
-      max-width: 300px;
       display: flex;
       align-items: center;
-      gap: 15px;
+      gap: 12px;
       cursor: pointer;
     }
 
     .user-card img {
-      width: 60px;
-      height: 60px;
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
       object-fit: cover;
       border: 2px solid #00ffae;
@@ -48,37 +84,80 @@
       text-align: left;
     }
 
-    .add-new {
-      margin-top: 30px;
+    .user-info strong {
+      display: block;
+      font-size: 15px;
+    }
+
+    .login-btn {
+      background-color: #00b86b;
+      color: white;
+      width: 100%;
+      max-width: 360px;
+      padding: 14px;
+      border: none;
+      border-radius: 30px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .footer {
+      margin-top: auto;
+      text-align: center;
+      font-size: 12px;
+      color: #aaa;
+    }
+
+    .footer b {
+      color: #fff;
+    }
+
+    .footer a {
       color: #00ffae;
       text-decoration: underline;
-      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <h2>Choose an Account</h2>
+
+  <div class="logo">
+    <img src="kudirat-logo.png" alt="Kudirat Logo">
+  </div>
+
+  <h2>Select an Account</h2>
+
+  <div class="input-box">
+    <input id="newPhone" type="text" placeholder="Enter your Mobile No./Email" />
+  </div>
+
+  <button onclick="continueLogin()" class="login-btn">Continue</button>
+
+  <h3 style="margin: 30px 0 10px; font-weight: normal; font-size: 15px;">Previous Users</h3>
 
   <div class="user-list" id="userList"></div>
 
-  <div class="add-new" onclick="addNewUser()">Login with another number</div>
+  <div class="footer">
+    Don’t have a Kudirat Wallet Account yet?<br/>
+    <a href="register.html">Click here to get one</a><br/><br/>
+    <span>Licensed by the <b>CBN</b> and insured by the <b>NDIC</b></span>
+  </div>
 
   <script>
+    const userList = document.getElementById("userList");
     const users = JSON.parse(localStorage.getItem("kudiratUsers")) || [];
 
-    const userList = document.getElementById("userList");
-
-    if (users.length === 0) {
-      window.location.href = "register.html"; // no saved users, go register
-    }
-
+    // Show all previously saved users
     users.forEach(user => {
+      const avatarSrc = user.avatar && user.avatar.trim() !== ""
+        ? user.avatar
+        : `https://i.pravatar.cc/150?u=${user.phone}`;
+
       const card = document.createElement("div");
       card.className = "user-card";
       card.innerHTML = `
-        <img src="${user.avatar || 'avatar.png'}" alt="avatar" />
+        <img src="${avatarSrc}" alt="avatar" />
         <div class="user-info">
-          <strong>${user.name}</strong><br/>
+          <strong>${user.name}</strong>
           <small>${user.phone}</small>
         </div>
       `;
@@ -91,9 +170,20 @@
       userList.appendChild(card);
     });
 
-    function addNewUser() {
-      window.location.href = "register.html";
+    function continueLogin() {
+      const phone = document.getElementById("newPhone").value.trim();
+      if (!phone) return alert("Please enter your mobile number or email");
+
+      const user = users.find(u => u.phone === phone || u.email === phone);
+      if (user) {
+        localStorage.setItem("currentUserPhone", user.phone);
+        window.location.href = "login.html";
+      } else {
+        alert("User not found. Please register.");
+        window.location.href = "register.html";
+      }
     }
   </script>
+
 </body>
 </html>

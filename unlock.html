@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Kudirat Wallet Unlock</title>
+  <title>Unlock – Kudirat Wallet</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
@@ -15,87 +15,102 @@
       justify-content: center;
       height: 100vh;
     }
-    h2 {
-      margin-bottom: 20px;
-    }
+
     input {
-      padding: 10px;
-      font-size: 1.2rem;
+      font-size: 2rem;
+      width: 40px;
+      height: 50px;
       text-align: center;
+      margin: 0 5px;
       border: none;
       border-radius: 8px;
-      outline: none;
-      width: 150px;
-      margin-bottom: 15px;
-      background-color: #1f1f1f;
+      background: #1f1f1f;
       color: white;
     }
+
     button {
       padding: 10px 20px;
-      font-size: 1rem;
-      background-color: #00ffae;
+      margin-top: 20px;
+      background-color: #00b86b;
       border: none;
       border-radius: 10px;
+      color: white;
+      font-size: 1rem;
       cursor: pointer;
     }
+
     .error {
       color: red;
       margin-top: 10px;
-      font-size: 0.9rem;
-    }
-    .forgot {
-      margin-top: 15px;
-    }
-    .forgot a {
-      color: #00ffae;
-      text-decoration: none;
       font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
 
-  <h2>Enter your Wallet PIN</h2>
-  <input type="password" id="pinInput" maxlength="6" placeholder="••••••">
-  <button onclick="unlockWallet()">Unlock</button>
-  <div id="error" class="error"></div>
-
-  <div class="forgot">
-    <a href="forgot-pin.html">Forgot PIN?</a>
+  <h2>Enter Your PIN</h2>
+  <div id="pinInputs">
+    <input type="password" maxlength="1">
+    <input type="password" maxlength="1">
+    <input type="password" maxlength="1">
+    <input type="password" maxlength="1">
+    <input type="password" maxlength="1">
+    <input type="password" maxlength="1">
   </div>
+  <button onclick="verifyPIN()">Unlock</button>
+  <div class="error" id="errorMsg"></div>
 
   <script>
-    function unlockWallet() {
-      const enteredPIN = document.getElementById("pinInput").value.trim();
-      const savedPIN = localStorage.getItem("userPIN");
-      const maxTries = 3;
-      let tries = parseInt(localStorage.getItem("pinAttempts") || "0");
+    // Auto move focus
+    const inputs = document.querySelectorAll('#pinInputs input');
+    inputs.forEach((input, i) => {
+      input.addEventListener('input', () => {
+        if (input.value && i < inputs.length - 1) {
+          inputs[i + 1].focus();
+        }
+      });
+    });
 
-      if (!savedPIN) {
-        document.getElementById("error").textContent = "No PIN set. Please set a new PIN.";
-        window.location.href = "set-pin.html";
+    function verifyPIN() {
+      const enteredPIN = Array.from(inputs).map(i => i.value).join('');
+      const savedPIN = localStorage.getItem("userPIN");
+      let attempts = parseInt(localStorage.getItem("pinAttempts") || "0");
+      const errorDiv = document.getElementById("errorMsg");
+
+      if (enteredPIN.length < 6) {
+        errorDiv.textContent = "Please enter your full 6-digit PIN.";
         return;
       }
 
       if (enteredPIN === savedPIN) {
-        localStorage.setItem("pinAttempts", "0"); // reset on success
+        // Reset attempts
+        localStorage.setItem("pinAttempts", "0");
+        errorDiv.textContent = "";
         window.location.href = "dashboard.html";
       } else {
-        tries++;
-        localStorage.setItem("pinAttempts", tries);
-        if (tries >= maxTries) {
-          alert("Too many wrong attempts. Please reset your PIN.");
-          window.location.href = "forgot-pin.html";
+        attempts++;
+        localStorage.setItem("pinAttempts", attempts);
+        if (attempts >= 3) {
+          errorDiv.textContent = "Too many failed attempts. Access temporarily locked!";
+          inputs.forEach(i => i.disabled = true);
+          document.querySelector("button").disabled = true;
+          // Optional: Reset attempts after 30 seconds
+          setTimeout(() => {
+            localStorage.setItem("pinAttempts", "0");
+            errorDiv.textContent = "";
+            inputs.forEach(i => {
+              i.disabled = false;
+              i.value = "";
+            });
+            document.querySelector("button").disabled = false;
+            inputs[0].focus();
+          }, 30000); // 30 seconds lock
         } else {
-          const left = maxTries - tries;
-          document.getElementById("error").textContent = `Incorrect PIN! You have ${left} attempt(s) left.`;
+          errorDiv.textContent = `Wrong PIN. Attempt ${attempts} of 3.`;
+          inputs.forEach(i => i.value = "");
+          inputs[0].focus();
         }
       }
-    }
-
-    // If not logged in, redirect to login
-    if (!localStorage.getItem("kudiratUser")) {
-      window.location.href = "login.html";
     }
   </script>
 

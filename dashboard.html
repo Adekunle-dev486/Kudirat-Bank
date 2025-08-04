@@ -360,6 +360,15 @@
         closeCardForm();
       }, 1000);
     }
+     
+    const phone = localStorage.getItem("currentUserPhone");
+const users = JSON.parse(localStorage.getItem("kudiratUsers") || "[]");
+const user = users.find(u => u.phone === phone);
+
+if (user) {
+  document.getElementById("dashboardAvatar").src = user.avatar || "avatar.png";
+  document.getElementById("userName").textContent = user.name;
+}
 
     function logout() {
       localStorage.removeItem("kudiratUser");

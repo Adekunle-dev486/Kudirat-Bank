@@ -14,6 +14,7 @@
       align-items: center;
       justify-content: center;
       height: 100vh;
+      padding: 20px;
     }
 
     h2 {
@@ -113,17 +114,30 @@
         return;
       }
 
-      // Save the PIN and reset wrong attempts
+      // ✅ Save the PIN to the correct user object
+      const users = JSON.parse(localStorage.getItem("kudiratUsers")) || [];
+      const phone = localStorage.getItem("currentUserPhone");
+
+      const index = users.findIndex(u => u.phone === phone);
+      if (index !== -1) {
+        users[index].pin = pin1;
+        localStorage.setItem("kudiratUsers", JSON.stringify(users));
+      } else {
+        error.textContent = "User not found.";
+        return;
+      }
+
+      // Optional global save
       localStorage.setItem("userPIN", pin1);
       localStorage.setItem("pinAttempts", "0");
 
-      // Redirect to unlock.html
+      // Redirect
       window.location.href = "unlock.html";
     }
 
-    // ✅ Make sure profile info exists first
-    if (!localStorage.getItem("firstName")) {
-      window.location.href = "profile-setup.html";
+    // ✅ Redirect if profile not complete
+    if (!localStorage.getItem("currentUserPhone")) {
+      window.location.href = "choose-user.html";
     }
   </script>
 

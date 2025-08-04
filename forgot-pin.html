@@ -21,6 +21,12 @@
       margin-bottom: 15px;
     }
 
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: #ccc;
+    }
+
     input {
       width: 100%;
       padding: 12px;
@@ -55,6 +61,7 @@
       color: red;
       text-align: center;
       font-size: 14px;
+      margin-top: 10px;
     }
   </style>
 </head>
@@ -69,27 +76,41 @@
 
   <button onclick="verifyPhone()">Verify and Reset</button>
 
-  <p class="note">We'll verify and allow you to set a new PIN.</p>
+  <p class="note" id="maskedInfo"></p>
   <div class="error" id="error"></div>
 
   <script>
+    // Show masked number if stored
+    const savedPhone = localStorage.getItem("userPhone");
+    if (savedPhone && savedPhone.length === 11) {
+      const masked = savedPhone.slice(0, 4) + "******" + savedPhone.slice(-2);
+      document.getElementById("maskedInfo").textContent = "Phone linked to this wallet: " + masked;
+    }
+
     function verifyPhone() {
       const inputPhone = document.getElementById("phone").value.trim();
-      const savedPhone = localStorage.getItem("userPhone") || "";
+      const errorBox = document.getElementById("error");
 
-      if (!inputPhone || inputPhone.length !== 11) {
-        document.getElementById("error").textContent = "Enter a valid 11-digit phone number.";
+      if (!inputPhone || inputPhone.length !== 11 || !/^\d{11}$/.test(inputPhone)) {
+        errorBox.textContent = "Enter a valid 11-digit phone number.";
         return;
       }
 
-      if (savedPhone && inputPhone !== savedPhone) {
-        document.getElementById("error").textContent = "Phone number does not match our records.";
+      if (!savedPhone) {
+        errorBox.textContent = "No phone number is linked to this wallet.";
         return;
       }
 
-      // Clear old PIN and go to set a new one
+      if (inputPhone !== savedPhone) {
+        errorBox.textContent = "Phone number does not match our records.";
+        return;
+      }
+
+      // Clear old PIN and reset attempts
       localStorage.removeItem("userPIN");
+      localStorage.setItem("pinAttempts", "0");
 
+      // Redirect to set new PIN
       window.location.href = "set-pin.html";
     }
   </script>
