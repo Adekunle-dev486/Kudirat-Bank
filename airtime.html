@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Airtime – Kudirat Wallet</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background-color: #121212;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px;
+      background: #1e1e1e;
+      border-bottom: 1px solid #333;
+    }
+    
+    header h1 {
+      font-size: 18px;
+      margin: 0;
+    }
+    
+    .back-btn {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 20px;
+      cursor: pointer;
+    }
+    
+    .history-link {
+      color: #00ffae;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    
+    .phone-section {
+      margin: 12px;
+    }
+    
+    .phone-input-container {
+      display: flex;
+      align-items: center;
+      background: #1e1e1e;
+      border-radius: 8px;
+      border: 1px solid #333;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    
+    .network-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 18px;
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
+    
+    .mtn-logo {
+      background-color: #FFCC00;
+      color: #000;
+    }
+    
+    .airtel-logo {
+      background-color: #EF1C25;
+      color: #fff;
+    }
+    
+    .glo-logo {
+      background-color: #27AE60;
+      color: #fff;
+    }
+    
+    .mobile-logo {
+      background-color: #00B4D8;
+      color: #fff;
+    }
+    
+    .unknown-logo {
+      background-color: #555;
+      color: #fff;
+    }
+    
+    .phone-input {
+      flex: 1;
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 16px;
+      outline: none;
+    }
+    
+    .phone-input::placeholder {
+      color: #999;
+    }
+    
+    .check-btn {
+      background: #0f5132;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      margin-left: 12px;
+      flex-shrink: 0;
+    }
+    
+    .check-btn:hover {
+      background: #0a3d26;
+    }
+    
+    .network-info {
+      display: flex;
+      align-items: center;
+      background: #1e1e1e;
+      border-radius: 8px;
+      border: 1px solid #333;
+      padding: 12px 16px;
+    }
+    
+    .network-name {
+      font-size: 14px;
+      color: #bbb;
+      margin-left: 8px;
+    }
+    
+    .amount-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      padding: 0 12px;
+    }
+    
+    .amount-card {
+      background: #1e1e1e;
+      padding: 12px;
+      text-align: center;
+      border-radius: 8px;
+      border: 1px solid #333;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .amount-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    }
+    
+    .amount-card.selected {
+      border-color: #00ffae;
+      background: rgba(0, 255, 174, 0.1);
+    }
+    
+    .cashback {
+      font-size: 12px;
+      color: #4caf50;
+      margin-bottom: 4px;
+    }
+    
+    .amount-value {
+      font-size: 16px;
+      font-weight: 600;
+    }
+    
+    .amount-label {
+      font-size: 12px;
+      color: #999;
+    }
+    
+    .custom-amount {
+      display: flex;
+      gap: 12px;
+      padding: 12px;
+    }
+    
+    .custom-amount input {
+      flex: 1;
+      padding: 12px;
+      background: #1e1e1e;
+      border: 1px solid #333;
+      border-radius: 8px;
+      color: #fff;
+    }
+    
+    .custom-amount button {
+      padding: 0 24px;
+      background: #0f5132;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .custom-amount button:hover {
+      background: #0a3d26;
+    }
+    
+    .custom-amount button:disabled {
+      background: #555;
+      cursor: not-allowed;
+    }
+    
+    .section {
+      background: #1e1e1e;
+      margin: 12px;
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid #333;
+    }
+    
+    .section h2 {
+      font-size: 16px;
+      margin-top: 0;
+      margin-bottom: 12px;
+      color: #bbb;
+    }
+    
+    .section p {
+      font-size: 14px;
+      margin-bottom: 8px;
+      color: #999;
+    }
+    
+    .section a {
+      color: #00ffae;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    
+    /* Bottom Navigation */
+    .bottom-nav {
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 0;
+      border-top: 1px solid #333;
+      background: #1e1e1e;
+      margin-top: auto;
+    }
+    
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #999;
+      text-decoration: none;
+      font-size: 12px;
+    }
+    
+    .nav-item.active {
+      color: #00ffae;
+    }
+    
+    .nav-item i {
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+    
+    /* Confirmation Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .modal-content {
+      background: #1e1e1e;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 350px;
+      padding: 24px;
+      border: 1px solid #333;
+    }
+    
+    .modal-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    
+    .modal-detail {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      font-size: 14px;
+    }
+    
+    .modal-detail-label {
+      color: #bbb;
+    }
+    
+    .modal-detail-value {
+      color: #fff;
+      font-weight: 500;
+    }
+    
+    .modal-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    
+    .modal-btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    
+    .cancel-btn {
+      background: #333;
+      color: #fff;
+    }
+    
+    .confirm-btn {
+      background: #0f5132;
+      color: white;
+    }
+    
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background-color: #1e1e1e;
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 30px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      opacity: 0;
+      transition: transform 0.3s, opacity 0.3s;
+      border: 1px solid #333;
+    }
+    
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+    
+    .toast-success {
+      background-color: #0f5132;
+      color: white;
+    }
+    
+    .toast-error {
+      background-color: #ff4d4f;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <button class="back-btn" onclick="goBack()">
+      <i class="fas fa-arrow-left"></i>
+    </button>
+    <h1>Airtime</h1>
+    <a href="history.html" class="history-link">History</a>
+  </header>
+  
+  <div class="phone-section">
+    <div class="phone-input-container">
+      <div class="network-logo unknown-logo" id="networkLogo">?</div>
+      <input type="tel" id="phoneNumberInput" class="phone-input" placeholder="Enter phone number" maxlength="11">
+      <button class="check-btn" id="checkNetworkBtn" onclick="detectNetwork()">
+        <i class="fas fa-check"></i>
+      </button>
+    </div>
+    
+    <div class="network-info" id="networkInfo" style="display: none;">
+      <div class="network-logo unknown-logo" id="networkLogoSmall">?</div>
+      <span class="network-name" id="networkName">Unknown Network</span>
+    </div>
+  </div>
+  
+  <div class="amount-grid">
+    <div class="amount-card" data-amount="50" data-bonus="1">
+      <div class="cashback">₦1 Cashback</div>
+      <div class="amount-value">₦50</div>
+      <div class="amount-label">Pay ₦50</div>
+    </div>
+    <div class="amount-card" data-amount="100" data-bonus="1">
+      <div class="cashback">₦1 Cashback</div>
+      <div class="amount-value">₦100</div>
+      <div class="amount-label">Pay ₦100</div>
+    </div>
+    <div class="amount-card" data-amount="200" data-bonus="2">
+      <div class="cashback">₦2 Cashback</div>
+      <div class="amount-value">₦200</div>
+      <div class="amount-label">Pay ₦200</div>
+    </div>
+    <div class="amount-card" data-amount="500" data-bonus="5">
+      <div class="cashback">₦5 Cashback</div>
+      <div class="amount-value">₦500</div>
+      <div class="amount-label">Pay ₦500</div>
+    </div>
+    <div class="amount-card" data-amount="1000" data-bonus="10">
+      <div class="cashback">₦10 Cashback</div>
+      <div class="amount-value">₦1,000</div>
+      <div class="amount-label">Pay ₦1,000</div>
+    </div>
+    <div class="amount-card" data-amount="2000" data-bonus="20">
+      <div class="cashback">₦20 Cashback</div>
+      <div class="amount-value">₦2,000</div>
+      <div class="amount-label">Pay ₦2,000</div>
+    </div>
+  </div>
+  
+  <div class="custom-amount">
+    <input type="number" id="customAmount" placeholder="₦50 - 500,000" min="50" max="500000" />
+    <button id="payBtn" disabled>Pay</button>
+  </div>
+  
+  <div class="section">
+    <h2>Airtime Service</h2>
+    <p>USSD enquiry – Check phone balance and more</p>
+  </div>
+  
+  <div class="section">
+    <h2>More Events</h2>
+    <p>Get an iPhone 16 and cash bonuses now!</p>
+    <p>Top up with GENIEX Now!</p>
+  </div>
+  
+  <div class="bottom-nav">
+    <a href="dashboard.html" class="nav-item">
+      <i class="fas fa-home"></i>
+      <span>Home</span>
+    </a>
+    <a href="history.html" class="nav-item">
+      <i class="fas fa-history"></i>
+      <span>History</span>
+    </a>
+    <a href="#" class="nav-item">
+      <i class="fas fa-wallet"></i>
+      <span>Finance</span>
+    </a>
+    <a href="#" class="nav-item">
+      <i class="fas fa-user"></i>
+      <span>Profile</span>
+    </a>
+  </div>
+  
+  <!-- Confirmation Modal -->
+  <div class="modal" id="confirmationModal">
+    <div class="modal-content">
+      <h2 class="modal-title">Confirm Airtime Purchase</h2>
+      <div class="modal-detail">
+        <span class="modal-detail-label">Network:</span>
+        <span class="modal-detail-value" id="modalNetwork">-</span>
+      </div>
+      <div class="modal-detail">
+        <span class="modal-detail-label">Phone Number:</span>
+        <span class="modal-detail-value" id="modalPhone">-</span>
+      </div>
+      <div class="modal-detail">
+        <span class="modal-detail-label">Amount:</span>
+        <span class="modal-detail-value" id="modalAmount">-</span>
+      </div>
+      <div class="modal-detail">
+        <span class="modal-detail-label">Cashback:</span>
+        <span class="modal-detail-value" id="modalBonus">-</span>
+      </div>
+      <div class="modal-buttons">
+        <button class="modal-btn cancel-btn" onclick="closeModal()">Cancel</button>
+        <button class="modal-btn confirm-btn" onclick="confirmPurchase()">Confirm</button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Check if user is logged in
+    const currentUser = localStorage.getItem("currentUserPhone");
+    const users = JSON.parse(localStorage.getItem("kudiratUsers") || "[]");
+    const user = users.find(u => u.number === currentUser);
+    
+    if (!user) {
+      window.location.href = "login.html";
+    }
+    
+    // Initialize wallet balance
+    const walletBalance = parseFloat(localStorage.getItem("walletBalance") || "0");
+    
+    // Selected options
+    let selectedAmount = 0;
+    let selectedBonus = 0;
+    let phoneNumber = "";
+    let network = {
+      name: "Unknown",
+      logoClass: "unknown-logo",
+      initial: "?"
+    };
+    
+    // Network prefixes for Nigerian networks
+    const networkPrefixes = {
+      mtn: ["0803", "0806", "0810", "0813", "0814", "0816", "0903", "0906", "0703", "0706"],
+      airtel: ["0802", "0808", "0812", "0708", "0701", "0902", "0901", "0907"],
+      glo: ["0805", "0807", "0811", "0815", "0705", "0905"],
+      "9mobile": ["0809", "0817", "0818", "0908", "0909"]
+    };
+    
+    // Load saved phone number if available
+    const savedPhone = localStorage.getItem("airtimePhoneNumber");
+    if (savedPhone) {
+      phoneNumber = savedPhone;
+      document.getElementById("phoneNumberInput").value = formatPhoneNumber(phoneNumber);
+      detectNetwork();
+    }
+    
+    // Amount selection
+    document.querySelectorAll('.amount-card').forEach(card => {
+      card.addEventListener('click', function() {
+        document.querySelectorAll('.amount-card').forEach(c => c.classList.remove('selected'));
+        this.classList.add('selected');
+        selectedAmount = parseInt(this.dataset.amount);
+        selectedBonus = parseInt(this.dataset.bonus);
+        document.getElementById('customAmount').value = "";
+        validateForm();
+      });
+    });
+    
+    // Custom amount input
+    document.getElementById('customAmount').addEventListener('input', function() {
+      document.querySelectorAll('.amount-card').forEach(c => c.classList.remove('selected'));
+      selectedAmount = parseFloat(this.value) || 0;
+      selectedBonus = 0;
+      validateForm();
+    });
+    
+    // Phone number input
+    document.getElementById('phoneNumberInput').addEventListener('input', function() {
+      // Remove non-digit characters
+      this.value = this.value.replace(/\D/g, '');
+      
+      // Save to localStorage
+      phoneNumber = this.value;
+      localStorage.setItem("airtimePhoneNumber", phoneNumber);
+      
+      // Auto-detect network when user finishes typing (after a short delay)
+      clearTimeout(this.networkDetectionTimer);
+      this.networkDetectionTimer = setTimeout(() => {
+        detectNetwork();
+      }, 1000);
+    });
+    
+    // Validate form
+    function validateForm() {
+      const isValid = phoneNumber.length === 11 && selectedAmount > 0;
+      document.getElementById('payBtn').disabled = !isValid;
+    }
+    
+    // Detect network from phone number
+    function detectNetwork() {
+      const cleanNumber = phoneNumber.replace(/\D/g, '');
+      
+      if (cleanNumber.length < 4) {
+        updateNetworkDisplay({
+          name: "Unknown",
+          logoClass: "unknown-logo",
+          initial: "?"
+        });
+        return;
+      }
+      
+      const prefix = cleanNumber.substring(0, 4);
+      let detectedNetwork = {
+        name: "Unknown",
+        logoClass: "unknown-logo",
+        initial: "?"
+      };
+      
+      // Check each network's prefixes
+      for (const [networkName, prefixes] of Object.entries(networkPrefixes)) {
+        if (prefixes.includes(prefix)) {
+          switch(networkName) {
+            case "mtn":
+              detectedNetwork = {
+                name: "MTN",
+                logoClass: "mtn-logo",
+                initial: "M"
+              };
+              break;
+            case "airtel":
+              detectedNetwork = {
+                name: "Airtel",
+                logoClass: "airtel-logo",
+                initial: "A"
+              };
+              break;
+            case "glo":
+              detectedNetwork = {
+                name: "Glo",
+                logoClass: "glo-logo",
+                initial: "G"
+              };
+              break;
+            case "9mobile":
+              detectedNetwork = {
+                name: "9mobile",
+                logoClass: "mobile-logo",
+                initial: "9"
+              };
+              break;
+          }
+          break;
+        }
+      }
+      
+      updateNetworkDisplay(detectedNetwork);
+      network = detectedNetwork;
+    }
+    
+    // Update network display
+    function updateNetworkDisplay(networkInfo) {
+      // Update main logo
+      const logoElement = document.getElementById("networkLogo");
+      logoElement.className = `network-logo ${networkInfo.logoClass}`;
+      logoElement.textContent = networkInfo.initial;
+      
+      // Update network info section
+      document.getElementById("networkInfo").style.display = "flex";
+      const logoSmallElement = document.getElementById("networkLogoSmall");
+      logoSmallElement.className = `network-logo ${networkInfo.logoClass}`;
+      logoSmallElement.textContent = networkInfo.initial;
+      document.getElementById("networkName").textContent = networkInfo.name;
+    }
+    
+    // Pay button click
+    document.getElementById('payBtn').addEventListener('click', function() {
+      // Show confirmation modal
+      document.getElementById('modalNetwork').textContent = network.name;
+      document.getElementById('modalPhone').textContent = formatPhoneNumber(phoneNumber);
+      document.getElementById('modalAmount').textContent = `₦${selectedAmount.toFixed(2)}`;
+      document.getElementById('modalBonus').textContent = selectedBonus > 0 ? `₦${selectedBonus.toFixed(2)}` : 'None';
+      
+      document.getElementById('confirmationModal').style.display = 'flex';
+    });
+    
+    // Close modal
+    function closeModal() {
+      document.getElementById('confirmationModal').style.display = 'none';
+    }
+    
+    // Confirm purchase
+    function confirmPurchase() {
+      const totalAmount = selectedAmount;
+      
+      // Check if user has sufficient balance
+      if (walletBalance < totalAmount) {
+        showToast('Insufficient wallet balance', 'error');
+        closeModal();
+        return;
+      }
+      
+      // Process purchase
+      const newBalance = walletBalance - selectedAmount;
+      localStorage.setItem('walletBalance', newBalance.toFixed(2));
+      
+      // Record transaction
+      const transactions = JSON.parse(localStorage.getItem('kudiratTransactions') || '[]');
+      transactions.push({
+        type: 'debit',
+        amount: selectedAmount,
+        date: new Date().toLocaleString(),
+        description: `Airtime purchase - ${network.name}`,
+        to: formatPhoneNumber(phoneNumber),
+        bonus: selectedBonus
+      });
+      localStorage.setItem('kudiratTransactions', JSON.stringify(transactions));
+      
+      // Show success message
+      showToast(`Airtime purchase successful! ₦${selectedAmount.toFixed(2)} sent to ${formatPhoneNumber(phoneNumber)}`, 'success');
+      
+      // Reset form
+      resetForm();
+      
+      // Close modal
+      closeModal();
+    }
+    
+    // Reset form
+    function resetForm() {
+      document.querySelectorAll('.amount-card').forEach(c => c.classList.remove('selected'));
+      document.getElementById('customAmount').value = "";
+      selectedAmount = 0;
+      selectedBonus = 0;
+      document.getElementById('payBtn').disabled = true;
+    }
+    
+    // Helper functions
+    function formatPhoneNumber(phone) {
+      if (phone.length === 11) {
+        return `${phone.substring(0, 4)} ${phone.substring(4, 7)} ${phone.substring(7)}`;
+      }
+      return phone;
+    }
+    
+    function showToast(message, type = 'info') {
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.classList.add('show');
+      }, 10);
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+          document.body.removeChild(toast);
+        }, 300);
+      }, 3000);
+    }
+    
+    function goBack() {
+      window.location.href = 'dashboard.html';
+    }
+  </script>
+</body>
+</html>

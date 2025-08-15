@@ -4,27 +4,47 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kudirat Wallet Dashboard</title>
-  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
   <style>
-    /* ... [unchanged CSS from your code] ... */
-
-    @keyframes fadeEye {
-      0% { transform: scale(1); opacity: 0.2; }
-      50% { transform: scale(1.3); opacity: 1; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-
+    /* Theme Variables */
+:root {
+  --bg-primary: #0e0e0e;
+  --bg-secondary: #1e1e1e;
+  --bg-card: #1e1e1e;
+  --text-primary: #ffffff;
+  --text-secondary: #bbbbbb;
+  --text-muted: #999999;
+  --accent: #00ffae;
+  --accent-secondary: #00b86b;
+  --border: #333333;
+  --input-bg: #1e1e1e;
+  --shadow: rgba(0, 0, 0, 0.5);
+}
+/* Light Mode */
+body.light {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f5;
+  --bg-card: #ffffff;
+  --text-primary: #000000;
+  --text-secondary: #666666;
+  --text-muted: #999999;
+  --accent: #00b86b;
+  --accent-secondary: #00b86b;
+  --border: #e0e0e0;
+  --input-bg: #f0f0f0;
+  --shadow: rgba(0, 0, 0, 0.1);
+}
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
       overflow: hidden;
-      background-color: #0e0e0e;
-      color: white;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
       font-family: "Segoe UI", sans-serif;
+      transition: background-color 0.3s, color 0.3s;
     }
-
+    
     .container {
       position: fixed;
       top: 0;
@@ -32,349 +52,810 @@
       right: 0;
       bottom: 56px;
       overflow-y: auto;
-      padding: 12px;
+      padding: 16px;
       box-sizing: border-box;
       z-index: 1;
+      background-color: var(--bg-secondary);
     }
-
-    .top-section {
-      position: sticky;
-      top: 0;
-      z-index: 2;
-      background-color: #1f1f1f;
-      padding: 12px;
-      border-radius: 10px;
-      margin-bottom: 10px;
+    
+    .header {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      margin-bottom: 20px;
     }
-
-    .top-section h2 {
-      margin: 0;
-      font-size: 0.95rem;
+    
+    .greeting {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
     }
-
-    .transaction-link {
-      color: #00ffae;
-      text-decoration: none;
-      font-size: 0.85rem;
+    
+    .profile-img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid var(--accent);
+      cursor: pointer;
     }
-
+    
     .balance-card {
-      background-color: #0bb86b;
-      padding: 12px;
-      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+      border-radius: 16px;
+      padding: 20px;
+      color: white;
+      box-shadow: 0 4px 12px rgba(0, 184, 107, 0.2);
+      margin-bottom: 20px;
+    }
+    
+    .balance-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-top: 10px;
+      margin-bottom: 16px;
     }
-
-    .balance-info {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    
+    .balance-title {
+      font-size: 0.9rem;
+      opacity: 0.9;
     }
-
-    .balance-card span {
-      font-size: 1.1rem;
+    
+    .eye-icon {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+    
+    .balance-amount {
+      font-size: 2rem;
       font-weight: bold;
+      margin-bottom: 20px;
     }
-
-    .action-row, .service-grid {
+    
+    .balance-actions {
       display: flex;
       justify-content: space-between;
-      margin-top: 10px;
-      flex-wrap: wrap;
     }
-
-    .action-btn, .service-btn {
-      background-color: #1e1e1e;
-      border-radius: 10px;
-      padding: 12px;
+    
+    .balance-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      border-radius: 20px;
+      padding: 8px 16px;
+      color: white;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .action-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    
+    .action-btn {
+      background: var(--bg-card);
+      border-radius: 12px;
+      padding: 16px;
       text-align: center;
       width: 30%;
-      margin-bottom: 10px;
+      box-shadow: 0 2px 8px var(--shadow);
       cursor: pointer;
-      color: white;
+      color: var(--text-primary);
       text-decoration: none;
+      font-size: 0.9rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--border);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .action-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px var(--shadow);
+    }
+    
+    .action-btn i {
+      font-size: 1.5rem;
+      color: var(--accent);
+    }
+    
+    .section-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--text-primary);
+    }
+    
+    .service-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    
+    .service-btn {
+      background: var(--bg-card);
+      border-radius: 12px;
+      padding: 16px 8px;
+      text-align: center;
+      box-shadow: 0 2px 8px var(--shadow);
+      cursor: pointer;
+      color: var(--text-primary);
+      text-decoration: none;
+      font-size: 0.8rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--border);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .service-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px var(--shadow);
+    }
+    
+    .service-btn i {
+      font-size: 1.5rem;
+      color: var(--accent);
+    }
+    
+    .bonus-card {
+      background: var(--bg-card);
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 2px 8px var(--shadow);
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+    }
+    
+    .bonus-title {
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text-primary);
+    }
+    
+    .bonus-desc {
       font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
     }
-
-    .action-btn:hover, .service-btn:hover {
-      background-color: #333;
-    }
-
-    .alert-card, .bonus-card {
-      background-color: #2e2e2e;
-      padding: 12px;
-      border-radius: 8px;
-      margin-top: 10px;
-    }
-
-    .bonus-card a {
-      color: #00ffae;
+    
+    .bonus-link {
+      color: var(--accent);
       text-decoration: none;
-      font-weight: bold;
+      font-weight: 500;
+      font-size: 0.9rem;
     }
-
+    
     .bottom-nav {
       position: fixed;
       bottom: 0;
       left: 0;
       right: 0;
-      background-color: #111;
+      background: var(--bg-card);
       display: flex;
       justify-content: space-around;
       padding: 8px 0;
-      border-top: 1px solid #222;
+      border-top: 1px solid var(--border);
       z-index: 3;
+      box-shadow: 0 -2px 10px var(--shadow);
     }
-
-    .bottom-nav a {
-      color: white;
+    
+    .nav-item {
+      color: var(--text-secondary);
       text-align: center;
       text-decoration: none;
-      font-size: 0.85rem;
+      font-size: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      transition: color 0.2s;
     }
-
-    .icon {
-      font-size: 1rem;
-      display: block;
-      margin-bottom: 2px;
+    
+    .nav-item.active {
+      color: var(--accent);
     }
-
-    .eye-icon {
-      background: none;
-      border: none;
-      color: white;
-      font-size: 1.1rem;
-      cursor: pointer;
+    
+    .nav-item i {
+      font-size: 1.2rem;
     }
-
+    
     #cardPopup {
       display: none;
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background-color: rgba(0, 0, 0, 0.8);
+      background-color: rgba(0, 0, 0, 0.5);
       justify-content: center;
       align-items: center;
       z-index: 999;
     }
-
+    
     #cardPopup .popup-content {
-      background: #1f1f1f;
-      padding: 16px;
-      border-radius: 10px;
+      background: var(--bg-card);
+      padding: 20px;
+      border-radius: 12px;
       width: 90%;
       max-width: 350px;
-      color: white;
+      color: var(--text-primary);
+      border: 1px solid var(--border);
     }
-
+    
+    #cardPopup h3 {
+      margin-top: 0;
+      text-align: center;
+      color: var(--text-primary);
+    }
+    
     #cardPopup input {
-      margin: 6px 0;
+      margin: 10px 0;
       width: 100%;
-      padding: 10px;
-      background: #333;
-      color: white;
-      border: none;
-      border-radius: 6px;
+      padding: 12px;
+      background: var(--input-bg);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-sizing: border-box;
     }
-
+    
     #cardPopup .input-row {
       display: flex;
-      gap: 8px;
+      gap: 10px;
     }
-
+    
     #cardPopup button {
       width: 100%;
-      padding: 10px;
-      background-color: #00b86b;
+      padding: 12px;
+      background-color: var(--accent);
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
       color: white;
-      font-size: 15px;
+      font-size: 1rem;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+    
+    #cardPopup .cancel-btn {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
       margin-top: 8px;
     }
-
-    #cardPopup .cancel-btn {
-      background: none;
-      color: #aaa;
-      font-size: 14px;
+    
+    #cardPopup .error-message {
+      color: #ff4d4f;
+      font-size: 0.85rem;
+      margin-top: 5px;
+      display: none;
     }
-  </style>
+    
+    /* Recent Transactions Styles */
+    .transaction-list {
+      background: var(--bg-card);
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 2px 8px var(--shadow);
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+    }
+    
+    .transaction-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .transaction-item:last-child {
+      border-bottom: none;
+    }
+    
+    .transaction-info {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .transaction-name {
+      font-weight: 500;
+      margin-bottom: 4px;
+      color: var(--text-primary);
+    }
+    
+    .transaction-date {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    
+    .transaction-amount {
+      font-weight: 600;
+    }
+    
+    .transaction-amount.credit {
+      color: var(--accent);
+    }
+    
+    .transaction-amount.debit {
+      color: #ff4d4f;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 16px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+    
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background-color: var(--bg-card);
+      color: var(--text-primary);
+      padding: 12px 24px;
+      border-radius: 30px;
+      box-shadow: 0 4px 12px var(--shadow);
+      z-index: 1000;
+      opacity: 0;
+      transition: transform 0.3s, opacity 0.3s;
+      border: 1px solid var(--border);
+    }
+    
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+    
+    .toast-success {
+      background-color: var(--accent);
+      color: white;
+    }
+    
+    .toast-error {
+      background-color: #ff4d4f;
+      color: white;
+    }
+    
+    .toast-info {
+      background-color: var(--bg-card);
+      color: var(--text-primary);
+    }
+  </style> 
+  <!-- Theme Management System -->
+<script>
+const ThemeManager = {
+  init() {
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    this.applyTheme(savedTheme);
+    
+    // Set initial toggle state if toggle exists on page
+    const darkModeToggle = document.getElementById('darkMode');
+    if (darkModeToggle) {
+      darkModeToggle.checked = savedTheme === 'dark';
+    }
+  },
+  
+  applyTheme(theme) {
+    if (theme === 'light') {
+      document.body.classList.add('light');
+    } else {
+      document.body.classList.remove('light');
+    }
+    localStorage.setItem('theme', theme);
+  },
+  
+  toggle() {
+    const currentTheme = document.body.classList.contains('light') ? 'light' : 'dark';
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    this.applyTheme(newTheme);
+    
+    // Update toggle state if it exists
+    const darkModeToggle = document.getElementById('darkMode');
+    if (darkModeToggle) {
+      darkModeToggle.checked = newTheme === 'dark';
+    }
+  }
+};
+// Initialize theme on page load
+document.addEventListener('DOMContentLoaded', () => {
+  ThemeManager.init();
+});
+</script>
 </head>
-
 <body>
-  <script>
-    if (!localStorage.getItem("kudiratUser")) {
-      window.location.href = "login.html";
-    }
-  </script>
-
-  <div class="top-section">
-    <div style="display: flex; align-items: center; gap: 10px;">
-      <a href="profile.html">
-        <img id="profilePic" src="default-avatar.png" alt="Avatar"
-          style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid #00ffae;" />
+  <div class="container">
+    <div class="header">
+      <div class="greeting">Hi, <span id="username">User</span></div>
+      <a href="./profile.html" class="profileComplete">
+        <img id="profilePic" class="profile-img" src="https://i.pravatar.cc/150?u=user" alt="Profile" />
       </a>
-      <h2>Hi, <span id="username">User</span></h2>
+    </div>
+    
+    <div class="balance-card">
+      <div class="balance-header">
+        <div class="balance-title">Total Balance</div>
+        <button class="eye-icon" onclick="toggleBalance()" id="eyeBtn"><i class="far fa-eye"></i></button>
+      </div>
+      <div class="balance-amount" id="balance">₦****</div>
+      <div class="balance-actions">
+        <button class="balance-btn" onclick="openCardForm()">
+          <i class="fas fa-plus"></i> Add Money
+        </button>
+        <a href="./transaction.html" class="balance-btn">
+          <i class="fas fa-history"></i> History
+        </a>
+      </div>
+    </div>
+    
+    <div class="action-row">
+      <a href="./To-kudirat.html" class="action-btn">
+        <i class="fas fa-exchange-alt"></i>
+        <span>To Kudirat</span>
+      </a>
+      <a href="#" class="action-btn">
+        <i class="fas fa-university"></i>
+        <span>To Bank</span>
+      </a>
+      <a href="#" class="action-btn">
+        <i class="fas fa-money-bill-wave"></i>
+        <span>Withdraw</span>
+      </a>
+    </div>
+    
+    <div class="section-title">Recent Transactions</div>
+    <div class="transaction-list" id="recentTransactions">
+      <div class="empty-state">No transactions yet</div>
+    </div>
+    
+    <div class="section-title">Services</div>
+    <div class="service-grid">
+      <a href="airtime.html" class="service-btn">
+        <i class="fas fa-phone"></i>
+        <span>Airtime</span>
+      </a>
+      <a href="data.html" class="service-btn">
+        <i class="fas fa-wifi"></i>
+        <span>Data</span>
+      </a>
+      <a href="betting.html" class="service-btn">
+        <i class="fas fa-futbol"></i>
+        <span>Betting</span>
+      </a>
+      <a href="./tv-subscription.html" class="service-btn">
+        <i class="fas fa-tv"></i>
+        <span>TV</span>
+      </a>
+      <a href="safebox.html" class="service-btn">
+        <i class="fas fa-lock"></i>
+        <span>Safebox</span>
+      </a>
+      <a href="loan.html" class="service-btn">
+        <i class="fas fa-hand-holding-usd"></i>
+        <span>Loan</span>
+      </a>
+      <a href="invitation.html" class="service-btn">
+        <i class="fas fa-user-friends"></i>
+        <span>Invite</span>
+      </a>
+      <a href="more.html" class="service-btn">
+        <i class="fas fa-ellipsis-h"></i>
+        <span>More</span>
+      </a>
+    </div>
+    
+    <div class="bonus-card">
+      <div class="bonus-title">Invite Friends, Earn Rewards!</div>
+      <div class="bonus-desc">Get ₦100 for each friend who signs up and completes their profile.</div>
+      <a href="referral.html" class="bonus-link">Invite Now →</a>
     </div>
   </div>
-
-  <div class="balance-card">
-    <div class="balance-info">
-      <span id="balance">****</span>
-      <button class="eye-icon" onclick="toggleBalance()" id="eyeBtn"><i class="far fa-eye"></i></button>
-    </div>
-    <div style="display: flex; flex-direction: column; align-items: flex-end;">
-      <a href="./transaction.html" class="transaction-link" style="margin-bottom: 6px;">📄 Transactions</a>
-      <button onclick="openCardForm()" style="background:black;border:solid black;border-radius: 10px; text-decoration:none;color:white;font-size:1rem;cursor:pointer;">+ Add Money</button>
-    </div>
-  </div>
-
-  <!-- Action buttons -->
-  <div class="action-row">
-    <a href="./To-kudirat.html" class="action-btn">To Kudirat</a>
-    <a href="#" class="action-btn">To Bank</a>
-    <a href="#" class="action-btn">Withdraw</a>
-  </div>
-
-  <!-- Alert -->
-  <div class="alert-card">
-    <strong>Your BVN and NIN info do not match</strong><br />
-    <small>Click to view more details</small>
-  </div>
-
-  <!-- Service grid -->
-  <div class="service-grid">
-    <a href="airtime.html" class="service-btn"><i class="fas fa-phone"></i> Airtime</a>
-    <a href="data.html" class="service-btn"><i class="fas fa-wifi"></i> Data</a>
-    <a href="betting.html" class="service-btn"><i class="fas fa-futbol"></i> Betting</a>
-    <a href="tv.html" class="service-btn"><i class="fas fa-tv"></i> TV</a>
-    <a href="safebox.html" class="service-btn"><i class="fas fa-lock"></i> Safebox</a>
-    <a href="loan.html" class="service-btn"><i class="fas fa-hand-holding-usd"></i> Loan</a>
-    <a href="invitation.html" class="service-btn"><i class="fas fa-user-friends"></i> Invitation</a>
-    <a href="more.html" class="service-btn"><i class="fas fa-ellipsis-h"></i> More</a>
-  </div>
-
-  <!-- Bonus -->
-  <div class="bonus-card">
-    <strong>Cash up for grabs!</strong><br />
-    <small>Invite friends, earn up to ₦6,300 Bonus</small><br />
-    <a href="referral.html">Click here to refer friends</a>
-  </div>
-
-  <!-- Bottom Nav -->
+  
   <div class="bottom-nav">
-    <a href="#"><span class="icon"><i class="fas fa-home"></i></span>Home</a>
-    <a href="#"><span class="icon"><i class="fas fa-gift"></i></span>Rewards</a>
-    <a href="#"><span class="icon"><i class="fas fa-wallet"></i></span>Finance</a>
-    <a href="#"><span class="icon"><i class="fas fa-credit-card"></i></span>Cards</a>
-    <a href="#" onclick="logout()"><span class="icon"><i class="fas fa-sign-out-alt"></i></span>Logout</a>
+    <a href="#" class="nav-item active">
+      <i class="fas fa-home"></i>
+      <span>Home</span>
+    </a>
+    <a href="#" class="nav-item">
+      <i class="fas fa-gift"></i>
+      <span>Rewards</span>
+    </a>
+    <a href="#" class="nav-item">
+      <i class="fas fa-wallet"></i>
+      <span>Finance</span>
+    </a>
+    <a href="#" class="nav-item">
+      <i class="fas fa-credit-card"></i>
+      <span>Cards</span>
+    </a>
+    <button id="logoutBtn" class="nav-item" style="background:none; border:none;">
+      <i class="fas fa-sign-out-alt"></i>
+      <span>Logout</span>
+    </button>
   </div>
-
-  <!-- Card Funding Popup -->
+  
   <div id="cardPopup">
     <div class="popup-content">
-      <h3 style="text-align:center;">Fund Wallet with Card</h3>
-      <input id="cardName" type="text" placeholder="Cardholder Name">
-      <input id="cardNumber" type="text" placeholder="Card Number" maxlength="16">
+      <h3>Fund Wallet</h3>
+      <input id="cardName" type="text" placeholder="Cardholder Name" />
+      <input id="cardNumber" type="text" placeholder="Card Number" maxlength="16" />
       <div class="input-row">
-        <input id="expiry" type="text" placeholder="MM/YY" maxlength="5">
-        <input id="cvv" type="text" placeholder="CVV" maxlength="3">
+        <input id="expiry" type="text" placeholder="MM/YY" maxlength="5" />
+        <input id="cvv" type="text" placeholder="CVV" maxlength="3" />
       </div>
-      <input id="fundAmount" type="number" placeholder="Enter Amount">
-      <button onclick="fundWallet()">Pay</button>
+      <input id="fundAmount" type="number" placeholder="Amount (₦)" />
+      <div class="error-message" id="cardError">Please enter valid card details</div>
+      <button id="payBtn" onclick="fundWallet()">Pay Now</button>
       <button onclick="closeCardForm()" class="cancel-btn">Cancel</button>
     </div>
   </div>
-
-  <script>
-    let isHidden = true;
-    const firstName = localStorage.getItem("firstName") || "User";
-    document.getElementById("username").textContent = firstName;
-
-    // Show saved profile image or fallback
-    const profilePic = document.getElementById("profilePic");
-    const storedProfile = localStorage.getItem("photo");
-    profilePic.src = storedProfile && storedProfile.trim() !== ""
-      ? storedProfile
-      : "https://i.pravatar.cc/150?img=3";
-
-    function toggleBalance() {
-      const balance = document.getElementById("balance");
-      const eyeBtn = document.getElementById("eyeBtn");
-      const storedBalance = localStorage.getItem("walletBalance") || "0.00";
-      if (isHidden) {
-        balance.textContent = `₦${parseFloat(storedBalance).toFixed(2)}`;
-        eyeBtn.innerHTML = '<i class="far fa-eye-slash" style="animation: fadeEye 0.3s ease;"></i>';
-      } else {
-        balance.textContent = "****";
-        eyeBtn.innerHTML = '<i class="fas fa-eye" style="animation: fadeEye 0.3s ease;"></i>';
+ 
+ <script>
+document.addEventListener("DOMContentLoaded", () => {
+  // Constants
+  const SESSION_TTL = 30 * 60 * 1000; // 30 minutes session
+  
+  // Initialize theme
+  ThemeManager.init();
+  
+  // Find logged-in user
+  function findUser() {
+    try {
+      const sessionUser = JSON.parse(localStorage.getItem("kudiratUser") || "null");
+      if (sessionUser && (sessionUser.name || sessionUser.phone) && sessionUser.loginPIN) {
+        return sessionUser;
       }
-      isHidden = !isHidden;
-    }
-
-    function openCardForm() {
-      document.getElementById("cardPopup").style.display = "flex";
-    }
-
-    function closeCardForm() {
-      document.getElementById("cardPopup").style.display = "none";
-    }
-
-    function fundWallet() {
-      const name = document.getElementById("cardName").value.trim();
-      const number = document.getElementById("cardNumber").value.trim();
-      const expiry = document.getElementById("expiry").value.trim();
-      const cvv = document.getElementById("cvv").value.trim();
-      const amount = parseFloat(document.getElementById("fundAmount").value);
-
-      if (!name || number.length !== 16 || expiry.length !== 5 || cvv.length !== 3 || isNaN(amount) || amount <= 0) {
-        alert("Please fill all card fields correctly.");
-        return;
-      }
-
-      setTimeout(() => {
-        let current = parseFloat(localStorage.getItem("walletBalance") || "0.00");
-        let newBalance = current + amount;
-        localStorage.setItem("walletBalance", newBalance.toFixed(2));
-
-        const transactions = JSON.parse(localStorage.getItem("kudiratTransactions")) || [];
-        transactions.push({
-          type: "credit",
-          amount: amount,
-          date: new Date().toLocaleString(),
-          description: "Wallet Funded via Card",
-          from: firstName
-        });
-        localStorage.setItem("kudiratTransactions", JSON.stringify(transactions));
-
-        if (!isHidden) {
-          document.getElementById("balance").textContent = `₦${newBalance.toFixed(2)}`;
-        }
-
-        alert(`₦${amount.toFixed(2)} added successfully to your wallet.`);
-        closeCardForm();
-      }, 1000);
-    }
-     
+    } catch(e) {}
+    
     const phone = localStorage.getItem("currentUserPhone");
-const users = JSON.parse(localStorage.getItem("kudiratUsers") || "[]");
-const user = users.find(u => u.phone === phone);
-
-if (user) {
-  document.getElementById("dashboardAvatar").src = user.avatar || "avatar.png";
-  document.getElementById("userName").textContent = user.name;
-}
-
-    function logout() {
-      localStorage.removeItem("kudiratUser");
-      localStorage.removeItem("walletBalance");
-      localStorage.removeItem("sessionToken");
-      window.location.href = "login.html";
+    const users = JSON.parse(localStorage.getItem("kudiratUsers") || "[]");
+    
+    if (!phone || !Array.isArray(users)) return null;
+    
+    const user = users.find(u => u.number === phone);
+    
+    // Check if user has set a login PIN and completed profile
+    if (user && user.loginPIN && user.profileComplete) {
+      return user;
     }
-  </script>
+    
+    return null;
+  }
+  
+  const user = findUser();
+  if (!user) {
+    localStorage.removeItem("currentUserPhone");
+    localStorage.removeItem("kudiratUser");
+    localStorage.removeItem("sessionTimestamp");
+    window.location.href = "login.html";
+    return;
+  }
+  
+  // Check session
+  const ts = parseInt(localStorage.getItem("sessionTimestamp") || "0", 10);
+  if (!ts || (Date.now() - ts) > SESSION_TTL) {
+    localStorage.removeItem("kudiratUser");
+    localStorage.removeItem("currentUserPhone");
+    localStorage.removeItem("sessionTimestamp");
+    window.location.href = "login.html";
+    return;
+  }
+  
+  // Elements
+  const profilePic = document.getElementById("profilePic");
+  const username = document.getElementById("username");
+  const balanceEl = document.getElementById("balance");
+  const eyeBtn = document.getElementById("eyeBtn");
+  const logoutBtn = document.getElementById("logoutBtn");
+  
+  // Set profile picture
+  profilePic.src = user.avatar || `https://i.pravatar.cc/150?u=${user.number || "user"}`;
+  
+  // Set username
+  username.textContent = user.fullName || user.name || "User";
+  
+  // Balance toggle - get saved state or default to hidden
+  let balanceHidden = localStorage.getItem("balanceHidden") !== "false";
+  
+  function toggleBalance() {
+    const currentBalance = parseFloat(localStorage.getItem("walletBalance") || "0");
+    if (balanceHidden) {
+      balanceEl.textContent = `₦${currentBalance.toFixed(2)}`;
+      eyeBtn.innerHTML = '<i class="far fa-eye-slash"></i>';
+    } else {
+      balanceEl.textContent = "₦****";
+      eyeBtn.innerHTML = '<i class="far fa-eye"></i>';
+    }
+    balanceHidden = !balanceHidden;
+    // Save the new state to localStorage
+    localStorage.setItem("balanceHidden", balanceHidden.toString());
+  }
+  
+  window.toggleBalance = toggleBalance;
+  
+  // Initialize balance visibility based on saved state
+  if (balanceHidden) {
+    balanceEl.textContent = "₦****";
+    eyeBtn.innerHTML = '<i class="far fa-eye"></i>';
+  } else {
+    const currentBalance = parseFloat(localStorage.getItem("walletBalance") || "0");
+    balanceEl.textContent = `₦${currentBalance.toFixed(2)}`;
+    eyeBtn.innerHTML = '<i class="far fa-eye-slash"></i>';
+  }
+  
+  // Display recent transactions
+  function displayRecentTransactions() {
+    const transactions = JSON.parse(localStorage.getItem("kudiratTransactions") || "[]");
+    const container = document.getElementById("recentTransactions");
+    
+    if (transactions.length === 0) {
+      container.innerHTML = '<div class="empty-state">No transactions yet</div>';
+      return;
+    }
+    
+    // Show last 3 transactions
+    const recent = transactions.slice(-3).reverse();
+    container.innerHTML = recent.map(t => `
+      <div class="transaction-item">
+        <div class="transaction-info">
+          <div class="transaction-name">${t.description}</div>
+          <div class="transaction-date">${t.date}</div>
+        </div>
+        <div class="transaction-amount ${t.type === 'credit' ? 'credit' : 'debit'}">
+          ${t.type === 'credit' ? '+' : '-'}₦${t.amount.toFixed(2)}
+        </div>
+      </div>
+    `).join('');
+  }
+  
+  displayRecentTransactions();
+  
+  // Card funding popup
+  window.openCardForm = () => {
+    document.getElementById("cardPopup").style.display = "flex";
+    // Reset form
+    document.getElementById("cardName").value = "";
+    document.getElementById("cardNumber").value = "";
+    document.getElementById("expiry").value = "";
+    document.getElementById("cvv").value = "";
+    document.getElementById("fundAmount").value = "";
+    document.getElementById("cardError").style.display = "none";
+    // Reset button
+    const payBtn = document.getElementById("payBtn");
+    payBtn.textContent = "Pay Now";
+    payBtn.disabled = false;
+  };
+  
+  window.closeCardForm = () => {
+    document.getElementById("cardPopup").style.display = "none";
+  };
+  
+  window.fundWallet = () => {
+    // Get form values
+    const cardName = document.getElementById("cardName").value.trim();
+    const cardNumber = document.getElementById("cardNumber").value.trim();
+    const expiry = document.getElementById("expiry").value.trim();
+    const cvv = document.getElementById("cvv").value.trim();
+    const amount = parseFloat(document.getElementById("fundAmount").value);
+    
+    // Validate form
+    if (!cardName || cardNumber.length !== 16 || expiry.length !== 5 || cvv.length !== 3 || isNaN(amount) || amount <= 0) {
+      document.getElementById("cardError").style.display = "block";
+      return;
+    }
+    
+    // Hide error message if validation passes
+    document.getElementById("cardError").style.display = "none";
+    
+    // Show loading state
+    const payBtn = document.getElementById("payBtn");
+    const originalText = payBtn.textContent;
+    payBtn.textContent = "Processing...";
+    payBtn.disabled = true;
+    
+    // Simulate processing
+    setTimeout(() => {
+      const currentBal = parseFloat(localStorage.getItem("walletBalance") || "0");
+      const newBal = currentBal + amount;
+      localStorage.setItem("walletBalance", newBal.toFixed(2));
+      
+      // Record transaction
+      const transactions = JSON.parse(localStorage.getItem("kudiratTransactions") || "[]");
+      transactions.push({
+        type: "credit",
+        amount,
+        date: new Date().toLocaleString(),
+        description: "Card Funding",
+        from: "Card Payment"
+      });
+      localStorage.setItem("kudiratTransactions", JSON.stringify(transactions));
+      
+      // Update UI if balance is visible
+      if (!balanceHidden) {
+        balanceEl.textContent = `₦${newBal.toFixed(2)}`;
+      }
+      
+      // Update recent transactions
+      displayRecentTransactions();
+      
+      // Reset button and close form
+      payBtn.textContent = originalText;
+      payBtn.disabled = false;
+      
+      showToast(`₦${amount.toFixed(2)} added successfully!`, "success");
+      closeCardForm();
+    }, 1000);
+  };
+  
+  // Toast notification function
+  function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+      toast.classList.add('show');
+    }, 10);
+    
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => {
+        document.body.removeChild(toast);
+      }, 300);
+    }, 3000);
+  }
+  
+  // Format card number input
+  document.getElementById("cardNumber").addEventListener("input", function(e) {
+    // Remove non-digit characters
+    let value = e.target.value.replace(/\D/g, '');
+    e.target.value = value;
+  });
+  
+  // Format expiry input
+  document.getElementById("expiry").addEventListener("input", function(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    if (value.length >= 2) {
+      value = value.substring(0, 2) + '/' + value.substring(2, 4);
+    }
+    e.target.value = value;
+  });
+  
+  // Format CVV input
+  document.getElementById("cvv").addEventListener("input", function(e) {
+    // Remove non-digit characters
+    let value = e.target.value.replace(/\D/g, '');
+    e.target.value = value;
+  });
+  
+  // Logout
+  function logout() {
+    localStorage.removeItem("kudiratUser");
+    localStorage.removeItem("currentUserPhone");
+    localStorage.removeItem("sessionTimestamp");
+    window.location.href = "login.html";
+  }
+  
+  logoutBtn.addEventListener("click", logout);
+  
+  // Session check every minute
+  setInterval(() => {
+    const sessionTs = parseInt(localStorage.getItem("sessionTimestamp") || "0", 10);
+    if (!sessionTs || (Date.now() - sessionTs) > SESSION_TTL) {
+      logout();
+    }
+  }, 60000);
+});
+</script>
 </body>
+</html>

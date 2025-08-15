@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TV Subscription - Kudirat Wallet</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
+  <style>
+    /* Theme Variables */
+:root {
+  --bg-primary: #0e0e0e;
+  --bg-secondary: #1e1e1e;
+  --bg-card: #1e1e1e;
+  --text-primary: #ffffff;
+  --text-secondary: #bbbbbb;
+  --text-muted: #999999;
+  --accent: #00ffae;
+  --accent-secondary: #00b86b;
+  --border: #333333;
+  --input-bg: #1e1e1e;
+  --shadow: rgba(0, 0, 0, 0.5);
+}
+/* Light Mode */
+body.light {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f5;
+  --bg-card: #ffffff;
+  --text-primary: #000000;
+  --text-secondary: #666666;
+  --text-muted: #999999;
+  --accent: #00b86b;
+  --accent-secondary: #00b86b;
+  --border: #e0e0e0;
+  --input-bg: #f0f0f0;
+  --shadow: rgba(0, 0, 0, 0.1);
+}
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    
+    .header {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .back-btn {
+      background: none;
+      border: none;
+      color: var(--text-primary);
+      font-size: 20px;
+      cursor: pointer;
+      margin-right: 16px;
+    }
+    
+    .page-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    
+    .container {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    
+    .balance-card {
+      background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+      border-radius: 12px;
+      padding: 16px;
+      color: white;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 12px rgba(0, 184, 107, 0.2);
+    }
+    
+    .balance-label {
+      font-size: 14px;
+      opacity: 0.9;
+      margin-bottom: 8px;
+    }
+    
+    .balance-amount {
+      font-size: 24px;
+      font-weight: bold;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+    
+    .input-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 2px 8px var(--shadow);
+    }
+    
+    .input-box input {
+      flex: 1;
+      background: none;
+      border: none;
+      color: var(--text-primary);
+      font-size: 16px;
+      outline: none;
+    }
+    
+    .input-box input::placeholder {
+      color: var(--text-muted);
+    }
+    
+    .tv-providers {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    
+    .provider-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 2px 8px var(--shadow);
+    }
+    
+    .provider-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 6px 16px var(--shadow);
+    }
+    
+    .provider-card.selected {
+      border-color: var(--accent);
+      background: rgba(0, 255, 174, 0.1);
+    }
+    
+    .provider-icon {
+      font-size: 36px;
+      margin-bottom: 12px;
+      color: var(--accent);
+    }
+    
+    .provider-name {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    
+    .provider-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    
+    .subscription-plans {
+      margin-bottom: 20px;
+    }
+    
+    .subscription-plan {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 2px 8px var(--shadow);
+    }
+    
+    .subscription-plan:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px var(--shadow);
+    }
+    
+    .subscription-plan.selected {
+      border-color: var(--accent);
+      background: rgba(0, 255, 174, 0.1);
+    }
+    
+    .plan-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    
+    .plan-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    
+    .plan-price {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--accent);
+    }
+    
+    .plan-details {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+    
+    .plan-validity {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    
+    .proceed-btn {
+      background: var(--accent-secondary);
+      color: white;
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .proceed-btn:hover {
+      background: var(--accent);
+    }
+    
+    .proceed-btn:disabled {
+      background: var(--text-muted);
+      cursor: not-allowed;
+    }
+    
+    .bottom-nav {
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 0;
+      border-top: 1px solid var(--border);
+      background: var(--bg-card);
+    }
+    
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 12px;
+    }
+    
+    .nav-item.active {
+      color: var(--accent);
+    }
+    
+    .nav-item i {
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+    
+    /* Confirmation Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .modal-content {
+      background: var(--bg-card);
+      border-radius: 12px;
+      width: 90%;
+      max-width: 350px;
+      padding: 24px;
+      border: 1px solid var(--border);
+    }
+    
+    .modal-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    
+    .modal-detail {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      font-size: 14px;
+    }
+    
+    .modal-detail-label {
+      color: var(--text-secondary);
+    }
+    
+    .modal-detail-value {
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+    
+    .modal-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    
+    .modal-btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    
+    .cancel-btn {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+    }
+    
+    .confirm-btn {
+      background: var(--accent-secondary);
+      color: white;
+    }
+    
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background-color: var(--bg-card);
+      color: var(--text-primary);
+      padding: 12px 24px;
+      border-radius: 30px;
+      box-shadow: 0 4px 12px var(--shadow);
+      z-index: 1000;
+      opacity: 0;
+      transition: transform 0.3s, opacity 0.3s;
+      border: 1px solid var(--border);
+    }
+    
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+    
+    .toast-success {
+      background-color: var(--accent);
+      color: white;
+    }
+    
+    .toast-error {
+      background-color: #ff4d4f;
+      color: white;
+    }
+  </style>
+  
+  <!-- Theme Management System -->
+  <script>
+  const ThemeManager = {
+    init() {
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      this.applyTheme(savedTheme);
+    },
+    
+    applyTheme(theme) {
+      if (theme === 'light') {
+        document.body.classList.add('light');
+      } else {
+        document.body.classList.remove('light');
+      }
+      localStorage.setItem('theme', theme);
+    },
+    
+    toggle() {
+      const currentTheme = document.body.classList.contains('light') ? 'light' : 'dark';
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      this.applyTheme(newTheme);
+    }
+  };
+  
+  // Initialize theme on page load
+  document.addEventListener('DOMContentLoaded', () => {
+    ThemeManager.init();
+  });
+  </script>
+</head>
+<body>
+  <div class="header">
+    <button class="back-btn" onclick="goBack()">
+      <i class="fas fa-arrow-left"></i>
+    </button>
+    <h1 class="page-title">TV Subscription</h1>
+  </div>
+  
+  <div class="container">
+    <div class="balance-card">
+      <div class="balance-label">Wallet Balance</div>
+      <div class="balance-amount" id="walletBalance">₦0.00</div>
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">Select TV Provider</label>
+      <div class="tv-providers">
+        <div class="provider-card" data-provider="dstv">
+          <div class="provider-icon" style="color: #005BAA;">
+            <i class="fas fa-tv"></i>
+          </div>
+          <div class="provider-name">DStv</div>
+          <div class="provider-desc">Satellite TV</div>
+        </div>
+        <div class="provider-card" data-provider="gotv">
+          <div class="provider-icon" style="color: #00A859;">
+            <i class="fas fa-tv"></i>
+          </div>
+          <div class="provider-name">GOtv</div>
+          <div class="provider-desc">Digital TV</div>
+        </div>
+        <div class="provider-card" data-provider="startimes">
+          <div class="provider-icon" style="color: #FF6600;">
+            <i class="fas fa-tv"></i>
+          </div>
+          <div class="provider-name">StarTimes</div>
+          <div class="provider-desc">Digital TV</div>
+        </div>
+        <div class="provider-card" data-provider="showmax">
+          <div class="provider-icon" style="color: #B71C1C;">
+            <i class="fas fa-play-circle"></i>
+          </div>
+          <div class="provider-name">Showmax</div>
+          <div class="provider-desc">Streaming</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">Smartcard Number / IUC Number</label>
+      <div class="input-box">
+        <input type="text" id="smartcardNumber" placeholder="Enter smartcard or IUC number">
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">Select Subscription Plan</label>
+      <div class="subscription-plans" id="subscriptionPlans">
+        <!-- Subscription plans will be populated by JavaScript based on selected provider -->
+      </div>
+    </div>
+    
+    <button class="proceed-btn" id="proceedBtn" disabled>Proceed</button>
+  </div>
+  
+  <div class="bottom-nav">
+    <a href="dashboard.html" class="nav-item">
+      <i class="fas fa-home"></i>
+      <span>Home</span>
+    </a>
+    <a href="#" class="nav-item">
+      <i class="fas fa-history"></i>
+      <span>History</span>
+    </a>
+    <a href="#" class="nav-item">
+      <i class="fas fa-wallet"></i>
+      <span>Finance</span>
+    </a>
+    <a href="#" class="nav-item">
+      <i class="fas fa-user"></i>
+      <span>Profile</span>
+    </a>
+  </div>
+  
+  <!-- Confirmation Modal -->
+  <div class="modal" id="confirmationModal">
+    <div class="modal-content">
+      <h2 class="modal-title">Confirm TV Subscription</h2>
+      <div class="modal-detail">
+        <span class="modal-detail-label">Provider:</span>
+        <span class="modal-detail-value" id="modalProvider">-</span>
+      </div>
+      <div class="modal-detail">
+        <span class="modal-detail-label">Smartcard/IUC:</span>
+        <span class="modal-detail-value" id="modalSmartcard">-</span>
+      </div>
+      <div class="modal-detail">
+        <span class="modal-detail-label">Plan:</span>
+        <span class="modal-detail-value" id="modalPlan">-</span>
+      </div>
+      <div class="modal-detail">
+        <span class="modal-detail-label">Amount:</span>
+        <span class="modal-detail-value" id="modalAmount">-</span>
+      </div>
+      <div class="modal-buttons">
+        <button class="modal-btn cancel-btn" onclick="closeModal()">Cancel</button>
+        <button class="modal-btn confirm-btn" onclick="confirmPurchase()">Confirm</button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Subscription plans for each provider
+    const subscriptionPlans = {
+      dstv: [
+        { name: "DStv Padi", price: 1800, channels: "25+ channels", validity: "Monthly" },
+        { name: "DStv Yanga", price: 2500, channels: "70+ channels", validity: "Monthly" },
+        { name: "DStv Confam", price: 4600, channels: "100+ channels", validity: "Monthly" },
+        { name: "DStv Compact", price: 7700, channels: "135+ channels", validity: "Monthly" },
+        { name: "DStv Compact Plus", price: 12500, channels: "165+ channels", validity: "Monthly" },
+        { name: "DStv Premium", price: 18400, channels: "200+ channels", validity: "Monthly" }
+      ],
+      gotv: [
+        { name: "GOtv Smallie", price: 900, channels: "30+ channels", validity: "Monthly" },
+        { name: "GOtv Jinja", price: 1900, channels: "60+ channels", validity: "Monthly" },
+        { name: "GOtv Jolli", price: 2800, channels: "75+ channels", validity: "Monthly" },
+        { name: "GOtv Max", price: 3600, channels: "85+ channels", validity: "Monthly" },
+        { name: "GOtv Supa", price: 5500, channels: "95+ channels", validity: "Monthly" }
+      ],
+      startimes: [
+        { name: "Nova", price: 900, channels: "40+ channels", validity: "Monthly" },
+        { name: "Basic", price: 1700, channels: "80+ channels", validity: "Monthly" },
+        { name: "Classic", price: 2600, channels: "100+ channels", validity: "Monthly" },
+        { name: "Unique", price: 3800, channels: "120+ channels", validity: "Monthly" },
+        { name: "Super", price: 5300, channels: "140+ channels", validity: "Monthly" }
+      ],
+      showmax: [
+        { name: "Mobile", price: 1200, quality: "SD", devices: "1 device", validity: "Monthly" },
+        { name: "Basic", price: 2900, quality: "HD", devices: "2 devices", validity: "Monthly" },
+        { name: "Premium", price: 3900, quality: "HD", devices: "4 devices", validity: "Monthly" }
+      ]
+    };
+    
+    // Check if user is logged in
+    const currentUser = localStorage.getItem("currentUserPhone");
+    const users = JSON.parse(localStorage.getItem("kudiratUsers") || "[]");
+    const user = users.find(u => u.number === currentUser);
+    
+    if (!user) {
+      window.location.href = "login.html";
+    }
+    
+    // Initialize wallet balance
+    const walletBalance = parseFloat(localStorage.getItem("walletBalance") || "0");
+    document.getElementById("walletBalance").textContent = `₦${walletBalance.toFixed(2)}`;
+    
+    // Selected options
+    let selectedProvider = "";
+    let selectedPlan = null;
+    
+    // Provider selection
+    document.querySelectorAll('.provider-card').forEach(option => {
+      option.addEventListener('click', function() {
+        document.querySelectorAll('.provider-card').forEach(opt => opt.classList.remove('selected'));
+        this.classList.add('selected');
+        selectedProvider = this.dataset.provider;
+        selectedPlan = null;
+        
+        // Update subscription plans
+        updateSubscriptionPlans(selectedProvider);
+        validateForm();
+      });
+    });
+    
+    // Update subscription plans based on selected provider
+    function updateSubscriptionPlans(provider) {
+      const plansContainer = document.getElementById('subscriptionPlans');
+      plansContainer.innerHTML = '';
+      
+      if (provider && subscriptionPlans[provider]) {
+        subscriptionPlans[provider].forEach((plan, index) => {
+          const planElement = document.createElement('div');
+          planElement.className = 'subscription-plan';
+          planElement.dataset.index = index;
+          planElement.innerHTML = `
+            <div class="plan-header">
+              <div class="plan-name">${plan.name}</div>
+              <div class="plan-price">₦${plan.price}</div>
+            </div>
+            <div class="plan-details">${plan.channels}</div>
+            <div class="plan-validity">Valid for ${plan.validity}</div>
+          `;
+          
+          planElement.addEventListener('click', function() {
+            document.querySelectorAll('.subscription-plan').forEach(p => p.classList.remove('selected'));
+            this.classList.add('selected');
+            selectedPlan = subscriptionPlans[provider][index];
+            validateForm();
+          });
+          
+          plansContainer.appendChild(planElement);
+        });
+      }
+    }
+    
+    // Smartcard number input
+    document.getElementById('smartcardNumber').addEventListener('input', function() {
+      // Remove non-digit characters
+      this.value = this.value.replace(/\D/g, '');
+      validateForm();
+    });
+    
+    // Validate form
+    function validateForm() {
+      const smartcardNumber = document.getElementById('smartcardNumber').value;
+      const isValid = selectedProvider && smartcardNumber.length >= 6 && selectedPlan;
+      document.getElementById('proceedBtn').disabled = !isValid;
+    }
+    
+    // Proceed button click
+    document.getElementById('proceedBtn').addEventListener('click', function() {
+      const smartcardNumber = document.getElementById('smartcardNumber').value;
+      
+      // Show confirmation modal
+      document.getElementById('modalProvider').textContent = getProviderName(selectedProvider);
+      document.getElementById('modalSmartcard').textContent = smartcardNumber;
+      document.getElementById('modalPlan').textContent = selectedPlan.name;
+      document.getElementById('modalAmount').textContent = `₦${selectedPlan.price.toFixed(2)}`;
+      
+      document.getElementById('confirmationModal').style.display = 'flex';
+    });
+    
+    // Close modal
+    function closeModal() {
+      document.getElementById('confirmationModal').style.display = 'none';
+    }
+    
+    // Confirm purchase
+    function confirmPurchase() {
+      const smartcardNumber = document.getElementById('smartcardNumber').value;
+      
+      // Check if user has sufficient balance
+      if (walletBalance < selectedPlan.price) {
+        showToast('Insufficient wallet balance', 'error');
+        closeModal();
+        return;
+      }
+      
+      // Process purchase
+      const newBalance = walletBalance - selectedPlan.price;
+      localStorage.setItem('walletBalance', newBalance.toFixed(2));
+      
+      // Record transaction
+      const transactions = JSON.parse(localStorage.getItem('kudiratTransactions') || '[]');
+      transactions.push({
+        type: 'debit',
+        amount: selectedPlan.price,
+        date: new Date().toLocaleString(),
+        description: `TV subscription - ${getProviderName(selectedProvider)} ${selectedPlan.name}`,
+        to: smartcardNumber
+      });
+      localStorage.setItem('kudiratTransactions', JSON.stringify(transactions));
+      
+      // Update UI
+      document.getElementById('walletBalance').textContent = `₦${newBalance.toFixed(2)}`;
+      
+      // Show success message
+      showToast(`TV subscription successful! ${getProviderName(selectedProvider)} ${selectedPlan.name} activated for smartcard ${smartcardNumber}`, 'success');
+      
+      // Reset form
+      resetForm();
+      
+      // Close modal
+      closeModal();
+    }
+    
+    // Reset form
+    function resetForm() {
+      document.querySelectorAll('.provider-card').forEach(opt => opt.classList.remove('selected'));
+      document.querySelectorAll('.subscription-plan').forEach(p => p.classList.remove('selected'));
+      document.getElementById('smartcardNumber').value = '';
+      document.getElementById('subscriptionPlans').innerHTML = '';
+      selectedProvider = "";
+      selectedPlan = null;
+      document.getElementById('proceedBtn').disabled = true;
+    }
+    
+    // Helper functions
+    function getProviderName(provider) {
+      const providerNames = {
+        'dstv': 'DStv',
+        'gotv': 'GOtv',
+        'startimes': 'StarTimes',
+        'showmax': 'Showmax'
+      };
+      return providerNames[provider] || provider;
+    }
+    
+    function showToast(message, type = 'info') {
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.classList.add('show');
+      }, 10);
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+          document.body.removeChild(toast);
+        }, 300);
+      }, 3000);
+    }
+    
+    function goBack() {
+      window.location.href = 'dashboard.html';
+    }
+  </script>
+</body>
+</html>

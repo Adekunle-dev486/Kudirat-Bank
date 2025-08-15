@@ -1,118 +1,420 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Unlock – Kudirat Wallet</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      background-color: #0e0e0e;
-      color: white;
-      font-family: "Segoe UI", sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
+<meta charset="UTF-8">
+<title>Enter OTP - Kudirat Wallet</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  /* Add this to the top of your CSS in all pages */
+:root {
+  --bg-primary: #0e0e0e;
+  --bg-secondary: #1e1e1e;
+  --bg-card: #1e1e1e;
+  --text-primary: #ffffff;
+  --text-secondary: #bbbbbb;
+  --text-muted: #999999;
+  --accent: #00ffae;
+  --accent-secondary: #00b86b;
+  --border: #333333;
+  --input-bg: #1e1e1e;
+  --shadow: rgba(0, 0, 0, 0.5);
+}
+/* Light Mode */
+body.light {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f5;
+  --bg-card: #ffffff;
+  --text-primary: #000000;
+  --text-secondary: #666666;
+  --text-muted: #999999;
+  --accent: #00b86b;
+  --accent-secondary: #00b86b;
+  --border: #e0e0e0;
+  --input-bg: #f0f0f0;
+  --shadow: rgba(0, 0, 0, 0.1);
+}
+  body {  
+    background-color: var(--bg-primary);
+    color: var(--text-primary); /* Fixed typo: was --text-primar */
+    font-family: "Segoe UI", sans-serif; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
+    height: 100vh;
+    padding: 20px;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  .container {
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+  }
+  
+  .logo {
+    margin-bottom: 30px;
+  }
+  
+  .logo img {
+    width: 180px;
+  }
+  
+  h2 {
+    margin-bottom: 20px;
+    color: var(--text-primary);
+  }
+  
+  .otp-box { 
+    display: flex; 
+    gap: 15px; 
+    justify-content: center;
+    margin-bottom: 30px;
+  }
+  
+  .otp-box input { 
+    width: 45px; 
+    height: 55px; 
+    font-size: 24px; 
+    text-align: center; 
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--input-bg); 
+    color: var(--text-primary);
+    transition: border-color 0.2s;
+  }
+  
+  .otp-box input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  
+  .otp-box input.error { 
+    animation: shake 0.3s; 
+    border-color: #ff4d4f;
+  }
+  
+  @keyframes shake { 
+    0%{transform:translateX(0);} 
+    25%{transform:translateX(-5px);} 
+    50%{transform:translateX(5px);} 
+    75%{transform:translateX(-5px);} 
+    100%{transform:translateX(0);} 
+  }
+  
+  .timer { 
+    margin: 20px 0;
+    color: var(--text-secondary);
+    font-size: 14px;
+  }
+  
+  button { 
+    margin-top: 10px;
+    padding: 12px 24px; 
+    border: none; 
+    border-radius: 30px; 
+    background: var(--accent-secondary); 
+    color: white; 
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  button:hover:not(:disabled) {
+    background: var(--accent);
+  }
+  
+  button:disabled { 
+    background: var(--text-muted); 
+    cursor: not-allowed;
+  }
+  
+  .error-message {
+    color: #ff4d4f;
+    font-size: 14px;
+    margin-top: 15px;
+    display: none;
+  }
+  
+  .back-btn {
+    display: flex;
+    align-items: center;
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin-top: 20px;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  
+  .back-btn i {
+    margin-right: 5px;
+  }
+  
+  .footer {
+    position: fixed;
+    bottom: 20px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  
+  .footer b {
+    color: var(--text-primary);
+  }
+</style>
+<!-- Add this to the <head> of all your HTML pages -->
+<script>
+// Theme Management System
+const ThemeManager = {
+  init() {
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    this.applyTheme(savedTheme);
+    
+    // Set initial toggle state if toggle exists on page
+    const darkModeToggle = document.getElementById('darkMode');
+    if (darkModeToggle) {
+      darkModeToggle.checked = savedTheme === 'dark';
     }
-
-    input {
-      font-size: 2rem;
-      width: 40px;
-      height: 50px;
-      text-align: center;
-      margin: 0 5px;
-      border: none;
-      border-radius: 8px;
-      background: #1f1f1f;
-      color: white;
+  },
+  
+  applyTheme(theme) {
+    if (theme === 'light') {
+      document.body.classList.add('light');
+    } else {
+      document.body.classList.remove('light');
     }
-
-    button {
-      padding: 10px 20px;
-      margin-top: 20px;
-      background-color: #00b86b;
-      border: none;
-      border-radius: 10px;
-      color: white;
-      font-size: 1rem;
-      cursor: pointer;
+    localStorage.setItem('theme', theme);
+  },
+  
+  toggle() {
+    const currentTheme = document.body.classList.contains('light') ? 'light' : 'dark';
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    this.applyTheme(newTheme);
+    
+    // Update toggle state if it exists
+    const darkModeToggle = document.getElementById('darkMode');
+    if (darkModeToggle) {
+      darkModeToggle.checked = newTheme === 'dark';
     }
-
-    .error {
-      color: red;
-      margin-top: 10px;
-      font-size: 0.9rem;
-    }
-  </style>
+  }
+};
+// Initialize theme on page load
+document.addEventListener('DOMContentLoaded', () => {
+  ThemeManager.init();
+});
+</script>
 </head>
 <body>
-
-  <h2>Enter Your PIN</h2>
-  <div id="pinInputs">
-    <input type="password" maxlength="1">
-    <input type="password" maxlength="1">
-    <input type="password" maxlength="1">
-    <input type="password" maxlength="1">
-    <input type="password" maxlength="1">
-    <input type="password" maxlength="1">
+<div class="container">
+  <div class="logo">
+    <img src="./kudirat-logo.png" alt="Kudirat Logo">
   </div>
-  <button onclick="verifyPIN()">Unlock</button>
-  <div class="error" id="errorMsg"></div>
+  
+  <h2>Enter OTP</h2>
+  <p style="color: var(--text-secondary); margin-bottom: 20px;">We've sent a 6-digit code to your registered phone number</p>
+  
+  <div class="otp-box" id="otpInputs"></div>
+  
+  <div class="error-message" id="errorMessage"></div>
+  
+  <div class="timer">Resend in <span id="countdown">60</span>s</div>
+  <button id="resendBtn" disabled>Resend OTP</button>
+  
+  <a href="login.html" class="back-btn">
+    <i class="fas fa-arrow-left"></i> Back to Login
+  </a>
+</div>
 
-  <script>
-    // Auto move focus
-    const inputs = document.querySelectorAll('#pinInputs input');
-    inputs.forEach((input, i) => {
-      input.addEventListener('input', () => {
-        if (input.value && i < inputs.length - 1) {
-          inputs[i + 1].focus();
-        }
-      });
-    });
+<div class="footer">
+  Licensed by the <b>CBN</b> and insured by the <b>NDIC</b>
+</div>
 
-    function verifyPIN() {
-      const enteredPIN = Array.from(inputs).map(i => i.value).join('');
-      const savedPIN = localStorage.getItem("userPIN");
-      let attempts = parseInt(localStorage.getItem("pinAttempts") || "0");
-      const errorDiv = document.getElementById("errorMsg");
-
-      if (enteredPIN.length < 6) {
-        errorDiv.textContent = "Please enter your full 6-digit PIN.";
-        return;
+<script>
+  const otpLength = 6;
+  const otpBox = document.getElementById("otpInputs");
+  const countdownEl = document.getElementById("countdown");
+  const resendBtn = document.getElementById("resendBtn");
+  const errorMessage = document.getElementById("errorMessage");
+  let timer = null;
+  let timeLeft = 60;
+  
+  // Security: Redirect if no OTP session
+  if (!localStorage.getItem("otpPending")) {
+    window.location.href = "login.html";
+  }
+  
+  // Create OTP inputs
+  for (let i = 0; i < otpLength; i++) {
+    const input = document.createElement("input");
+    input.type = "text";
+    input.maxLength = 1;
+    input.addEventListener("input", handleInput);
+    input.addEventListener("keydown", handleKeyDown);
+    input.addEventListener("paste", handlePaste);
+    otpBox.appendChild(input);
+  }
+  
+  const inputs = otpBox.querySelectorAll("input");
+  inputs[0].focus();
+  
+  function handleInput(e) {
+    const value = e.target.value.replace(/\D/, "");
+    e.target.value = value;
+    
+    if (value && e.target.nextElementSibling) {
+      e.target.nextElementSibling.focus();
+    }
+    
+    checkAutoSubmit();
+  }
+  
+  function handleKeyDown(e) {
+    // Handle backspace
+    if (e.key === "Backspace" && !e.target.value && e.target.previousElementSibling) {
+      e.target.previousElementSibling.focus();
+    }
+  }
+  
+  function handlePaste(e) {
+    e.preventDefault();
+    const pastedData = e.clipboardData.getData("text").trim();
+    
+    // Only allow digits
+    if (!/^\d+$/.test(pastedData)) return;
+    
+    // Fill inputs
+    const digits = pastedData.split('');
+    digits.forEach((digit, i) => {
+      if (i < otpLength) {
+        inputs[i].value = digit;
       }
-
-      if (enteredPIN === savedPIN) {
-        // Reset attempts
-        localStorage.setItem("pinAttempts", "0");
-        errorDiv.textContent = "";
+    });
+    
+    // Focus on last filled input or next empty one
+    const lastIndex = Math.min(digits.length - 1, otpLength - 1);
+    inputs[lastIndex].focus();
+    
+    // Auto-submit if all digits are pasted
+    if (digits.length === otpLength) {
+      checkAutoSubmit();
+    }
+  }
+  
+  function checkAutoSubmit() {
+    const code = Array.from(inputs).map(i => i.value).join("");
+    if (code.length === otpLength) {
+      verifyOTP(code);
+    }
+  }
+  
+  function verifyOTP(code) {
+    const savedOTP = localStorage.getItem("loginOTP");
+    const expiry = parseInt(localStorage.getItem("otpExpiry"), 10);
+    
+    if (Date.now() > expiry) {
+      failOTP("OTP expired! Please resend.");
+      return;
+    }
+    
+    if (code === savedOTP) {
+      const phone = localStorage.getItem("currentUserPhone");
+      const users = JSON.parse(localStorage.getItem("kudiratUsers")) || [];
+      const user = users.find(u => u.number === phone || u.phone === phone);
+      
+      if (user) {
+        // Set session
+        localStorage.setItem("kudiratUser", JSON.stringify(user));
+        localStorage.setItem("sessionTimestamp", Date.now().toString());
+        
+        // Clean up OTP data
+        localStorage.removeItem("otpPending");
+        localStorage.removeItem("loginOTP");
+        localStorage.removeItem("otpExpiry");
+        
+        // Redirect to dashboard
         window.location.href = "dashboard.html";
       } else {
-        attempts++;
-        localStorage.setItem("pinAttempts", attempts);
-        if (attempts >= 3) {
-          errorDiv.textContent = "Too many failed attempts. Access temporarily locked!";
-          inputs.forEach(i => i.disabled = true);
-          document.querySelector("button").disabled = true;
-          // Optional: Reset attempts after 30 seconds
-          setTimeout(() => {
-            localStorage.setItem("pinAttempts", "0");
-            errorDiv.textContent = "";
-            inputs.forEach(i => {
-              i.disabled = false;
-              i.value = "";
-            });
-            document.querySelector("button").disabled = false;
-            inputs[0].focus();
-          }, 30000); // 30 seconds lock
-        } else {
-          errorDiv.textContent = `Wrong PIN. Attempt ${attempts} of 3.`;
-          inputs.forEach(i => i.value = "");
-          inputs[0].focus();
-        }
+        failOTP("User not found. Please try again.");
       }
+    } else {
+      failOTP("Invalid OTP. Try again.");
     }
-  </script>
-
+  }
+  
+  function failOTP(message) {
+    errorMessage.textContent = message;
+    errorMessage.style.display = "block";
+    
+    inputs.forEach(inp => {
+      inp.classList.add("error");
+      inp.value = "";
+    });
+    
+    inputs[0].focus();
+    
+    setTimeout(() => {
+      inputs.forEach(inp => inp.classList.remove("error"));
+      errorMessage.style.display = "none";
+    }, 2000);
+  }
+  
+  function startTimer() {
+    clearInterval(timer);
+    timeLeft = 60;
+    countdownEl.textContent = timeLeft;
+    resendBtn.disabled = true;
+    
+    timer = setInterval(() => {
+      timeLeft--;
+      countdownEl.textContent = timeLeft;
+      
+      if (timeLeft <= 0) {
+        clearInterval(timer);
+        resendBtn.disabled = false;
+        errorMessage.textContent = "OTP expired! Please resend.";
+        errorMessage.style.display = "block";
+      }
+    }, 1000);
+  }
+  
+  resendBtn.addEventListener("click", () => {
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiry = Date.now() + 60000; // 60 seconds expiry
+    
+    localStorage.setItem("loginOTP", otp);
+    localStorage.setItem("otpExpiry", expiry);
+    
+    console.log("New OTP:", otp); // remove in production
+    
+    // Show a notification
+    const notification = document.createElement("div");
+    notification.style.position = "fixed";
+    notification.style.bottom = "20px";
+    notification.style.left = "50%";
+    notification.style.transform = "translateX(-50%)";
+    notification.style.backgroundColor = "var(--accent)";
+    notification.style.color = "white";
+    notification.style.padding = "12px 24px";
+    notification.style.borderRadius = "30px";
+    notification.style.zIndex = "1000";
+    notification.textContent = "OTP has been resent to your phone";
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+      document.body.removeChild(notification);
+    }, 3000);
+    
+    // Reset inputs and hide error message
+    inputs.forEach(inp => inp.value = "");
+    inputs[0].focus();
+    errorMessage.style.display = "none";
+    
+    // Start timer
+    startTimer();
+  });
+  
+  // Start initial timer
+  startTimer();
+</script>
 </body>
 </html>

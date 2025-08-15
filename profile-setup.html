@@ -1,143 +1,310 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Kudirat Wallet - Complete Profile</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: "Segoe UI", sans-serif;
-      background-color: #1e1e1e;
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kudirat Wallet - Complete Profile</title>
+<style>
+  /* Add this to the top of your CSS in all pages */
+:root {
+  --bg-primary: #0e0e0e;
+  --bg-secondary: #1e1e1e;
+  --bg-card: #1e1e1e;
+  --text-primary: #ffffff;
+  --text-secondary: #bbbbbb;
+  --text-muted: #999999;
+  --accent: #00ffae;
+  --accent-secondary: #00b86b;
+  --border: #333333;
+  --input-bg: #1e1e1e;
+  --shadow: rgba(0, 0, 0, 0.5);
+}
+/* Light Mode */
+body.light {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f5;
+  --bg-card: #ffffff;
+  --text-primary: #000000;
+  --text-secondary: #666666;
+  --text-muted: #999999;
+  --accent: #00b86b;
+  --accent-secondary: #00b86b;
+  --border: #e0e0e0;
+  --input-bg: #f0f0f0;
+  --shadow: rgba(0, 0, 0, 0.1);
+}
+  body {
+    margin: 0;
+    font-family: "Segoe UI", sans-serif;
+     background-color: var(--bg-primary);
+       color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding-top: 40px;
+  }
+  .container {
+    width: 90%;
+    max-width: 400px;
+  }
+  .logo img { width: 150px; margin-bottom: 20px; display: block; margin: 0 auto; }
+  h2 { text-align: center; margin-bottom: 10px; color: var(--text-primary); }
+  p { text-align: center; color: var(--text-secondary); margin-bottom: 20px; }
+  .input-group {
+    margin-bottom: 15px;
+  }
+  .input-label {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 5px;
+    display: block;
+  }
+  input {
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 15px;
+    border: none;
+    border-radius: 10px;
+    background: var(--input-bg);
+    color: var(--text-primary);
+    font-size: 15px;
+    outline: none;
+  }
+  button {
+    width: 100%;
+    padding: 14px;
+    background: var(--accent-secondary);
+    border: none;
+    border-radius: 30px;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    opacity: 0.5;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  button.enabled {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .error {
+    color: red;
+    font-size: 13px;
+    margin-bottom: 10px;
+    display: none;
+    text-align: center;
+  }
+  .note {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: 10px;
+  }
+</style>
+<!-- Add this to the <head> of all your HTML pages -->
+<script>
+// Theme Management System
+const ThemeManager = {
+  init() {
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    this.applyTheme(savedTheme);
+    
+    // Set initial toggle state if toggle exists on page
+    const darkModeToggle = document.getElementById('darkMode');
+    if (darkModeToggle) {
+      darkModeToggle.checked = savedTheme === 'dark';
     }
-    .container {
-      width: 90%;
-      max-width: 400px;
-      text-align: center;
+  },
+  
+  applyTheme(theme) {
+    if (theme === 'light') {
+      document.body.classList.add('light');
+    } else {
+      document.body.classList.remove('light');
     }
-    h2 {
-      margin-bottom: 20px;
-      font-size: 1.4rem;
+    localStorage.setItem('theme', theme);
+  },
+  
+  toggle() {
+    const currentTheme = document.body.classList.contains('light') ? 'light' : 'dark';
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    this.applyTheme(newTheme);
+    
+    // Update toggle state if it exists
+    const darkModeToggle = document.getElementById('darkMode');
+    if (darkModeToggle) {
+      darkModeToggle.checked = newTheme === 'dark';
     }
-    input, select {
-      width: 100%;
-      padding: 14px;
-      margin-bottom: 15px;
-      border-radius: 10px;
-      border: none;
-      background: #2e2e2e;
-      color: white;
-      font-size: 1rem;
-    }
-    button {
-      width: 100%;
-      background-color: #00ffae;
-      color: #000;
-      border: none;
-      padding: 14px;
-      border-radius: 30px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    input[type="file"] {
-      background: transparent;
-    }
-  </style>
+  }
+};
+// Initialize theme on page load
+document.addEventListener('DOMContentLoaded', () => {
+  ThemeManager.init();
+});
+</script>
 </head>
 <body>
-  <div class="container">
-    <h2>Complete Your Profile</h2>
-
-    <input type="text" id="fullname" placeholder="Full Name (required)" required />
-    <input type="password" id="pin" maxlength="4" placeholder="Set 4-digit PIN (required)" required />
-    <select id="gender">
-      <option value="">Select Gender (optional)</option>
-      <option value="Male">Male</option>
-      <option value="Female">Female</option>
-      <option value="Other">Other</option>
-    </select>
-    <input type="date" id="dob" />
-    <input type="email" id="email" placeholder="Email Address" />
-    <input type="text" id="bvn" placeholder="BVN (optional)" maxlength="11" />
-    <input type="text" id="nin" placeholder="NIN (optional)" maxlength="11" />
-    <input type="file" id="photo" accept="image/*" />
-
-    <button onclick="saveProfile()">Finish</button>
+<div class="container">
+  <div class="logo">
+    <img src="./kudirat-logo.png" alt="Kudirat Logo" />
   </div>
-
-  <script>
-    function generateAccountNumber() {
-      return '20' + Math.floor(10000000 + Math.random() * 90000000);
+  <h2>Complete Your Profile</h2>
+  <p>Please enter your details to continue</p>
+  <div class="error" id="errorMsg">Please fill all fields correctly.</div>
+  
+  <div class="input-group">
+    <label class="input-label" for="fullName">Full Name</label>
+    <input type="text" id="fullName" placeholder="Enter your full name">
+  </div>
+  
+  <div class="input-group">
+    <label class="input-label" for="bvn">BVN</label>
+    <input type="text" id="bvn" placeholder="11-digit BVN" maxlength="11" inputmode="numeric" pattern="\d*">
+  </div>
+  
+  <div class="input-group">
+    <label class="input-label" for="nin">NIN</label>
+    <input type="text" id="nin" placeholder="11-digit NIN" maxlength="11" inputmode="numeric" pattern="\d*">
+  </div>
+  
+  <div class="input-group">
+    <label class="input-label" for="dob">Date of Birth</label>
+    <input type="date" id="dob" max="9999-12-31">
+  </div>
+  
+  <div class="input-group">
+    <label class="input-label" for="pin">4-digit Transaction PIN</label>
+    <input type="password" id="pin" placeholder="Create a 4-digit PIN" maxlength="4" inputmode="numeric" pattern="\d*">
+  </div>
+  
+  <button id="saveBtn" disabled>Save & Continue</button>
+  <div class="note">You'll set your login PIN next</div>
+</div>
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  // Constants
+  const SESSION_TTL = 30 * 60 * 1000; // 30 minutes session
+  
+  // Check session
+  const phone = localStorage.getItem("currentUserPhone");
+  const sessionTimestamp = localStorage.getItem("sessionTimestamp");
+  
+  if (!phone || !sessionTimestamp || (Date.now() - parseInt(sessionTimestamp) > SESSION_TTL)) {
+    localStorage.removeItem("currentUserPhone");
+    localStorage.removeItem("sessionTimestamp");
+    window.location.href = "register.html";
+    return;
+  }
+  
+  // Check if user is verified
+  const users = JSON.parse(localStorage.getItem("kudiratUsers") || "[]");
+  const currentUser = users.find(u => u.number === phone);
+  
+  if (!currentUser || !currentUser.verified) {
+    alert("Please verify your account first");
+    window.location.href = "verify.html";
+    return;
+  }
+  
+  // Check if profile is already complete
+  if (currentUser.profileComplete) {
+    window.location.href = "set-pin.html";
+    return;
+  }
+  
+  const fullNameInput = document.getElementById("fullName");
+  const bvnInput = document.getElementById("bvn");
+  const ninInput = document.getElementById("nin");
+  const dobInput = document.getElementById("dob");
+  const pinInput = document.getElementById("pin");
+  const saveBtn = document.getElementById("saveBtn");
+  const errorMsg = document.getElementById("errorMsg");
+  
+  function validateForm() {
+    const fullName = fullNameInput.value.trim();
+    const bvn = bvnInput.value.trim();
+    const nin = ninInput.value.trim();
+    const dob = dobInput.value;
+    const pin = pinInput.value.trim();
+    
+    const validFullName = fullName.length >= 3;
+    const validBVN = /^\d{11}$/.test(bvn);
+    const validNIN = /^\d{11}$/.test(nin);
+    const validDOB = !!dob;
+    const validPIN = /^\d{4}$/.test(pin);
+    
+    if (validFullName && validBVN && validNIN && validDOB && validPIN) {
+      saveBtn.disabled = false;
+      saveBtn.classList.add("enabled");
+    } else {
+      saveBtn.disabled = true;
+      saveBtn.classList.remove("enabled");
     }
-
-    function saveProfile() {
-      const fullName = document.getElementById('fullname').value.trim();
-      const pin = document.getElementById('pin').value.trim();
-      const gender = document.getElementById('gender').value;
-      const dob = document.getElementById('dob').value;
-      const email = document.getElementById('email').value;
-      const bvn = document.getElementById('bvn').value;
-      const nin = document.getElementById('nin').value;
-      const photoFile = document.getElementById('photo').files[0];
-
-      if (fullName.length < 3) return alert("Please enter your full name.");
-      if (!/^\d{4}$/.test(pin)) return alert("Enter a valid 4-digit PIN.");
-
-      const phone = localStorage.getItem("phoneNumber");
-      if (!phone) {
-        alert("Missing phone number. Please start again.");
-        window.location.href = "register.html";
-        return;
-      }
-
-      const account = generateAccountNumber();
-      let users = JSON.parse(localStorage.getItem("kudiratUsers") || "[]");
-
-      const saveUser = (avatarBase64) => {
-        const user = {
-          name: fullName,
-          phone,
-          pin,
-          gender,
-          dob,
-          email,
-          bvn,
-          nin,
-          avatar: avatarBase64 || `https://i.pravatar.cc/150?u=${phone}`,
-          account,
-          balance: 0
-        };
-
-        const existingIndex = users.findIndex(u => u.phone === phone);
-        if (existingIndex >= 0) {
-          users[existingIndex] = user;
-        } else {
-          users.push(user);
-        }
-
-        localStorage.setItem("kudiratUsers", JSON.stringify(users));
-        localStorage.setItem("currentUserPhone", phone);
-        localStorage.setItem("kudiratUser", "true");
-
-        alert("✅ Profile completed successfully!");
-        window.location.href = "./set-pin.html";
-      };
-
-      if (photoFile) {
-        const reader = new FileReader();
-        reader.onloadend = () => saveUser(reader.result);
-        reader.readAsDataURL(photoFile);
-      } else {
-        saveUser(""); // No image uploaded
-      }
+  }
+  
+  fullNameInput.addEventListener("input", validateForm);
+  bvnInput.addEventListener("input", validateForm);
+  ninInput.addEventListener("input", validateForm);
+  dobInput.addEventListener("change", validateForm);
+  pinInput.addEventListener("input", validateForm);
+  
+  saveBtn.addEventListener("click", () => {
+    const fullName = fullNameInput.value.trim();
+    const bvn = bvnInput.value.trim();
+    const nin = ninInput.value.trim();
+    const dob = dobInput.value;
+    const pin = pinInput.value.trim();
+    
+    if (!(fullName.length >= 3 && /^\d{11}$/.test(bvn) && /^\d{11}$/.test(nin) && dob && /^\d{4}$/.test(pin))) {
+      errorMsg.textContent = "Please fill all fields correctly.";
+      errorMsg.style.display = "block";
+      return;
     }
-  </script>
+    
+    errorMsg.style.display = "none";
+    let users = JSON.parse(localStorage.getItem("kudiratUsers") || "[]");
+    const userIndex = users.findIndex(u => u.number === phone);
+    
+    if (userIndex !== -1) {
+      // Update existing user
+      users[userIndex].fullName = fullName;
+      users[userIndex].bvn = bvn;
+      users[userIndex].nin = nin;
+      users[userIndex].dob = dob;
+      users[userIndex].pin = pin; // Transaction PIN (4-digit)
+      users[userIndex].profileComplete = true;
+      
+      // Update session timestamp
+      localStorage.setItem("sessionTimestamp", Date.now().toString());
+    } else {
+      // This should not happen if the flow is correct, but handle just in case
+      users.push({
+        number: phone,
+        fullName,
+        bvn,
+        nin,
+        dob,
+        pin, // Transaction PIN (4-digit)
+        verified: true,
+        profileComplete: true
+      });
+    }
+    
+    localStorage.setItem("kudiratUsers", JSON.stringify(users));
+    
+    // Show success message
+    errorMsg.textContent = "Profile saved successfully!";
+    errorMsg.style.color = "var(--accent-secondary)";
+    errorMsg.style.display = "block";
+    
+    // Redirect to PIN setup after a short delay
+    setTimeout(() => {
+      window.location.href = "./set-pin.html";
+    }, 1500);
+  });
+});
+</script>
 </body>
 </html>

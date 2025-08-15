@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>More Services - Kudirat Wallet</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
+  <style>
+    /* Theme Variables */
+:root {
+  --bg-primary: #0e0e0e;
+  --bg-secondary: #1e1e1e;
+  --bg-card: #1e1e1e;
+  --text-primary: #ffffff;
+  --text-secondary: #bbbbbb;
+  --text-muted: #999999;
+  --accent: #00ffae;
+  --accent-secondary: #00b86b;
+  --border: #333333;
+  --input-bg: #1e1e1e;
+  --shadow: rgba(0, 0, 0, 0.5);
+}
+/* Light Mode */
+body.light {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f5;
+  --bg-card: #ffffff;
+  --text-primary: #000000;
+  --text-secondary: #666666;
+  --text-muted: #999999;
+  --accent: #00b86b;
+  --accent-secondary: #00b86b;
+  --border: #e0e0e0;
+  --input-bg: #f0f0f0;
+  --shadow: rgba(0, 0, 0, 0.1);
+}
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    
+    .header {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .back-btn {
+      background: none;
+      border: none;
+      color: var(--text-primary);
+      font-size: 20px;
+      cursor: pointer;
+      margin-right: 16px;
+    }
+    
+    .page-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    
+    .container {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    
+    .balance-card {
+      background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+      border-radius: 12px;
+      padding: 16px;
+      color: white;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 12px rgba(0, 184, 107, 0.2);
+    }
+    
+    .balance-label {
+      font-size: 14px;
+      opacity: 0.9;
+      margin-bottom: 8px;
+    }
+    
+    .balance-amount {
+      font-size: 24px;
+      font-weight: bold;
+    }
+    
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    
+    .service-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 2px 8px var(--shadow);
+    }
+    
+    .service-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 6px 16px var(--shadow);
+    }
+    
+    .service-icon {
+      font-size: 36px;
+      margin-bottom: 12px;
+      color: var(--accent);
+    }
+    
+    .service-name {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    
+    .service-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    
+    .coming-soon {
+      position: relative;
+    }
+    
+    .coming-soon::after {
+      content: "Coming Soon";
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: var(--accent);
+      color: white;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+    
+    .bottom-nav {
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 0;
+      border-top: 1px solid var(--border);
+      background: var(--bg-card);
+    }
+    
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 12px;
+    }
+    
+    .nav-item.active {
+      color: var(--accent);
+    }
+    
+    .nav-item i {
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+    
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background-color: var(--bg-card);
+      color: var(--text-primary);
+      padding: 12px 24px;
+      border-radius: 30px;
+      box-shadow: 0 4px 12px var(--shadow);
+      z-index: 1000;
+      opacity: 0;
+      transition: transform 0.3s, opacity 0.3s;
+      border: 1px solid var(--border);
+    }
+    
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+    
+    .toast-info {
+      background-color: var(--accent);
+      color: white;
+    }
+  </style>
+  
+  <!-- Theme Management System -->
+  <script>
+  const ThemeManager = {
+    init() {
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      this.applyTheme(savedTheme);
+    },
+    
+    applyTheme(theme) {
+      if (theme === 'light') {
+        document.body.classList.add('light');
+      } else {
+        document.body.classList.remove('light');
+      }
+      localStorage.setItem('theme', theme);
+    },
+    
+    toggle() {
+      const currentTheme = document.body.classList.contains('light') ? 'light' : 'dark';
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      this.applyTheme(newTheme);
+    }
+  };
+  
+  // Initialize theme on page load
+  document.addEventListener('DOMContentLoaded', () => {
+    ThemeManager.init();
+  });
+  </script>
+</head>
+<body>
+  <div class="header">
+    <button class="back-btn" onclick="goBack()">
+      <i class="fas fa-arrow-left"></i>
+    </button>
+    <h1 class="page-title">More Services</h1>
+  </div>
+  
+  <div class="container">
+    <div class="balance-card">
+      <div class="balance-label">Wallet Balance</div>
+      <div class="balance-amount" id="walletBalance">₦0.00</div>
+    </div>
+    
+    <div class="services-grid">
+      <div class="service-card" onclick="openService('electricity')">
+        <div class="service-icon">
+          <i class="fas fa-bolt"></i>
+        </div>
+        <div class="service-name">Electricity</div>
+        <div class="service-desc">Pay electricity bills</div>
+      </div>
+      
+      <div class="service-card" onclick="openService('internet')">
+        <div class="service-icon">
+          <i class="fas fa-wifi"></i>
+        </div>
+        <div class="service-name">Internet</div>
+        <div class="service-desc">Broadband subscription</div>
+      </div>
+      
+      <div class="service-card" onclick="openService('education')">
+        <div class="service-icon">
+          <i class="fas fa-graduation-cap"></i>
+        </div>
+        <div class="service-name">Education</div>
+        <div class="service-desc">School fees payment</div>
+      </div>
+      
+      <div class="service-card coming-soon" onclick="openService('insurance')">
+        <div class="service-icon">
+          <i class="fas fa-shield-alt"></i>
+        </div>
+        <div class="service-name">Insurance</div>
+        <div class="service-desc">Insurance premiums</div>
+      </div>
+      
+      <div class="service-card coming-soon" onclick="openService('flight')">
+        <div class="service-icon">
+          <i class="fas fa-plane"></i>
+        </div>
+        <div class="service-name">Flight Booking</div>
+        <div class="service-desc">Book flights</div>
+      </div>
+      
+      <div class="service-card coming-soon" onclick="openService('hotel')">
+        <div class="service-icon">
+          <i class="fas fa-hotel"></i>
+        </div>
+        <div class="service-name">Hotel Booking</div>
+        <div class="service-desc">Book accommodations</div>
+      </div>
+      
+      <div class="service-card coming-soon" onclick="openService('taxi')">
+        <div class="service-icon">
+          <i class="fas fa-taxi"></i>
+        </div>
+        <div class="service-name">Ride Hailing</div>
+        <div class="service-desc">Book a ride</div>
+      </div>
+      
+      <div class="service-card coming-soon" onclick="openService('delivery')">
+        <div class="service-icon">
+          <i class="fas fa-truck"></i>
+        </div>
+        <div class="service-name">Delivery</div>
+        <div class="service-desc">Food & package delivery</div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="bottom-nav">
+    <a href="dashboard.html" class="nav-item">
+      <i class="fas fa-home"></i>
+      <span>Home</span>
+    </a>
+    <a href="#" class="nav-item">
+      <i class="fas fa-history"></i>
+      <span>History</span>
+    </a>
+    <a href="#" class="nav-item">
+      <i class="fas fa-wallet"></i>
+      <span>Finance</span>
+    </a>
+    <a href="#" class="nav-item">
+      <i class="fas fa-user"></i>
+      <span>Profile</span>
+    </a>
+  </div>
+  
+  <script>
+    // Check if user is logged in
+    const currentUser = localStorage.getItem("currentUserPhone");
+    const users = JSON.parse(localStorage.getItem("kudiratUsers") || "[]");
+    const user = users.find(u => u.number === currentUser);
+    
+    if (!user) {
+      window.location.href = "login.html";
+    }
+    
+    // Initialize wallet balance
+    const walletBalance = parseFloat(localStorage.getItem("walletBalance") || "0");
+    document.getElementById("walletBalance").textContent = `₦${walletBalance.toFixed(2)}`;
+    
+    // Open service function
+    function openService(service) {
+      // Check if service is coming soon
+      const comingSoonServices = ['insurance', 'flight', 'hotel', 'taxi', 'delivery'];
+      if (comingSoonServices.includes(service)) {
+        showToast(`${service.charAt(0).toUpperCase() + service.slice(1)} service is coming soon!`, 'info');
+        return;
+      }
+      
+      // For now, show a message for available services
+      showToast(`${service.charAt(0).toUpperCase() + service.slice(1)} service will be available soon!`, 'info');
+    }
+    
+    // Toast notification function
+    function showToast(message, type = 'info') {
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.classList.add('show');
+      }, 10);
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+          document.body.removeChild(toast);
+        }, 300);
+      }, 3000);
+    }
+    
+    function goBack() {
+      window.location.href = 'dashboard.html';
+    }
+  </script>
+</body>
+</html>

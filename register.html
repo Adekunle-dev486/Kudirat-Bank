@@ -5,11 +5,39 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Kudirat Wallet - Register</title>
   <style>
+    /* Add this to the top of your CSS in all pages */
+:root {
+  --bg-primary: #0e0e0e;
+  --bg-secondary: #1e1e1e;
+  --bg-card: #1e1e1e;
+  --text-primary: #ffffff;
+  --text-secondary: #bbbbbb;
+  --text-muted: #999999;
+  --accent: #00ffae;
+  --accent-secondary: #00b86b;
+  --border: #333333;
+  --input-bg: #1e1e1e;
+  --shadow: rgba(0, 0, 0, 0.5);
+}
+/* Light Mode */
+body.light {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f5;
+  --bg-card: #ffffff;
+  --text-primary: #000000;
+  --text-secondary: #666666;
+  --text-muted: #999999;
+  --accent: #00b86b;
+  --accent-secondary: #00b86b;
+  --border: #e0e0e0;
+  --input-bg: #f0f0f0;
+  --shadow: rgba(0, 0, 0, 0.1);
+}
     body {
       margin: 0;
       font-family: "Segoe UI", sans-serif;
-      background-color: #1e1e1e;
-      color: white;
+       background-color: var(--bg-primary);
+       color: var(--text-primary);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -21,28 +49,21 @@
       max-width: 400px;
       text-align: center;
     }
-    .logo {
-      margin-bottom: 40px;
-    }
-    .logo img {
-      width: 200px;
-    }
-    h2 {
-      font-size: 1.2rem;
-      margin-bottom: 20px;
-    }
+    .logo { margin-bottom: 40px; }
+    .logo img { width: 200px; }
+    h2 { font-size: 1.2rem; margin-bottom: 20px; color: var(--text-primary); }
     .input-box {
-      background: #2e2e2e;
-      border: 1px solid #04B24D;
+      background: var(--input-bg);
+      border: 1px solid var(--accent);
       padding: 12px;
       border-radius: 10px;
       display: flex;
       align-items: center;
-      margin-bottom: 15px;
+      margin-bottom: 5px;
     }
     select {
       background: transparent;
-      color: white;
+      color: var(--text-primary);
       border: none;
       font-size: 16px;
       outline: none;
@@ -53,20 +74,27 @@
       background: none;
       border: none;
       outline: none;
-      color: white;
+      color: var(--text-primary);
       font-size: 16px;
       flex: 1;
     }
+    .input-feedback {
+      color: #ff4d4f;
+      font-size: 13px;
+      margin-bottom: 10px;
+      min-height: 18px;
+      text-align: left;
+    }
     .invite-box {
-      background: #043d2b;
+      background: var(--bg-secondary);
       padding: 10px;
       border-radius: 10px;
       margin-bottom: 15px;
       font-size: 14px;
-      color: #aaa;
+      color: var(--text-muted);
     }
     .promo-btn {
-      background: #00ffae;
+      background: var(--accent);
       color: black;
       font-weight: bold;
       padding: 8px;
@@ -76,7 +104,7 @@
       display: inline-block;
     }
     .signup-btn {
-      background: #00b86b;
+      background: var(--accent-secondary);
       width: 100%;
       padding: 14px;
       border: none;
@@ -88,92 +116,70 @@
       margin-bottom: 15px;
       opacity: 0.5;
       pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .signup-btn.enabled {
+      opacity: 1;
+      pointer-events: auto;
     }
     .checkbox-label {
       display: flex;
       align-items: center;
       font-size: 13px;
       margin-bottom: 20px;
-      color: #ccc;
+      color: var(--text-secondary);
     }
-    .checkbox-label input {
-      margin-right: 8px;
-    }
-    .checkbox-label a {
-      color: #00ffae;
-      text-decoration: none;
-    }
-    .login-link {
-      margin-top: 10px;
-      font-size: 14px;
-    }
-    .login-link a {
-      color: #00ffae;
-      text-decoration: none;
-    }
+    .checkbox-label input { margin-right: 8px; }
+    .checkbox-label a { color: var(--accent); text-decoration: none; }
+    .login-link { margin-top: 10px; font-size: 14px; }
+    .login-link a { color: var(--accent); text-decoration: none; }
     footer {
       font-size: 12px;
-      color: #888;
+      color: var(--text-muted);
       margin-top: 30px;
     }
   </style>
-  <script>
-    window.addEventListener('DOMContentLoaded', () => {
-      const signUpBtn = document.querySelector(".signup-btn");
-      const input = document.querySelector(".input-box input");
-
-      // Redirect if already logged in
-      const currentUser = localStorage.getItem("kudiratUser");
-      if (currentUser) {
-        window.location.href = "dashboard.html";
-      }
-
-      input.addEventListener("input", () => {
-        if (input.value.trim().length >= 9) {
-          signUpBtn.disabled = false;
-          signUpBtn.style.opacity = "1";
-          signUpBtn.style.pointerEvents = "auto";
-        } else {
-          signUpBtn.disabled = true;
-          signUpBtn.style.opacity = "0.5";
-          signUpBtn.style.pointerEvents = "none";
-        }
-      });
-
-      signUpBtn.addEventListener("click", () => {
-        const phone = input.value.trim();
-        if (!phone || phone.length < 9) {
-          alert("Please enter a valid phone number.");
-          return;
-        }
-
-        // Save raw number
-        const fullNumber = "+234" + phone.slice(-10); // Nigeria default
-
-        // Check if already registered
-        const allUsers = JSON.parse(localStorage.getItem("kudiratUsers") || "[]");
-        const exists = allUsers.find(u => u.number === fullNumber);
-
-        if (exists) {
-          alert("This number is already registered. Please log in.");
-          window.location.href = "login.html";
-          return;
-        }
-
-        // Generate 6-digit code
-        const code = Math.floor(100000 + Math.random() * 900000).toString();
-
-        // Store verification session
-        localStorage.setItem("phoneNumber", fullNumber);
-        localStorage.setItem("verificationCode", code);
-
-        alert("Your Kudirat Wallet verification code is: " + code);
-
-        // Go to verify page
-        window.location.href = "verify.html";
-      });
-    });
-  </script>
+  <!-- Add this to the <head> of all your HTML pages -->
+<script>
+// Theme Management System
+const ThemeManager = {
+  init() {
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    this.applyTheme(savedTheme);
+    
+    // Set initial toggle state if toggle exists on page
+    const darkModeToggle = document.getElementById('darkMode');
+    if (darkModeToggle) {
+      darkModeToggle.checked = savedTheme === 'dark';
+    }
+  },
+  
+  applyTheme(theme) {
+    if (theme === 'light') {
+      document.body.classList.add('light');
+    } else {
+      document.body.classList.remove('light');
+    }
+    localStorage.setItem('theme', theme);
+  },
+  
+  toggle() {
+    const currentTheme = document.body.classList.contains('light') ? 'light' : 'dark';
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    this.applyTheme(newTheme);
+    
+    // Update toggle state if it exists
+    const darkModeToggle = document.getElementById('darkMode');
+    if (darkModeToggle) {
+      darkModeToggle.checked = newTheme === 'dark';
+    }
+  }
+};
+// Initialize theme on page load
+document.addEventListener('DOMContentLoaded', () => {
+  ThemeManager.init();
+});
+</script>
 </head>
 <body>
   <div class="container">
@@ -185,24 +191,119 @@
       <select disabled>
         <option value="+234" selected>🇳🇬 +234</option>
       </select>
-      <input type="tel" placeholder="Phone number" />
+      <input type="tel" placeholder="Phone number" maxlength="11" inputmode="numeric" pattern="\d*" />
     </div>
+    <div class="input-feedback" id="phone-feedback"></div>
     <div class="invite-box">Have an Invitation Code? (Optional)</div>
     <div class="promo-btn">Get ₦100 airtime for free</div>
     <button class="signup-btn" disabled>Sign Up</button>
-
     <label class="checkbox-label">
-      <input type="checkbox" checked />
+      <input type="checkbox" />
       I agree to the <a href="#">Terms & Conditions</a> and <a href="#">Privacy Policy</a>
     </label>
-
     <div class="login-link">
       Already have a Kudirat Account? <a href="login.html">Log in</a>
     </div>
-
     <footer>
       Licensed by the CBN and insured by the NDIC
     </footer>
   </div>
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  const signUpBtn = document.querySelector(".signup-btn");
+  const input = document.querySelector(".input-box input");
+  const termsCheckbox = document.querySelector(".checkbox-label input");
+  const feedback = document.getElementById("phone-feedback");
+  const currentUser = localStorage.getItem("currentUserPhone");
+  
+  // Check if user is already logged in
+  if (currentUser) {
+    window.location.href = "dashboard.html";
+  }
+  
+  function validateForm() {
+    const phone = input.value.trim();
+    const validPhone = /^0\d{10}$/.test(phone);
+    const validForm = validPhone && termsCheckbox.checked;
+    // Feedback
+    if (!phone) {
+      feedback.textContent = '';
+    } else if (!validPhone) {
+      feedback.textContent = 'Enter a valid 11-digit Nigerian phone number starting with 0.';
+    } else {
+      feedback.textContent = '';
+    }
+    signUpBtn.disabled = !validForm;
+    if (validForm) {
+      signUpBtn.classList.add('enabled');
+    } else {
+      signUpBtn.classList.remove('enabled');
+    }
+  }
+  
+  input.addEventListener("input", validateForm);
+  termsCheckbox.addEventListener("change", validateForm);
+  
+  signUpBtn.addEventListener("click", () => {
+    const rawPhone = input.value.trim();
+    if (!/^0\d{10}$/.test(rawPhone)) {
+      feedback.textContent = "Please enter a valid Nigerian phone number starting with 0 (11 digits).";
+      return;
+    }
+    
+    const accountNumber = rawPhone.substring(1);
+    const fullNumber = "+234" + accountNumber;
+    let allUsers = JSON.parse(localStorage.getItem("kudiratUsers") || "[]");
+    
+    // Debug: Log current users
+    console.log("Debug - Current users:", allUsers);
+    
+    // Check if user already exists
+    if (allUsers.some(user => user.number === fullNumber)) {
+      alert("This phone number is already registered. Please log in instead.");
+      window.location.href = "login.html";
+      return;
+    }
+    
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    // Set code expiry (30 minutes from now)
+    const codeExpiry = new Date().getTime() + (30 * 60 * 1000);
+    
+    localStorage.setItem("currentUserPhone", fullNumber);
+    localStorage.setItem("accountNumber", accountNumber);
+    localStorage.setItem("verificationCode", code);
+    localStorage.setItem("verificationCodeExpiry", codeExpiry.toString());
+    
+    // Save complete user data to kudiratUsers
+    const newUser = {
+      number: fullNumber,
+      accountNumber: accountNumber,
+      verificationCode: code,
+      verified: false,
+      profileComplete: false,
+      loginPIN: null, // Will be set later
+      createdAt: new Date().toISOString()
+    };
+    
+    // Debug: Log new user
+    console.log("Debug - New user:", newUser);
+    
+    allUsers.push(newUser);
+    localStorage.setItem("kudiratUsers", JSON.stringify(allUsers));
+    
+    // Debug: Verify user was saved
+    const savedUsers = JSON.parse(localStorage.getItem("kudiratUsers") || "[]");
+    const savedUser = savedUsers.find(u => u.number === fullNumber);
+    console.log("Debug - Saved user:", savedUser);
+    
+    // Demo alert
+    alert("Your Kudirat Wallet verification code is: " + code);
+    window.location.href = "verify.html";
+  });
+  
+  // Initial validation on page load
+  validateForm();
+});
+</script>
 </body>
 </html>

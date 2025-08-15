@@ -6,57 +6,110 @@
   <title>My Profile - Kudirat Wallet</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <style>
-    body {
+    /* Dark Mode (Default) */
+    :root {
+      --bg-primary: #0e0e0e;
+      --bg-secondary: #1e1e1e;
+      --bg-card: #1e1e1e;
+      --text-primary: #ffffff;
+      --text-secondary: #bbbbbb;
+      --text-muted: #999999;
+      --accent: #00ffae;
+      --accent-secondary: #00b86b;
+      --border: #333333;
+      --input-bg: #1e1e1e;
+      --shadow: rgba(0, 0, 0, 0.5);
+    }
+    
+    /* Light Mode */
+    body.light {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f5f5f5;
+      --bg-card: #ffffff;
+      --text-primary: #000000;
+      --text-secondary: #666666;
+      --text-muted: #999999;
+      --accent: #00b86b;
+      --accent-secondary: #00b86b;
+      --border: #e0e0e0;
+      --input-bg: #f0f0f0;
+      --shadow: rgba(0, 0, 0, 0.1);
+    }
+    
+    * {
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
       font-family: "Segoe UI", sans-serif;
-      background-color: #0e0e0e;
-      color: #fff;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
       transition: background-color 0.3s, color 0.3s;
     }
+    
     .container {
       padding: 20px;
       max-width: 500px;
       margin: auto;
     }
+    
     .header {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      margin-bottom: 20px;
     }
+    
+    .header h2 {
+      margin: 0;
+      color: var(--accent);
+    }
+    
     .avatar {
       width: 60px;
       height: 60px;
       border-radius: 50%;
-      border: 2px solid #00ffae;
+      border: 2px solid var(--accent);
+      cursor: pointer;
+      object-fit: cover;
     }
+    
     .input-group {
       margin-top: 15px;
     }
+    
     .input-group label {
       display: block;
       font-size: 14px;
       margin-bottom: 5px;
-      color: #bbb;
+      color: var(--text-secondary);
     }
-    .input-group input {
+    
+    .input-group input,
+    .input-group select {
       width: 100%;
-      padding: 10px;
-      border: none;
+      padding: 12px;
+      border: 1px solid var(--border);
       border-radius: 8px;
-      background-color: #1e1e1e;
-      color: white;
+      background-color: var(--input-bg);
+      color: var(--text-primary);
+      font-size: 15px;
     }
+    
     .copy-btn {
       background: none;
       border: none;
-      color: #00ffae;
+      color: var(--accent);
       margin-left: 8px;
       cursor: pointer;
+      font-size: 14px;
     }
+    
     .save-btn {
       margin-top: 20px;
-      background-color: #00b86b;
+      background-color: var(--accent-secondary);
       color: white;
       width: 100%;
       padding: 12px;
@@ -64,33 +117,169 @@
       border: none;
       border-radius: 8px;
       cursor: pointer;
+      font-weight: 600;
     }
+    
     .readonly {
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
+    
     .dark-toggle {
       margin-top: 30px;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
+    
+    .dark-toggle label {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+    
     .dark-toggle input {
       width: 20px;
       height: 20px;
+      margin-left: 10px;
     }
-    body.light {
-      background-color: #fff;
-      color: #000;
+    
+    #tierPopup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--bg-card);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px var(--shadow);
+      color: var(--text-primary);
+      z-index: 1000;
+      max-width: 300px;
+      border: 1px solid var(--border);
     }
-    body.light input {
-      background-color: #f0f0f0;
-      color: #000;
-    }
-    body.light .save-btn {
-      background-color: #00b86b;
+    
+    #tierPopup button {
+      margin-top: 10px;
+      background: var(--accent-secondary);
       color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    
+    .limit-note {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    
+    .success-message {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--accent-secondary);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      display: none;
+      z-index: 1001;
+      box-shadow: 0 2px 10px rgba(0, 184, 107, 0.3);
+    }
+    
+    .profile-card {
+      background: var(--bg-card);
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      border: 1px solid var(--border);
+    }
+    
+    .profile-info h3 {
+      margin: 0 0 5px 0;
+      font-size: 18px;
+      color: var(--text-primary);
+    }
+    
+    .profile-info p {
+      margin: 0;
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+    
+    .tier-badge {
+      background: var(--accent-secondary);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-left: auto;
+    }
+    
+    .section-title {
+      font-size: 16px;
+      margin: 25px 0 10px 0;
+      color: var(--accent);
+      font-weight: 600;
+    }
+    
+    /* Toggle Switch Styles */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+    }
+    
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 24px;
+    }
+    
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    
+    input:checked + .slider {
+      background-color: var(--accent-secondary);
+    }
+    
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+    
+    /* Theme Toggle Icon */
+    .theme-icon {
+      margin-right: 8px;
     }
   </style>
 </head>
@@ -98,9 +287,22 @@
   <div class="container">
     <div class="header">
       <h2>👤 My Profile</h2>
-      <img id="profilePic" class="avatar" src="default-avatar.png" alt="Avatar" />
+      <label for="avatarInput">
+        <img id="profilePic" class="avatar" src="https://i.pravatar.cc/150?u=default" alt="Avatar" />
+      </label>
+      <input type="file" id="avatarInput" accept="image/*" style="display:none" />
     </div>
-
+    
+    <div class="profile-card">
+      <img id="profilePic" class="avatar" src="https://i.pravatar.cc/150?u=default" alt="Avatar" />
+      <div class="profile-info">
+        <h3 id="displayName">Loading...</h3>
+        <p id="displayNumber">Loading...</p>
+      </div>
+      <div class="tier-badge" id="tierBadge">Tier 1</div>
+    </div>
+    
+    <div class="section-title">Account Information</div>
     <div class="input-group readonly">
       <div style="width: 100%;">
         <label>Account Number</label>
@@ -108,127 +310,306 @@
       </div>
       <button class="copy-btn" onclick="copyAccount()">Copy</button>
     </div>
-
     <div class="input-group">
       <label>Account Tier</label>
-      <input type="text" id="tier" value="Tier 1" readonly />
+      <input type="text" id="tier" readonly onclick="showTierPopup()" />
+      <div id="tierLimit" class="limit-note"></div>
     </div>
-
+    
+    <div class="section-title">Personal Information</div>
     <div class="input-group">
       <label>Full Name</label>
-      <input type="text" id="fullName" readonly />
+      <input type="text" id="fullName" placeholder="Enter your full name" />
     </div>
-
     <div class="input-group">
       <label>Mobile Number</label>
-      <input type="text" id="mobile" />
+      <input type="text" id="mobile" readonly />
     </div>
-
     <div class="input-group">
       <label>Nickname</label>
-      <input type="text" id="nickname" />
+      <input type="text" id="nickname" placeholder="Enter your nickname" />
     </div>
-
     <div class="input-group">
       <label>Gender</label>
-      <input type="text" id="gender" />
+      <select id="gender">
+        <option value="">Select Gender</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+        <option value="Other">Other</option>
+      </select>
     </div>
-
     <div class="input-group">
       <label>Date of Birth</label>
       <input type="date" id="dob" />
     </div>
-
     <div class="input-group">
       <label>Email</label>
-      <input type="email" id="email" />
+      <input type="email" id="email" placeholder="Enter your email address" />
     </div>
-
     <div class="input-group">
       <label>Address</label>
-      <input type="text" id="address" />
+      <input type="text" id="address" placeholder="Enter your address" />
     </div>
-
+    
     <button class="save-btn" onclick="saveProfile()">💾 Save Changes</button>
-
+    
     <div class="dark-toggle">
-      <label for="darkMode">🌙 Dark Mode</label>
-      <input type="checkbox" id="darkMode" onchange="toggleDarkMode()" />
+      <label for="darkMode">
+        <span class="theme-icon">🌙</span>
+        Dark Mode
+        <label class="switch">
+          <input type="checkbox" id="darkMode" onchange="toggleTheme()">
+          <span class="slider"></span>
+        </label>
+      </label>
     </div>
   </div>
+  
+  <div id="tierPopup">
+    <p>🔒 You're currently on <strong>Tier 1</strong>.<br/>Please complete your profile to upgrade and unlock more features!</p>
+    <button onclick="closeTierPopup()">OK</button>
+  </div>
+  
+  <div class="success-message" id="successMessage">
+    Profile updated successfully!
+  </div>
+
 <script>
-  const $ = (id) => document.getElementById(id);
-
-  // Get current user phone and all users
-  const phone = localStorage.getItem("currentUserPhone");
-  const users = JSON.parse(localStorage.getItem("kudiratUsers") || "[]");
-
-  // Find the matching user
-  let currentUser = users.find(u => u.phone === phone);
-
+  // Theme Management System
+  const ThemeManager = {
+    init() {
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      this.applyTheme(savedTheme);
+      
+      // Set initial toggle state
+      const darkModeToggle = document.getElementById('darkMode');
+      if (darkModeToggle) {
+        darkModeToggle.checked = savedTheme === 'dark';
+      }
+    },
+    
+    applyTheme(theme) {
+      if (theme === 'light') {
+        document.body.classList.add('light');
+      } else {
+        document.body.classList.remove('light');
+      }
+      localStorage.setItem('theme', theme);
+    },
+    
+    toggle() {
+      const currentTheme = document.body.classList.contains('light') ? 'light' : 'dark';
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      this.applyTheme(newTheme);
+      
+      // Update toggle state
+      const darkModeToggle = document.getElementById('darkMode');
+      if (darkModeToggle) {
+        darkModeToggle.checked = newTheme === 'dark';
+      }
+    }
+  };
+  
+  // Initialize theme on page load
+  document.addEventListener('DOMContentLoaded', () => {
+    ThemeManager.init();
+  });
+  
+  // Constants
+  const SESSION_TTL = 30 * 60 * 1000; // 30 minutes session
+  
+  // DOM Elements
+  const elements = {
+    profilePic: document.getElementById("profilePic"),
+    displayName: document.getElementById("displayName"),
+    displayNumber: document.getElementById("displayNumber"),
+    accountNumber: document.getElementById("accountNumber"),
+    tier: document.getElementById("tier"),
+    tierBadge: document.getElementById("tierBadge"),
+    tierLimit: document.getElementById("tierLimit"),
+    fullName: document.getElementById("fullName"),
+    mobile: document.getElementById("mobile"),
+    nickname: document.getElementById("nickname"),
+    gender: document.getElementById("gender"),
+    dob: document.getElementById("dob"),
+    email: document.getElementById("email"),
+    address: document.getElementById("address"),
+    darkMode: document.getElementById("darkMode"),
+    tierPopup: document.getElementById("tierPopup"),
+    successMessage: document.getElementById("successMessage"),
+    avatarInput: document.getElementById("avatarInput")
+  };
+  
+  // Get current user
+  function getCurrentUser() {
+    const phone = localStorage.getItem("currentUserPhone");
+    const users = JSON.parse(localStorage.getItem("kudiratUsers") || "[]");
+    
+    // Check session
+    const sessionTimestamp = localStorage.getItem("sessionTimestamp");
+    if (!phone || !sessionTimestamp || (Date.now() - parseInt(sessionTimestamp) > SESSION_TTL)) {
+      localStorage.removeItem("currentUserPhone");
+      localStorage.removeItem("sessionTimestamp");
+      window.location.href = "login.html";
+      return null;
+    }
+    
+    return users.find(u => u.number === phone) || null;
+  }
+  
+  let currentUser = getCurrentUser();
+  
   if (!currentUser) {
-    alert("No user found. Please login.");
+    alert("Session expired. Please login again.");
     window.location.href = "login.html";
   }
-
-  // Load profile into fields
+  
+  // Calculate user tier based on profile completion
+  function calculateTier() {
+    const requiredFields = ["nickname", "gender", "dob", "email", "address"];
+    const filledCount = requiredFields.filter(field => 
+      currentUser[field] && currentUser[field].trim() !== ""
+    ).length;
+    
+    return filledCount === 5 ? 3 : filledCount >= 2 ? 2 : 1;
+  }
+  
+  // Load profile data
   function loadProfile() {
-    $("profilePic").src = currentUser.avatar || `https://i.pravatar.cc/150?u=${currentUser.phone}`;
-    $("fullName").value = currentUser.name || "";
-    $("accountNumber").value = currentUser.account || "";
-    $("mobile").value = currentUser.phone || "";
-    $("nickname").value = currentUser.nickname || "";
-    $("gender").value = currentUser.gender || "";
-    $("dob").value = currentUser.dob || "";
-    $("email").value = currentUser.email || "";
-    $("address").value = currentUser.address || "";
-
-    // Dark mode
-    if (localStorage.getItem("theme") === "light") {
-      document.body.classList.add("light");
-      $("darkMode").checked = false;
-    } else {
-      $("darkMode").checked = true;
-    }
+    // Refresh user data
+    currentUser = getCurrentUser();
+    
+    if (!currentUser) return;
+    
+    // Update profile picture
+    elements.profilePic.src = currentUser.avatar || `https://i.pravatar.cc/150?u=${currentUser.number}`;
+    
+    // Update profile card
+    elements.displayName.textContent = currentUser.fullName || "No Name";
+    elements.displayNumber.textContent = currentUser.number || "No Number";
+    
+    // Update form fields
+    elements.fullName.value = currentUser.fullName || "";
+    elements.accountNumber.value = currentUser.accountNumber || "";
+    elements.mobile.value = currentUser.number || "";
+    elements.nickname.value = currentUser.nickname || "";
+    elements.gender.value = currentUser.gender || "";
+    elements.dob.value = currentUser.dob || "";
+    elements.email.value = currentUser.email || "";
+    elements.address.value = currentUser.address || "";
+    
+    // Update tier information
+    const tier = calculateTier();
+    elements.tier.value = `Tier ${tier}`;
+    elements.tierBadge.textContent = `Tier ${tier}`;
+    
+    const limits = {
+      1: "Max Balance: ₦100,000",
+      2: "Max Balance: ₦500,000",
+      3: "Max Balance: ₦1,000,000"
+    };
+    elements.tierLimit.textContent = limits[tier];
   }
-
-  // Save updated profile
+  
+  // Save profile data
   function saveProfile() {
-    currentUser.nickname = $("nickname").value.trim();
-    currentUser.phone = $("mobile").value.trim();
-    currentUser.address = $("address").value.trim();
-    currentUser.gender = $("gender").value.trim();
-    currentUser.email = $("email").value.trim();
-    currentUser.dob = $("dob").value.trim();
-
-    const index = users.findIndex(u => u.phone === phone);
-    if (index !== -1) {
-      users[index] = currentUser;
+    // Update current user object
+    currentUser.fullName = elements.fullName.value.trim();
+    currentUser.nickname = elements.nickname.value.trim();
+    currentUser.gender = elements.gender.value;
+    currentUser.dob = elements.dob.value;
+    currentUser.email = elements.email.value.trim();
+    currentUser.address = elements.address.value.trim();
+    
+    // Update users array
+    const users = JSON.parse(localStorage.getItem("kudiratUsers") || "[]");
+    const userIndex = users.findIndex(u => u.number === currentUser.number);
+    
+    if (userIndex !== -1) {
+      users[userIndex] = currentUser;
       localStorage.setItem("kudiratUsers", JSON.stringify(users));
+      
+      // Show success message
+      elements.successMessage.style.display = "block";
+      setTimeout(() => {
+        elements.successMessage.style.display = "none";
+      }, 3000);
+      
+      // Reload profile to update tier
+      loadProfile();
+    } else {
+      alert("Error saving profile. Please try again.");
     }
-
-    alert("✅ Profile updated!");
   }
-
+  
   // Copy account number
   function copyAccount() {
-    navigator.clipboard.writeText($("accountNumber").value)
-      .then(() => alert("📋 Account number copied!"));
+    navigator.clipboard.writeText(elements.accountNumber.value)
+      .then(() => {
+        elements.successMessage.textContent = "Account number copied!";
+        elements.successMessage.style.display = "block";
+        setTimeout(() => {
+          elements.successMessage.style.display = "none";
+          elements.successMessage.textContent = "Profile updated successfully!";
+        }, 2000);
+      })
+      .catch(err => {
+        console.error("Failed to copy: ", err);
+        alert("Failed to copy account number");
+      });
   }
-
-  // Toggle dark/light theme
-  function toggleDarkMode() {
-    const isDark = $("darkMode").checked;
-    if (isDark) {
-      document.body.classList.remove("light");
-      localStorage.setItem("theme", "dark");
-    } else {
-      document.body.classList.add("light");
-      localStorage.setItem("theme", "light");
+  
+  // Toggle theme
+  function toggleTheme() {
+    ThemeManager.toggle();
+  }
+  
+  // Show tier popup
+  function showTierPopup() {
+    if (calculateTier() === 1) {
+      elements.tierPopup.style.display = "block";
     }
   }
-
+  
+  // Close tier popup
+  function closeTierPopup() {
+    elements.tierPopup.style.display = "none";
+  }
+  
+  // Handle avatar upload
+  elements.avatarInput.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const avatarSrc = event.target.result;
+        elements.profilePic.src = avatarSrc;
+        currentUser.avatar = avatarSrc;
+        
+        // Save to localStorage
+        const users = JSON.parse(localStorage.getItem("kudiratUsers") || "[]");
+        const userIndex = users.findIndex(u => u.number === currentUser.number);
+        
+        if (userIndex !== -1) {
+          users[userIndex].avatar = avatarSrc;
+          localStorage.setItem("kudiratUsers", JSON.stringify(users));
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+  
+  // Initialize profile
   loadProfile();
+  
+  // Update session timestamp on user activity
+  function updateSessionTimestamp() {
+    localStorage.setItem("sessionTimestamp", Date.now().toString());
+  }
+  
+  // Add event listeners for user activity
+  document.addEventListener("click", updateSessionTimestamp);
+  document.addEventListener("keypress", updateSessionTimestamp);
 </script>
 </body>
 </html>

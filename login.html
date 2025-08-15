@@ -1,87 +1,119 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>Kudirat Wallet Login</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
+    /* Add this to the top of your CSS in all pages */
+:root {
+  --bg-primary: #0e0e0e;
+  --bg-secondary: #1e1e1e;
+  --bg-card: #1e1e1e;
+  --text-primary: #ffffff;
+  --text-secondary: #bbbbbb;
+  --text-muted: #999999;
+  --accent: #00ffae;
+  --accent-secondary: #00b86b;
+  --border: #333333;
+  --input-bg: #1e1e1e;
+  --shadow: rgba(0, 0, 0, 0.5);
+}
+/* Light Mode */
+body.light {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f5;
+  --bg-card: #ffffff;
+  --text-primary: #000000;
+  --text-secondary: #666666;
+  --text-muted: #999999;
+  --accent: #00b86b;
+  --accent-secondary: #00b86b;
+  --border: #e0e0e0;
+  --input-bg: #f0f0f0;
+  --shadow: rgba(0, 0, 0, 0.1);
+}
     * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: "Segoe UI", sans-serif;
-      background: #121212;
-      color: white;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
+      transition: background-color 0.3s, color 0.3s;
     }
-
+    
+    @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-8px); }
+    40%, 80% { transform: translateX(8px); }
+   }
+input.error {
+  animation: shake 0.4s;
+  border: 1px solid #ff4d4d;
+}
     .login-container {
       text-align: center;
       max-width: 350px;
       width: 90%;
       padding: 20px;
     }
-
     .logo img {
       width: 180px;
       margin-bottom: 30px;
     }
-
     .avatar img {
       width: 90px;
       height: 90px;
       border-radius: 50%;
       object-fit: cover;
-      border: 2px solid #00ffae;
-      background-color: #333;
+      border: 2px solid var(--accent);
+      background-color: var(--bg-secondary);
       margin-bottom: 10px;
     }
-
     .user-info {
       font-weight: bold;
       margin-bottom: 25px;
       font-size: 17px;
+      color: var(--text-primary);
     }
-
     .pin-box {
-      background: #1e1e1e;
+      background: var(--bg-card);
       border-radius: 8px;
       padding: 12px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 8px var(--shadow);
     }
-
     .pin-box input {
       border: none;
       background: transparent;
-      color: white;
+      color: var(--text-primary);
       width: 100%;
       font-size: 16px;
       outline: none;
     }
-
     .eye {
       cursor: pointer;
       font-size: 20px;
-      color: #888;
+      color: var(--text-secondary);
     }
-
     .forgot {
       text-align: right;
       margin: 10px 0 25px;
     }
-
     .forgot a {
-      color: #00ffae;
+      color: var(--accent);
       font-size: 14px;
       text-decoration: none;
     }
-
     .login-btn {
-      background: #00b86b;
+      background: var(--accent-secondary);
       color: white;
       width: 100%;
       padding: 14px;
@@ -89,112 +121,229 @@
       font-size: 16px;
       border-radius: 30px;
       cursor: pointer;
+      transition: background-color 0.2s;
     }
-
+    .login-btn:hover {
+      background: var(--accent);
+    }
     .switch-account {
       margin-top: 25px;
       font-size: 14px;
-      color: #ccc;
+      color: var(--text-muted);
     }
-
     .switch-account a {
-      color: #00ffae;
+      color: var(--accent);
       text-decoration: underline;
       cursor: pointer;
     }
-
     footer {
       margin-top: 30px;
       font-size: 12px;
-      color: #888;
+      color: var(--text-muted);
+    }
+    footer b {
+      color: var(--text-primary);
+    }
+    .error-message {
+      color: #ff4d4f;
+      font-size: 14px;
+      margin-top: 10px;
+      display: none;
     }
   </style>
+  <!-- Add this to the <head> of all your HTML pages -->
+<script>
+// Theme Management System
+const ThemeManager = {
+  init() {
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    this.applyTheme(savedTheme);
+    
+    // Set initial toggle state if toggle exists on page
+    const darkModeToggle = document.getElementById('darkMode');
+    if (darkModeToggle) {
+      darkModeToggle.checked = savedTheme === 'dark';
+    }
+  },
+  
+  applyTheme(theme) {
+    if (theme === 'light') {
+      document.body.classList.add('light');
+    } else {
+      document.body.classList.remove('light');
+    }
+    localStorage.setItem('theme', theme);
+  },
+  
+  toggle() {
+    const currentTheme = document.body.classList.contains('light') ? 'light' : 'dark';
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    this.applyTheme(newTheme);
+    
+    // Update toggle state if it exists
+    const darkModeToggle = document.getElementById('darkMode');
+    if (darkModeToggle) {
+      darkModeToggle.checked = newTheme === 'dark';
+    }
+  }
+};
+// Initialize theme on page load
+document.addEventListener('DOMContentLoaded', () => {
+  ThemeManager.init();
+});
+</script>
 </head>
 <body>
-
 <div class="login-container">
   <div class="logo">
     <img src="./kudirat-logo.png" alt="Kudirat Logo" />
   </div>
-
   <div class="avatar">
     <img id="avatarImage" src="default-avatar.png" alt="User Avatar">
   </div>
-
   <div class="user-info" id="userLabel">Loading...</div>
-
   <div class="pin-box">
     <input type="password" id="password" maxlength="6" placeholder="Enter 6-digit PIN" />
     <span onclick="togglePassword()" class="eye">&#128065;</span>
   </div>
-
+  <div class="error-message" id="errorMessage"></div>
   <div class="forgot">
     <a href="forgot-pin.html">Forgot PIN?</a>
   </div>
-
   <button onclick="login()" class="login-btn">Login</button>
-
   <div class="switch-account">
     Not you? <a onclick="switchAccount()">Click here to login as a different user</a>
   </div>
-
   <footer>
     Licensed by the <b>CBN</b> and insured by the <b>NDIC</b>
   </footer>
 </div>
-
 <script>
-  const currentPhone = localStorage.getItem("currentUserPhone");
+  // Function to mask phone number
+  function maskPhoneNumber(phone) {
+    if (!phone) return "";
+    
+    // Handle international format (+234...)
+    if (phone.startsWith('+')) {
+      return phone.substring(0, 4) + '******' + phone.substring(phone.length - 2);
+    }
+    
+    // Handle local format (0...)
+    if (phone.startsWith('0')) {
+      return phone.substring(0, 3) + '******' + phone.substring(phone.length - 2);
+    }
+    
+    // Default masking for other formats
+    return phone.substring(0, 2) + '******' + phone.substring(phone.length - 2);
+  }
+  
+  // Check if user is already logged in
+  const existingUser = localStorage.getItem("currentUserPhone");
+  const sessionTimestamp = localStorage.getItem("sessionTimestamp");
+  const SESSION_TTL = 30 * 60 * 1000; // 30 minutes
+  
+  if (existingUser && sessionTimestamp && (Date.now() - parseInt(sessionTimestamp) < SESSION_TTL)) {
+    window.location.href = "dashboard.html";
+  }
+  
+  const currentContact = localStorage.getItem("currentUserPhone");
   const users = JSON.parse(localStorage.getItem("kudiratUsers")) || [];
-
-  if (!currentPhone || users.length === 0) {
+  
+  // If no session user → go pick an account
+  if (!currentContact || users.length === 0) {
     window.location.href = "choose-user.html";
   }
-
-  const currentUser = users.find(u => u.phone === currentPhone);
-
+  
+  // Match user by phone number
+  const currentUser = users.find(u => u.number === currentContact);
+  
+  // If not found → go back to choose-user
   if (!currentUser) {
-    alert("User not found. Please choose an account again.");
     localStorage.removeItem("currentUserPhone");
     window.location.href = "choose-user.html";
   }
-
-  // Show user info
-  document.getElementById("userLabel").textContent = `${currentUser.name} (${currentUser.phone})`;
-
+  
+  // Check if user has set a login PIN
+  if (!currentUser.loginPIN) {
+    // Redirect to set PIN page
+    window.location.href = "set-pin.html";
+  }
+  
+  // Show user info on page - display masked phone number instead of name
+  document.getElementById("userLabel").textContent = maskPhoneNumber(currentUser.number);
+  
   const avatarImage = document.getElementById("avatarImage");
-  const avatarSrc = currentUser.avatar && currentUser.avatar.trim() !== ""
+  avatarImage.src = currentUser.avatar && currentUser.avatar.trim() !== ""
     ? currentUser.avatar
-    : `https://i.pravatar.cc/150?u=${currentUser.phone}`;
-  avatarImage.src = avatarSrc;
-
+    : `https://i.pravatar.cc/150?u=${currentUser.number}`;
+  
   function togglePassword() {
     const input = document.getElementById("password");
     input.type = input.type === "password" ? "text" : "password";
   }
-
+  
   function login() {
-    const enteredPassword = document.getElementById("password").value;
-
-    if (!currentUser.pin) {
-      alert("No PIN set for this user.");
+    const enteredPassword = document.getElementById("password").value.trim();
+    const errorMessage = document.getElementById("errorMessage");
+    
+    // Clear previous error
+    errorMessage.style.display = "none";
+    
+    // Check if PIN is entered
+    if (enteredPassword.length !== 6) {
+      errorMessage.textContent = "Please enter your 6-digit PIN";
+      errorMessage.style.display = "block";
+      shakeInput();
       return;
     }
-
-    if (enteredPassword === currentUser.pin) {
-      localStorage.setItem("kudiratUser", "true");
-      window.location.href = "unlock.html";
+    
+    // Check if PIN matches
+    if (enteredPassword === currentUser.loginPIN) {
+      // Generate and save OTP
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      const expiry = Date.now() + 60000; // 60 seconds expiry
+      
+      localStorage.setItem("loginOTP", otp);
+      localStorage.setItem("otpExpiry", expiry);
+      localStorage.setItem("otpPending", "true");
+      
+      // For demo purposes, show the OTP in an alert
+      alert(`Your Kudirat Wallet verification code is: ${otp}\n\n(This is for demo purposes only. In a real app, this would be sent to your phone via SMS.)`);
+      
+      // Redirect to OTP verification page
+      window.location.href = "./unlock.html";
     } else {
-      alert("Incorrect PIN. Try again.");
+      errorMessage.textContent = "Incorrect PIN. Please try again.";
+      errorMessage.style.display = "block";
+      shakeInput();
     }
   }
-
+  
+  function shakeInput() {
+    const input = document.getElementById("password");
+    input.classList.add("error");
+    setTimeout(() => {
+      input.classList.remove("error");
+      input.value = "";
+    }, 500);
+  }
+  
   function switchAccount() {
-    localStorage.removeItem("kudiratUser");
     localStorage.removeItem("currentUserPhone");
+    localStorage.removeItem("sessionTimestamp");
+    localStorage.removeItem("kudiratUser");
+    localStorage.removeItem("otpPending");
+    localStorage.removeItem("loginOTP");
+    localStorage.removeItem("otpExpiry");
     window.location.href = "choose-user.html";
   }
+  
+  // Handle Enter key press
+  document.getElementById("password").addEventListener("keypress", function(e) {
+    if (e.key === "Enter") {
+      login();
+    }
+  });
 </script>
-
 </body>
 </html>

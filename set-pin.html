@@ -5,9 +5,37 @@
   <title>Set PIN – Kudirat Wallet</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
+    /* Add this to the top of your CSS in all pages */
+:root {
+  --bg-primary: #0e0e0e;
+  --bg-secondary: #1e1e1e;
+  --bg-card: #1e1e1e;
+  --text-primary: #ffffff;
+  --text-secondary: #bbbbbb;
+  --text-muted: #999999;
+  --accent: #00ffae;
+  --accent-secondary: #00b86b;
+  --border: #333333;
+  --input-bg: #1e1e1e;
+  --shadow: rgba(0, 0, 0, 0.5);
+}
+/* Light Mode */
+body.light {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f5;
+  --bg-card: #ffffff;
+  --text-primary: #000000;
+  --text-secondary: #666666;
+  --text-muted: #999999;
+  --accent: #00b86b;
+  --accent-secondary: #00b86b;
+  --border: #e0e0e0;
+  --input-bg: #f0f0f0;
+  --shadow: rgba(0, 0, 0, 0.1);
+}
     body {
-      background-color: #0e0e0e;
-      color: white;
+       background-color: var(--bg-primary);
+       color: var(--text-primary);
       font-family: "Segoe UI", sans-serif;
       display: flex;
       flex-direction: column;
@@ -16,130 +44,269 @@
       height: 100vh;
       padding: 20px;
     }
-
+    .container {
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+    .logo {
+      margin-bottom: 30px;
+    }
+    .logo img {
+      width: 150px;
+    }
     h2 {
       margin-bottom: 10px;
       text-align: center;
+      color: var(--text-primary);
     }
-
+    .subtitle {
+      color: var(--text-secondary);
+      margin-bottom: 30px;
+      font-size: 0.9rem;
+    }
     .pin-section {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 20px;
     }
-
     .pin-boxes {
       display: flex;
       gap: 10px;
     }
-
     .pin-boxes input {
-      width: 40px;
-      height: 50px;
+      width: 45px;
+      height: 55px;
       text-align: center;
-      font-size: 1.5rem;
+      font-size: 1.8rem;
       border: none;
       border-radius: 8px;
-      background-color: #1f1f1f;
-      color: white;
+      background-color: var(--input-bg);
+      color: var(--text-primary);
+      font-weight: bold;
     }
-
-    button {
-      padding: 10px 20px;
+    .pin-label {
       font-size: 1rem;
-      background-color: #00b86b;
+      margin-bottom: 10px;
+      color: var(--text-secondary);
+    }
+    button {
+      padding: 12px 30px;
+      font-size: 1rem;
+      background-color: var(--accent-secondary);
       border: none;
       border-radius: 10px;
       cursor: pointer;
-    }
-
-    .error {
-      color: red;
+      color: white;
+      font-weight: 600;
       margin-top: 10px;
+      width: 100%;
+      max-width: 300px;
+    }
+    .skip-btn {
+      background: none;
+      color: var(--accent-secondary);
+      border: 1px solid var(--accent-secondary);
+      padding: 10px 20px;
+      margin-top: 15px;
+    }
+    .error {
+      color: #ff4d4f;
+      margin-top: 15px;
       font-size: 0.9rem;
+      min-height: 20px;
+    }
+    .success {
+      color: var(--accent-secondary);
+      margin-top: 15px;
+      font-size: 0.9rem;
+      min-height: 20px;
     }
   </style>
+  <!-- Add this to the <head> of all your HTML pages -->
+<script>
+// Theme Management System
+const ThemeManager = {
+  init() {
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    this.applyTheme(savedTheme);
+    
+    // Set initial toggle state if toggle exists on page
+    const darkModeToggle = document.getElementById('darkMode');
+    if (darkModeToggle) {
+      darkModeToggle.checked = savedTheme === 'dark';
+    }
+  },
+  
+  applyTheme(theme) {
+    if (theme === 'light') {
+      document.body.classList.add('light');
+    } else {
+      document.body.classList.remove('light');
+    }
+    localStorage.setItem('theme', theme);
+  },
+  
+  toggle() {
+    const currentTheme = document.body.classList.contains('light') ? 'light' : 'dark';
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    this.applyTheme(newTheme);
+    
+    // Update toggle state if it exists
+    const darkModeToggle = document.getElementById('darkMode');
+    if (darkModeToggle) {
+      darkModeToggle.checked = newTheme === 'dark';
+    }
+  }
+};
+// Initialize theme on page load
+document.addEventListener('DOMContentLoaded', () => {
+  ThemeManager.init();
+});
+</script>
 </head>
 <body>
-
-  <h2>Set Your 6-Digit PIN</h2>
-
-  <div class="pin-section">
-    <div class="pin-boxes" id="pin1">
-      <input type="password" maxlength="1" oninput="moveNext(this, 0, 'pin1')">
-      <input type="password" maxlength="1" oninput="moveNext(this, 1, 'pin1')">
-      <input type="password" maxlength="1" oninput="moveNext(this, 2, 'pin1')">
-      <input type="password" maxlength="1" oninput="moveNext(this, 3, 'pin1')">
-      <input type="password" maxlength="1" oninput="moveNext(this, 4, 'pin1')">
-      <input type="password" maxlength="1" oninput="moveNext(this, 5, 'pin1')">
+  <div class="container">
+    <div class="logo">
+      <img src="./kudirat-logo.png" alt="Kudirat Logo">
     </div>
-
-    <h2 style="font-size: 18px;">Confirm PIN</h2>
-
-    <div class="pin-boxes" id="pin2">
-      <input type="password" maxlength="1" oninput="moveNext(this, 0, 'pin2')">
-      <input type="password" maxlength="1" oninput="moveNext(this, 1, 'pin2')">
-      <input type="password" maxlength="1" oninput="moveNext(this, 2, 'pin2')">
-      <input type="password" maxlength="1" oninput="moveNext(this, 3, 'pin2')">
-      <input type="password" maxlength="1" oninput="moveNext(this, 4, 'pin2')">
-      <input type="password" maxlength="1" oninput="moveNext(this, 5, 'pin2')">
+    <h2>Set Your PIN</h2>
+    <p class="subtitle">Create a 6-digit PIN for secure login to your account</p>
+    
+    <div class="pin-section">
+      <div>
+        <div class="pin-label">Enter PIN</div>
+        <div class="pin-boxes" id="pin1">
+          <input type="password" maxlength="1" oninput="moveNext(this, 0, 'pin1')" onkeydown="handleBackspace(event, this, 'pin1')">
+          <input type="password" maxlength="1" oninput="moveNext(this, 1, 'pin1')" onkeydown="handleBackspace(event, this, 'pin1')">
+          <input type="password" maxlength="1" oninput="moveNext(this, 2, 'pin1')" onkeydown="handleBackspace(event, this, 'pin1')">
+          <input type="password" maxlength="1" oninput="moveNext(this, 3, 'pin1')" onkeydown="handleBackspace(event, this, 'pin1')">
+          <input type="password" maxlength="1" oninput="moveNext(this, 4, 'pin1')" onkeydown="handleBackspace(event, this, 'pin1')">
+          <input type="password" maxlength="1" oninput="moveNext(this, 5, 'pin1')" onkeydown="handleBackspace(event, this, 'pin1')">
+        </div>
+      </div>
+      
+      <div>
+        <div class="pin-label">Confirm PIN</div>
+        <div class="pin-boxes" id="pin2">
+          <input type="password" maxlength="1" oninput="moveNext(this, 0, 'pin2')" onkeydown="handleBackspace(event, this, 'pin2')">
+          <input type="password" maxlength="1" oninput="moveNext(this, 1, 'pin2')" onkeydown="handleBackspace(event, this, 'pin2')">
+          <input type="password" maxlength="1" oninput="moveNext(this, 2, 'pin2')" onkeydown="handleBackspace(event, this, 'pin2')">
+          <input type="password" maxlength="1" oninput="moveNext(this, 3, 'pin2')" onkeydown="handleBackspace(event, this, 'pin2')">
+          <input type="password" maxlength="1" oninput="moveNext(this, 4, 'pin2')" onkeydown="handleBackspace(event, this, 'pin2')">
+          <input type="password" maxlength="1" oninput="moveNext(this, 5, 'pin2')" onkeydown="handleBackspace(event, this, 'pin2')">
+        </div>
+      </div>
+      
+      <button onclick="savePIN()">Set PIN</button>
+      <button class="skip-btn" onclick="skipPINSetup()">Skip for Now</button>
+      <div id="message" class="error"></div>
     </div>
-
-    <button onclick="savePIN()">Set PIN</button>
-    <div id="error" class="error"></div>
   </div>
-
-  <script>
-    // Auto move to next input box
-    function moveNext(el, index, groupId) {
-      const inputs = document.querySelectorAll(`#${groupId} input`);
-      if (el.value && index < inputs.length - 1) {
-        inputs[index + 1].focus();
-      }
+<script>
+function moveNext(input, index, groupId) {
+  if (input.value.length === 1 && index < 5) {
+    input.parentElement.children[index + 1].focus();
+  }
+}
+function handleBackspace(event, input, groupId) {
+  if (event.key === "Backspace" && input.value === "") {
+    const index = Array.from(input.parentElement.children).indexOf(input);
+    if (index > 0) {
+      input.parentElement.children[index - 1].focus();
     }
-
-    function savePIN() {
-      const pin1 = Array.from(document.querySelectorAll('#pin1 input')).map(i => i.value).join('');
-      const pin2 = Array.from(document.querySelectorAll('#pin2 input')).map(i => i.value).join('');
-      const error = document.getElementById("error");
-
-      if (pin1.length < 6 || pin2.length < 6) {
-        error.textContent = "Please enter all 6 digits in both fields.";
-        return;
-      }
-
-      if (pin1 !== pin2) {
-        error.textContent = "PINs do not match.";
-        return;
-      }
-
-      // ✅ Save the PIN to the correct user object
-      const users = JSON.parse(localStorage.getItem("kudiratUsers")) || [];
-      const phone = localStorage.getItem("currentUserPhone");
-
-      const index = users.findIndex(u => u.phone === phone);
-      if (index !== -1) {
-        users[index].pin = pin1;
-        localStorage.setItem("kudiratUsers", JSON.stringify(users));
-      } else {
-        error.textContent = "User not found.";
-        return;
-      }
-
-      // Optional global save
-      localStorage.setItem("userPIN", pin1);
-      localStorage.setItem("pinAttempts", "0");
-
-      // Redirect
-      window.location.href = "unlock.html";
-    }
-
-    // ✅ Redirect if profile not complete
-    if (!localStorage.getItem("currentUserPhone")) {
-      window.location.href = "choose-user.html";
-    }
-  </script>
-
+  }
+}
+function getPIN(groupId) {
+  const inputs = document.querySelectorAll(`#${groupId} input`);
+  return Array.from(inputs).map(i => i.value).join("");
+}
+function isSimplePIN(pin) {
+  // Check for repeated digits (111111) or sequential (123456)
+  return /^(\d)\1{5}$/.test(pin) || 
+         /^012345$|^123456$|^234567$|^345678$|^456789$|^567890$|^098765$|^987654$|^876543$|^765432$|^654321$|^543210$/.test(pin);
+}
+function savePIN() {
+  const pin1 = getPIN("pin1");
+  const pin2 = getPIN("pin2");
+  const messageEl = document.getElementById("message");
+  
+  // Reset message
+  messageEl.textContent = "";
+  messageEl.className = "error";
+  
+  // Validate PIN length
+  if (pin1.length !== 6 || pin2.length !== 6) {
+    messageEl.textContent = "PIN must be 6 digits.";
+    return;
+  }
+  
+  // Validate PIN match
+  if (pin1 !== pin2) {
+    messageEl.textContent = "PINs do not match.";
+    return;
+  }
+  
+  // Validate PIN complexity
+  if (isSimplePIN(pin1)) {
+    messageEl.textContent = "PIN is too simple. Avoid repeated or sequential digits.";
+    return;
+  }
+  
+  // Get user data
+  const phone = localStorage.getItem("currentUserPhone");
+  if (!phone) {
+    messageEl.textContent = "Session expired. Please register again.";
+    return;
+  }
+  
+  let users = JSON.parse(localStorage.getItem("kudiratUsers") || "[]");
+  const userIndex = users.findIndex(u => u.number === phone);
+  
+  if (userIndex === -1) {
+    messageEl.textContent = "User not found.";
+    return;
+  }
+  
+  // Save the login PIN
+  users[userIndex].loginPIN = pin1;
+  localStorage.setItem("kudiratUsers", JSON.stringify(users));
+  
+  // Update current session
+  localStorage.setItem("kudiratUser", JSON.stringify(users[userIndex]));
+  
+  // Show success message
+  messageEl.textContent = "PIN set successfully!";
+  messageEl.className = "success";
+  
+  // Redirect to dashboard after a short delay
+  setTimeout(() => {
+    window.location.href = "dashboard.html";
+  }, 1500);
+}
+function skipPINSetup() {
+  if (confirm("You can set your PIN later in Settings. Continue to dashboard?")) {
+    window.location.href = "dashboard.html";
+  }
+}
+// Check if user is logged in
+window.addEventListener('DOMContentLoaded', () => {
+  const phone = localStorage.getItem("currentUserPhone");
+  if (!phone) {
+    window.location.href = "register.html";
+    return;
+  }
+  
+  // Check if user already has a PIN set
+  const users = JSON.parse(localStorage.getItem("kudiratUsers") || "[]");
+  const user = users.find(u => u.number === phone);
+  
+  if (user && user.loginPIN) {
+    // If PIN is already set, redirect to dashboard
+    window.location.href = "dashboard.html";
+  }
+});
+</script>
 </body>
 </html>
