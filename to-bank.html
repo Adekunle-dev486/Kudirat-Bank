@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kudirat Wallet - To Bank</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
+  <style>
+    /* Theme Variables */
+    :root {
+      --bg-primary: #060607;
+      --bg-secondary: #232727;
+      --bg-card: #232727;
+      --bg-input: #232727;
+      --bg-modal: #16213e;
+      --bg-highlight: #0f3460;
+      --text-primary: #e0e0e0;
+      --text-secondary: #a0a0a0;
+      --text-muted: #999999;
+      --accent: #00b16a;
+      --accent-hover: #00a05f;
+      --border: #2a2a3e;
+      --shadow: rgba(0, 0, 0, 0.5);
+      --international: #3498db;
+      --international-hover: #2980b9;
+    }
+    
+    /* Light Mode */
+    body.light {
+      --bg-primary: #f5f5f5;
+      --bg-secondary: #ffffff;
+      --bg-card: #ffffff;
+      --bg-input: #f8f9fa;
+      --bg-modal: #ffffff;
+      --bg-highlight: #e9f5ff;
+      --text-primary: #333333;
+      --text-secondary: #666666;
+      --text-muted: #999999;
+      --accent: #00b16a;
+      --accent-hover: #00a05f;
+      --border: #e0e0e0;
+      --shadow: rgba(0, 0, 0, 0.1);
+    }
+    
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif}
+    body{background:var(--bg-primary);color:var(--text-primary);min-height:100vh;transition:background-color 0.3s, color 0.3s}
+    header{display:flex;align-items:center;justify-content:space-between;padding:clamp(15px, 4vw, 18px) clamp(15px, 4vw, 20px);background:var(--bg-secondary);
+      box-shadow:0 2px 10px var(--shadow);font-size:clamp(16px, 4vw, 18px);font-weight:700;position:sticky;top:0;z-index:10;transition:background-color 0.3s}
+    header i{font-size:clamp(18px, 4vw, 20px);cursor:pointer;color:var(--accent)}
+    header a{font-size:clamp(14px, 3vw, 15px);color:var(--accent);text-decoration:none;font-weight:500}
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: clamp(36px, 8vw, 40px);
+      height: clamp(36px, 8vw, 40px);
+      border-radius: 50%;
+      background: var(--bg-highlight);
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .theme-toggle:hover {
+      background: var(--bg-input);
+    }
+    .theme-toggle i {
+      font-size: clamp(16px, 4vw, 18px);
+      color: var(--text-secondary);
+    }
+    .container{padding:clamp(15px, 4vw, 20px);max-width:600px;margin:0 auto;width:100%}
+    .card{background:var(--bg-card);border-radius:16px;padding:clamp(15px, 4vw, 20px);margin-bottom:20px;box-shadow:0 6px 18px var(--shadow);transition:background-color 0.3s}
+    .input-group{margin-bottom:20px}
+    .input-group label{display:block;font-size:clamp(13px, 3vw, 14px);margin-bottom:8px;color:var(--text-secondary);font-weight:600}
+    .input-group input{width:100%;padding:clamp(12px, 3vw, 15px);border:1px solid var(--border);border-radius:12px;font-size:clamp(15px, 3vw, 16px);outline:none;transition:all .3s;background:var(--bg-input);color:var(--text-primary)}
+    .input-group input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,177,106,0.1)}
+    .input-group select{width:100%;padding:clamp(12px, 3vw, 15px);border:1px solid var(--border);border-radius:12px;font-size:clamp(15px, 3vw, 16px);outline:none;transition:all .3s;background:var(--bg-input);color:var(--text-primary)}
+    .input-group select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,177,106,0.1)}
+    .bank-select{display:flex;justify-content:space-between;align-items:center;padding:clamp(12px, 3vw, 15px);border:1px solid var(--border);border-radius:12px;background:var(--bg-input);cursor:pointer;transition:all .3s}
+    .bank-select:hover{border-color:var(--accent)}
+    .bank-select.auto-selected{border-color:var(--accent);background:var(--bg-highlight)}
+    .bank-select i { pointer-events: none; } /* Fix for chevron icon click issue */
+    .btn{width:100%;padding:clamp(12px, 3vw, 16px);background:var(--accent);color:#fff;font-size:clamp(15px, 3vw, 17px);font-weight:600;border:0;border-radius:12px;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center;gap:10px}
+    .btn:hover{background:var(--accent-hover)}
+    .btn:active{transform:scale(.98)}
+    .btn:disabled{background:var(--text-muted);cursor:not-allowed}
+    .btn.international{background:var(--international)}
+    .btn.international:hover{background:var(--international-hover)}
+    .banner{background:var(--bg-card);padding:clamp(12px, 3vw, 16px);border-radius:12px;font-size:clamp(14px, 3vw, 15px);text-align:center;margin-bottom:20px;box-shadow:0 4px 12px var(--shadow);color:var(--text-primary);display:flex;align-items:center;justify-content:center;gap:10px;transition:background-color 0.3s}
+    .tabs{display:flex;gap:10px;margin-bottom:15px}
+    .tabs button{flex:1;padding:clamp(10px, 2.5vw, 12px);background:var(--bg-card);border:0;border-radius:10px;font-size:clamp(14px, 3vw, 15px);cursor:pointer;font-weight:500;transition:all .3s;color:var(--text-secondary)}
+    .tabs button.active{background:var(--accent);color:#fff}
+    .tabs button.international.active{background:var(--international)}
+    .recent-list, .favorites-list{list-style:none;margin-top:15px}
+    .recent-list li, .favorites-list li{display:flex;flex-direction:column;padding:clamp(12px, 3vw, 16px);border-bottom:1px solid var(--border);cursor:pointer;transition:all .3s}
+    .recent-list li:hover, .favorites-list li:hover{background:var(--bg-card)}
+    .recent-list li:last-child, .favorites-list li:last-child{border-bottom:none}
+    .recent-header, .favorites-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+    .recent-name, .favorites-name{font-weight:600;color:var(--text-primary);font-size:clamp(14px, 3vw, 16px)}
+    .recent-amount, .favorites-amount{font-weight:700;color:var(--accent);font-size:clamp(14px, 3vw, 16px)}
+    .recent-details, .favorites-details{font-size:clamp(12px, 2.5vw, 13px);color:var(--text-secondary)}
+    .view-all{display:flex;justify-content:center;margin-top:15px}
+    .view-all button{background:none;border:none;color:var(--accent);font-size:clamp(14px, 3vw, 15px);cursor:pointer;font-weight:500}
+    .favorite-icon{color:#ffcc00;margin-left:10px;cursor:pointer}
+    .favorite-icon.active{color:var(--accent)}
+    
+    /* Account Name Confirmation */
+    .account-name-confirm{background:var(--bg-highlight);padding:clamp(12px, 3vw, 15px);border-radius:12px;margin-bottom:20px;text-align:center;transition:background-color 0.3s}
+    .account-name-confirm .name{font-size:clamp(16px, 4vw, 18px);font-weight:600;color:var(--accent);margin-bottom:5px}
+    .account-name-confirm .account{font-size:clamp(13px, 3vw, 14px);color:var(--text-secondary)}
+    .account-name-confirm .loading{display:flex;align-items:center;justify-content:center;gap:10px;color:var(--text-secondary)}
+    
+    /* Amount Input Styling */
+    .amount-input{position:relative}
+    .amount-input .currency{position:absolute;left:clamp(12px, 3vw, 15px);top:50%;transform:translateY(-50%);font-size:clamp(16px, 4vw, 18px);font-weight:600;color:var(--text-secondary)}
+    .amount-input input{padding-left:clamp(30px, 6vw, 35px)}
+    
+    /* Bank Detection */
+    .bank-detection{display:flex;align-items:center;gap:8px;margin-top:5px;font-size:clamp(12px, 2.5vw, 13px);color:var(--accent)}
+    .bank-detection i{font-size:clamp(10px, 2vw, 12px)}
+    
+    /* Exchange Rate Display */
+    .exchange-display{background:var(--bg-highlight);padding:clamp(12px, 3vw, 15px);border-radius:12px;margin-bottom:20px}
+    .exchange-display .rate{font-size:clamp(14px, 3vw, 15px);color:var(--text-secondary);margin-bottom:5px}
+    .exchange-display .value{font-size:clamp(16px, 4vw, 18px);font-weight:600;color:var(--text-primary)}
+    .exchange-display .fee{font-size:clamp(13px, 3vw, 14px);color:var(--text-secondary);margin-top:5px}
+    
+    /* Modal (bottom sheet) */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.7);opacity:0;pointer-events:none;transition:.3s;z-index:19}
+    .modal{position:fixed;left:0;bottom:-100%;width:100%;background:var(--bg-secondary);border-radius:20px 20px 0 0;
+      box-shadow:0 -12px 30px var(--shadow);transition:bottom .3s ease;z-index:20;max-height:85%;display:flex;flex-direction:column}
+    .modal.show{bottom:0}
+    .modal-backdrop.show{opacity:1;pointer-events:auto}
+    .modal-header{padding:clamp(15px, 4vw, 18px) clamp(15px, 4vw, 20px);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+    .modal-header .title{font-weight:700;font-size:clamp(16px, 4vw, 18px);flex:1;color:var(--text-primary)}
+    .modal-header .close{font-size:clamp(20px, 4vw, 22px);cursor:pointer;color:var(--text-secondary)}
+    .controls{display:flex;flex-direction:column;gap:10px;padding:clamp(12px, 3vw, 15px) clamp(15px, 4vw, 20px);border-bottom:1px solid var(--border)}
+    .controls input[type="text"]{flex:1;padding:clamp(10px, 2.5vw, 12px) clamp(12px, 3vw, 15px);border:1px solid var(--border);border-radius:10px;font-size:clamp(14px, 3vw, 15px);background:var(--bg-highlight);color:var(--text-primary)}
+    .controls select{padding:clamp(10px, 2.5vw, 12px) clamp(12px, 3vw, 15px);border:1px solid var(--border);border-radius:10px;font-size:clamp(14px, 3vw, 15px);background:var(--bg-highlight);color:var(--text-primary)}
+    .bank-list{overflow:auto}
+    .bank-item{display:flex;align-items:center;gap:15px;padding:clamp(12px, 3vw, 15px) clamp(15px, 4vw, 20px);border-bottom:1px solid var(--border);cursor:pointer;transition:all .3s}
+    .bank-item:hover{background:var(--bg-highlight)}
+    .bank-logo{width:clamp(35px, 7vw, 40px);height:clamp(35px, 7vw, 40px);border-radius:10px;object-fit:cover;background:var(--bg-highlight);display:flex;align-items:center;justify-content:center;font-size:clamp(12px, 3vw, 14px);color:var(--text-secondary);font-weight:600}
+    .bank-meta{display:flex;flex-direction:column}
+    .bank-name{font-size:clamp(14px, 3vw, 15px);font-weight:600;color:var(--text-primary)}
+    .bank-country{font-size:clamp(12px, 2.5vw, 13px);color:var(--text-secondary)}
+    .empty{padding:30px;text-align:center;color:var(--text-secondary)}
+    .pager{display:flex;align-items:center;justify-content:center;gap:15px;padding:clamp(12px, 3vw, 15px) clamp(15px, 4vw, 20px);border-top:1px solid var(--border)}
+    .pager button{border:1px solid var(--border);background:var(--bg-highlight);padding:clamp(8px, 2vw, 10px) clamp(12px, 3vw, 15px);border-radius:8px;cursor:pointer;transition:all .3s;color:var(--text-primary)}
+    .pager button:hover{background:var(--bg-input)}
+    .pager button:disabled{opacity:.5;cursor:not-allowed}
+    .pager .page-info{font-size:clamp(12px, 2.5vw, 14px);color:var(--text-secondary)}
+    
+    /* Success Screen */
+    .success-screen{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:100;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:20px}
+    .success-icon{font-size:clamp(60px, 10vw, 80px);color:var(--accent);margin-bottom:20px}
+    .success-title{font-size:clamp(22px, 5vw, 28px);font-weight:700;color:#fff;margin-bottom:15px}
+    .success-text{font-size:clamp(16px, 4vw, 18px);color:var(--text-primary);max-width:400px;line-height:1.5}
+    
+    /* Confirmation Popup */
+    .popup{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%, -50%);background:var(--bg-modal);padding:clamp(20px, 4vw, 25px);border-radius:16px;box-shadow:0 10px 30px var(--shadow);z-index:50;width:90%;max-width:400px}
+    .popup.show{display:block}
+    .close-btn{position:absolute;top:clamp(12px, 3vw, 15px);right:clamp(12px, 3vw, 15px);font-size:clamp(18px, 4vw, 22px);cursor:pointer;color:var(--text-secondary)}
+    .popup h3{font-size:clamp(18px, 4vw, 20px);margin-bottom:20px;color:var(--text-primary)}
+    .summary{background:var(--bg-highlight);padding:clamp(12px, 3vw, 15px);border-radius:10px;margin-bottom:20px}
+    .summary p{margin-bottom:10px;display:flex;justify-content:space-between;font-size:clamp(14px, 3vw, 16px)}
+    .summary p:last-child{margin-bottom:0}
+    .summary p span:first-child{color:var(--text-secondary)}
+    .summary p span:last-child{font-weight:600;color:var(--text-primary)}
+    .popup .btn{margin-top:10px}
+    
+    /* PIN Modal */
+    .pin-modal{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%, -50%);background:var(--bg-modal);padding:clamp(20px, 4vw, 25px);border-radius:16px;box-shadow:0 10px 30px var(--shadow);z-index:50;width:90%;max-width:400px}
+    .pin-modal.show{display:block}
+    .pin-modal h3{font-size:clamp(18px, 4vw, 20px);margin-bottom:20px;text-align:center;color:var(--text-primary)}
+    .pin-inputs{display:flex;justify-content:center;gap:clamp(8px, 2vw, 12px);margin:25px 0}
+    .pin-inputs input{width:clamp(40px, 8vw, 50px);height:clamp(40px, 8vw, 50px);text-align:center;font-size:clamp(18px, 4vw, 22px);border:2px solid var(--border);border-radius:10px;background:var(--bg-highlight);color:var(--text-primary);transition:all .3s}
+    .pin-inputs input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,177,106,0.1)}
+    .pin-modal .btn{margin-top:10px}
+    
+    /* Loading state */
+    .loading{display:inline-block;width:20px;height:20px;border:3px solid rgba(255,255,255,.3);border-radius:50%;border-top-color:#fff;animation:spin 1s ease-in-out infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    
+    /* Notification */
+    .notification{position:fixed;top:80px;left:50%;transform:translateX(-50%);background:var(--bg-card);color:var(--text-primary);padding:clamp(12px, 3vw, 15px) clamp(20px, 4vw, 25px);border-radius:30px;font-size:clamp(14px, 3vw, 15px);z-index:30;opacity:0;transition:all .3s;max-width:90%;box-shadow:0 4px 12px var(--shadow)}
+    .notification.show{opacity:1;transform:translateX(-50%) translateY(10px)}
+    
+    /* Section titles */
+    .section-title{font-size:clamp(15px, 3.5vw, 16px);font-weight:600;color:var(--text-secondary);margin-bottom:15px}
+    
+    /* Tab content */
+    .tab-content{display:none}
+    .tab-content.active{display:block}
+    
+    /* Form steps */
+    .form-step{display:none}
+    .form-step.active{display:block}
+    
+    /* Cancel button style */
+    .cancel-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: clamp(12px, 3vw, 14px);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .cancel-btn:hover {
+      background: var(--bg-highlight);
+      color: var(--text-primary);
+    }
+    
+    /* International Transfer Specific Styles */
+    .transfer-type-selector {
+      display: flex;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .transfer-type-option {
+      flex: 1;
+      padding: clamp(12px, 3vw, 15px);
+      background: var(--bg-input);
+      color: var(--text-secondary);
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 500;
+    }
+    .transfer-type-option.active {
+      background: var(--accent);
+      color: white;
+    }
+    .transfer-type-option.international.active {
+      background: var(--international);
+    }
+    
+    /* Media Queries */
+    @media (max-width: 480px) {
+      .container {
+        padding: 15px;
+      }
+      
+      .card {
+        padding: 15px;
+        margin-bottom: 15px;
+      }
+      
+      .modal {
+        border-radius: 15px 15px 0 0;
+      }
+      
+      .bank-item {
+        padding: 12px 15px;
+      }
+      
+      .bank-logo {
+        width: 35px;
+        height: 35px;
+      }
+      
+      .controls {
+        flex-direction: column;
+        gap: 8px;
+        padding: 12px 15px;
+      }
+      
+      .controls input, .controls select {
+        padding: 10px 12px;
+        font-size: 14px;
+      }
+      
+      .pin-inputs input {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+      }
+    }
+    
+    @media (min-width: 768px) {
+      .container {
+        max-width: 700px;
+      }
+      
+      .controls {
+        flex-direction: row;
+      }
+    }
+    
+    @media (min-width: 1024px) {
+      .container {
+        max-width: 800px;
+      }
+      
+      .modal {
+        max-width: 600px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-radius: 16px;
+        bottom: auto;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        max-height: 90vh;
+      }
+      
+      .modal.show {
+        bottom: auto;
+        top: 50%;
+        transform: translate(-50%, -50%);
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="dashboard.html"><i class="fa fa-arrow-left"></i></a>
+    <span>Transfer to Bank Account</span>
+    <div style="display: flex; align-items: center; gap: 15px;">
+      <a href="transaction.html">History</a>
+      <div class="theme-toggle" onclick="ThemeManager.toggle()">
+        <i class="fa fa-moon" id="themeIcon"></i>
+      </div>
+    </div>
+  </header>
+  
+  <div class="container">
+    <div class="card">
+      <!-- Transfer Type Selector -->
+      <div class="transfer-type-selector">
+        <div class="transfer-type-option active" id="domesticOption" onclick="switchTransferType('domestic')">
+          <i class="fa fa-university"></i> Domestic
+        </div>
+        <div class="transfer-type-option international" id="internationalOption" onclick="switchTransferType('international')">
+          <i class="fa fa-globe"></i> International
+        </div>
+      </div>
+      
+      <!-- Domestic Transfer Form -->
+      <div id="domesticForm">
+        <div class="section-title">Recipient Account</div>
+        
+        <!-- Step 1: Account Details -->
+        <div id="step1" class="form-step active">
+          <div class="input-group">
+            <label>Enter 10 digits Account Number</label>
+            <input type="text" id="accountNumber" placeholder="Enter account number" maxlength="10">
+            <div class="bank-detection" id="bankDetection" style="display:none;">
+              <i class="fas fa-check-circle"></i>
+              <span id="detectedBankText"></span>
+            </div>
+          </div>
+          
+          <div class="input-group">
+            <label>Select Bank</label>
+            <div class="bank-select" id="bankSelect">
+              <span id="selectedBank">Select Bank</span>
+              <i class="fa fa-chevron-down"></i>
+            </div>
+          </div>
+          
+          <button class="btn" id="verifyBtn" disabled>
+            <span>Verify Account</span>
+            <i class="fa fa-search"></i>
+          </button>
+        </div>
+        
+        <!-- Step 2: Account Name Confirmation -->
+        <div id="step2" class="form-step">
+          <div class="account-name-confirm" id="accountNameConfirm">
+            <div class="loading">
+              <span class="loading"></span>
+              <span>Verifying account details...</span>
+            </div>
+          </div>
+          
+          <div class="input-group" id="amountGroup" style="display:none;">
+            <label>Enter Amount</label>
+            <div class="amount-input">
+              <span class="currency">₦</span>
+              <input type="number" id="amount" placeholder="0.00" min="1" step="0.01">
+            </div>
+          </div>
+          
+          <button class="btn" id="nextBtn" style="display:none;">
+            <span>Continue</span>
+            <i class="fa fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+      
+      <!-- International Transfer Form -->
+      <div id="internationalForm" style="display: none;">
+        <div class="section-title">International Transfer</div>
+        
+        <!-- Step 1: Recipient Details -->
+        <div id="intStep1" class="form-step active">
+          <div class="input-group">
+            <label>Recipient Country</label>
+            <select id="recipientCountry">
+              <option value="">Select Country</option>
+              <option value="US">United States</option>
+              <option value="GB">United Kingdom</option>
+              <option value="CA">Canada</option>
+              <option value="EU">Eurozone</option>
+              <option value="AU">Australia</option>
+              <option value="IN">India</option>
+              <option value="CN">China</option>
+              <option value="AE">United Arab Emirates</option>
+            </select>
+          </div>
+          
+          <div class="input-group">
+            <label>Recipient Currency</label>
+            <select id="recipientCurrency">
+              <option value="">Select Currency</option>
+              <option value="USD">US Dollar (USD)</option>
+              <option value="GBP">British Pound (GBP)</option>
+              <option value="EUR">Euro (EUR)</option>
+              <option value="CAD">Canadian Dollar (CAD)</option>
+              <option value="AUD">Australian Dollar (AUD)</option>
+              <option value="INR">Indian Rupee (INR)</option>
+              <option value="CNY">Chinese Yuan (CNY)</option>
+              <option value="AED">UAE Dirham (AED)</option>
+            </select>
+          </div>
+          
+          <div class="input-group">
+            <label>Bank Name</label>
+            <input type="text" id="recipientBank" placeholder="Enter bank name">
+          </div>
+          
+          <div class="input-group">
+            <label>Account Number / IBAN</label>
+            <input type="text" id="recipientAccount" placeholder="Enter account number or IBAN">
+          </div>
+          
+          <div class="input-group">
+            <label>Recipient Name</label>
+            <input type="text" id="recipientName" placeholder="Enter recipient full name">
+          </div>
+          
+          <button class="btn international" id="validateIntBtn">
+            <span>Validate Details</span>
+            <i class="fa fa-check-circle"></i>
+          </button>
+        </div>
+        
+        <!-- Step 2: Amount & Exchange -->
+        <div id="intStep2" class="form-step">
+          <div class="account-name-confirm" id="intAccountConfirm" style="display:none;">
+            <div class="name" id="confirmedRecipientName"></div>
+            <div class="account" id="confirmedAccountDetails"></div>
+          </div>
+          
+          <div class="input-group" id="intAmountGroup" style="display:none;">
+            <label>Amount to Send (NGN)</label>
+            <div class="amount-input">
+              <span class="currency">₦</span>
+              <input type="number" id="intAmount" placeholder="0.00" min="1" step="0.01">
+            </div>
+          </div>
+          
+          <div class="exchange-display" id="exchangeDisplay" style="display:none;">
+            <div class="rate">Exchange Rate</div>
+            <div class="value" id="exchangeRate">1 NGN = 0.00067 USD</div>
+            <div class="fee">Transfer Fee: <span id="transferFee">₦500</span></div>
+            <div class="fee">Recipient Gets: <span id="recipientGets">$0.00</span></div>
+          </div>
+          
+          <button class="btn international" id="intContinueBtn" style="display:none;">
+            <span>Continue</span>
+            <i class="fa fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="banner">
+      <i class="fas fa-chart-line"></i>
+      <span>Bank Transfer Success Rate Monitor</span>
+    </div>
+    
+    <div class="card">
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('recents')">Recents</button>
+        <button class="tab-btn" onclick="switchTab('favorites')">Favourites</button>
+      </div>
+      
+      <div id="recents" class="tab-content active">
+        <ul class="recent-list" id="recentList">
+          <!-- Recent transactions will be dynamically loaded here -->
+        </ul>
+        <div class="view-all">
+          <button>View All ></button>
+        </div>
+      </div>
+      
+      <div id="favorites" class="tab-content">
+        <ul class="favorites-list" id="favoritesList">
+          <!-- Favorite transactions will be dynamically loaded here -->
+        </ul>
+        <div class="view-all">
+          <button>Manage Favourites ></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Backdrop + Modal -->
+  <div class="modal-backdrop" id="bankBackdrop"></div>
+  <div class="modal" id="bankModal">
+    <div class="modal-header">
+      <span class="title">Select Bank</span>
+      <div style="display: flex; gap: 10px;">
+        <button class="cancel-btn" id="cancelBankBtn">Cancel</button>
+        <i class="fa fa-times close" id="closeBankModal"></i>
+      </div>
+    </div>
+    <div class="controls">
+      <input type="text" id="bankSearch" placeholder="Search banks...">
+      <select id="countryFilter">
+        <option value="">All countries</option>
+      </select>
+    </div>
+    <div class="bank-list" id="bankList"><div class="empty">Loading banks…</div></div>
+    <div class="pager">
+      <button id="prevPage">&laquo; Prev</button>
+      <span class="page-info" id="pageInfo">Page 1</span>
+      <button id="nextPage">Next &raquo;</button>
+    </div>
+  </div>
+  
+  <!-- Success Screen -->
+  <div id="successScreen" class="success-screen">
+    <div class="success-icon"><i class="fas fa-check-circle"></i></div>
+    <div class="success-title">Transfer Successful!</div>
+    <div class="success-text" id="successText"></div>
+  </div>
+  
+  <!-- Confirmation Popup -->
+  <div class="popup" id="confirmPopup">
+    <span class="close-btn" id="closePopup">&times;</span>
+    <h3>Confirm Transfer</h3>
+    <div class="summary" id="summary"></div>
+    <button class="btn" id="confirmTransferBtn">
+      <span>Confirm</span>
+      <i class="fa fa-lock"></i>
+    </button>
+  </div>
+  
+  <!-- PIN Modal -->
+  <div class="pin-modal" id="pinModal">
+    <span class="close-btn" id="closePinModal">&times;</span>
+    <h3>Enter PIN</h3>
+    <div class="pin-inputs">
+      <input type="password" maxlength="1">
+      <input type="password" maxlength="1">
+      <input type="password" maxlength="1">
+      <input type="password" maxlength="1">
+    </div>
+    <button class="btn" id="verifyPinBtn">
+      <span>Verify PIN</span>
+      <i class="fa fa-shield-alt"></i>
+    </button>
+  </div>
+  
+  <!-- Notification -->
+  <div class="notification" id="notification"></div>
+  
+  <!-- Theme Management System -->
+  <script>
+    // Theme Management System
+    const ThemeManager = {
+      init() {
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        this.applyTheme(savedTheme);
+        
+        // Set initial toggle state if toggle exists on page
+        const darkModeToggle = document.getElementById('darkMode');
+        if (darkModeToggle) {
+          darkModeToggle.checked = savedTheme === 'dark';
+        }
+      },
+      
+      applyTheme(theme) {
+        if (theme === 'light') {
+          document.body.classList.add('light');
+        } else {
+          document.body.classList.remove('light');
+        }
+        localStorage.setItem('theme', theme);
+      },
+      
+      toggle() {
+        const currentTheme = document.body.classList.contains('light') ? 'light' : 'dark';
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        this.applyTheme(newTheme);
+        
+        // Update toggle state if it exists
+        const darkModeToggle = document.getElementById('darkMode');
+        if (darkModeToggle) {
+          darkModeToggle.checked = newTheme === 'dark';
+        }
+      }
+    };
+    // Initialize theme on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      ThemeManager.init();
+    });
+  </script>
+  
+  <!-- Event Listeners Setup -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Bank select click handler
+      const bankSelect = document.getElementById('bankSelect');
+      if (bankSelect) {
+        bankSelect.addEventListener('click', function() {
+          // Remove auto-selected class to allow manual selection
+          bankSelect.classList.remove('auto-selected');
+          if (typeof openBankModal === 'function') {
+            openBankModal();
+          }
+        });
+      }
+      
+      // Add click event to the chevron icon specifically
+      const chevronIcon = document.querySelector('.bank-select i');
+      if (chevronIcon) {
+        chevronIcon.addEventListener('click', function(e) {
+          e.stopPropagation(); // Prevent event bubbling
+          if (typeof openBankModal === 'function') {
+            openBankModal();
+          }
+        });
+      }
+      
+      // International transfer event listeners
+      setupInternationalTransferEvents();
+    });
+    
+    function setupInternationalTransferEvents() {
+      // Recipient country change - update currency options
+      const recipientCountry = document.getElementById('recipientCountry');
+      if (recipientCountry) {
+        recipientCountry.addEventListener('change', function() {
+          updateCurrencyOptions(this.value);
+        });
+      }
+      
+      // Amount input change - calculate exchange
+      const intAmount = document.getElementById('intAmount');
+      if (intAmount) {
+        intAmount.addEventListener('input', calculateExchange);
+      }
+      
+      // Validate international details button
+      const validateIntBtn = document.getElementById('validateIntBtn');
+      if (validateIntBtn) {
+        validateIntBtn.addEventListener('click', validateInternationalDetails);
+      }
+      
+      // Continue button for international transfer
+      const intContinueBtn = document.getElementById('intContinueBtn');
+      if (intContinueBtn) {
+        intContinueBtn.addEventListener('click', function() {
+          showInternationalConfirmation();
+        });
+      }
+    }
+    
+    function switchTransferType(type) {
+      const domesticOption = document.getElementById('domesticOption');
+      const internationalOption = document.getElementById('internationalOption');
+      const domesticForm = document.getElementById('domesticForm');
+      const internationalForm = document.getElementById('internationalForm');
+      
+      if (type === 'domestic') {
+        domesticOption.classList.add('active');
+        internationalOption.classList.remove('active');
+        domesticForm.style.display = 'block';
+        internationalForm.style.display = 'none';
+      } else {
+        domesticOption.classList.remove('active');
+        internationalOption.classList.add('active');
+        domesticForm.style.display = 'none';
+        internationalForm.style.display = 'block';
+      }
+    }
+    
+    function updateCurrencyOptions(country) {
+      const currencySelect = document.getElementById('recipientCurrency');
+      // Clear existing options
+      currencySelect.innerHTML = '<option value="">Select Currency</option>';
+      
+      // Add currency options based on country
+      switch(country) {
+        case 'US':
+          currencySelect.innerHTML += '<option value="USD">US Dollar (USD)</option>';
+          break;
+        case 'GB':
+          currencySelect.innerHTML += '<option value="GBP">British Pound (GBP)</option>';
+          break;
+        case 'CA':
+          currencySelect.innerHTML += '<option value="CAD">Canadian Dollar (CAD)</option>';
+          break;
+        case 'EU':
+          currencySelect.innerHTML += '<option value="EUR">Euro (EUR)</option>';
+          break;
+        case 'AU':
+          currencySelect.innerHTML += '<option value="AUD">Australian Dollar (AUD)</option>';
+          break;
+        case 'IN':
+          currencySelect.innerHTML += '<option value="INR">Indian Rupee (INR)</option>';
+          break;
+        case 'CN':
+          currencySelect.innerHTML += '<option value="CNY">Chinese Yuan (CNY)</option>';
+          break;
+        case 'AE':
+          currencySelect.innerHTML += '<option value="AED">UAE Dirham (AED)</option>';
+          break;
+      }
+    }
+    
+    function validateInternationalDetails() {
+      // Get form values
+      const country = document.getElementById('recipientCountry').value;
+      const currency = document.getElementById('recipientCurrency').value;
+      const bank = document.getElementById('recipientBank').value;
+      const account = document.getElementById('recipientAccount').value;
+      const name = document.getElementById('recipientName').value;
+      
+      // Basic validation
+      if (!country || !currency || !bank || !account || !name) {
+        showNotification('Please fill in all fields', 'error');
+        return;
+      }
+      
+      // Simulate API validation
+      showNotification('Validating recipient details...', 'info');
+      
+      setTimeout(() => {
+        // Show confirmation
+        const intStep1 = document.getElementById('intStep1');
+        const intStep2 = document.getElementById('intStep2');
+        const intAccountConfirm = document.getElementById('intAccountConfirm');
+        const confirmedRecipientName = document.getElementById('confirmedRecipientName');
+        const confirmedAccountDetails = document.getElementById('confirmedAccountDetails');
+        const intAmountGroup = document.getElementById('intAmountGroup');
+        const intContinueBtn = document.getElementById('intContinueBtn');
+        
+        // Update confirmation details
+        confirmedRecipientName.textContent = name;
+        confirmedAccountDetails.textContent = `${bank} • ${account}`;
+        
+        // Show step 2
+        intStep1.classList.remove('active');
+        intStep2.classList.add('active');
+        intAccountConfirm.style.display = 'block';
+        intAmountGroup.style.display = 'block';
+        intContinueBtn.style.display = 'flex';
+        
+        showNotification('Recipient details validated successfully', 'success');
+      }, 1500);
+    }
+    
+    function calculateExchange() {
+      const amount = parseFloat(document.getElementById('intAmount').value) || 0;
+      const currency = document.getElementById('recipientCurrency').value;
+      
+      if (amount <= 0 || !currency) return;
+      
+      // Mock exchange rates (in real app, fetch from API)
+      const exchangeRates = {
+        'USD': 0.00067,
+        'GBP': 0.00053,
+        'EUR': 0.00062,
+        'CAD': 0.00091,
+        'AUD': 0.00101,
+        'INR': 0.056,
+        'CNY': 0.0048,
+        'AED': 0.0025
+      };
+      
+      const rate = exchangeRates[currency] || 0;
+      const convertedAmount = amount * rate;
+      const fee = 500; // Fixed fee in NGN
+      
+      // Update UI
+      document.getElementById('exchangeRate').textContent = `1 NGN = ${rate} ${currency}`;
+      document.getElementById('transferFee').textContent = `₦${fee.toFixed(2)}`;
+      document.getElementById('recipientGets').textContent = `${convertedAmount.toFixed(2)} ${currency}`;
+      
+      // Show exchange display
+      document.getElementById('exchangeDisplay').style.display = 'block';
+    }
+    
+    function showInternationalConfirmation() {
+      // Get values
+      const amount = parseFloat(document.getElementById('intAmount').value) || 0;
+      const currency = document.getElementById('recipientCurrency').value;
+      const name = document.getElementById('recipientName').value;
+      const account = document.getElementById('recipientAccount').value;
+      
+      if (amount <= 0) {
+        showNotification('Please enter a valid amount', 'error');
+        return;
+      }
+      
+      // Show confirmation popup
+      const confirmPopup = document.getElementById('confirmPopup');
+      const summary = document.getElementById('summary');
+      
+      // Calculate final values
+      const exchangeRates = {
+        'USD': 0.00067,
+        'GBP': 0.00053,
+        'EUR': 0.00062,
+        'CAD': 0.00091,
+        'AUD': 0.00101,
+        'INR': 0.056,
+        'CNY': 0.0048,
+        'AED': 0.0025
+      };
+      
+      const rate = exchangeRates[currency] || 0;
+      const convertedAmount = amount * rate;
+      const fee = 500;
+      
+      // Update summary
+      summary.innerHTML = `
+        <p><span>Recipient:</span> <span>${name}</span></p>
+        <p><span>Account:</span> <span>${account}</span></p>
+        <p><span>You Send:</span> <span>₦${amount.toFixed(2)}</span></p>
+        <p><span>Exchange Rate:</span> <span>1 NGN = ${rate} ${currency}</span></p>
+        <p><span>Fee:</span> <span>₦${fee.toFixed(2)}</span></p>
+        <p><span>Recipient Gets:</span> <span>${convertedAmount.toFixed(2)} ${currency}</span></p>
+      `;
+      
+      // Show popup
+      confirmPopup.classList.add('show');
+      
+      // Setup confirm button
+      const confirmTransferBtn = document.getElementById('confirmTransferBtn');
+      confirmTransferBtn.onclick = function() {
+        confirmPopup.classList.remove('show');
+        showPinModal();
+      };
+    }
+    
+    function showPinModal() {
+      const pinModal = document.getElementById('pinModal');
+      pinModal.classList.add('show');
+      
+      // Setup PIN inputs
+      const pinInputs = pinModal.querySelectorAll('.pin-inputs input');
+      pinInputs.forEach((input, index) => {
+        input.value = '';
+        input.addEventListener('input', function() {
+          if (this.value.length === 1 && index < pinInputs.length - 1) {
+            pinInputs[index + 1].focus();
+          }
+        });
+        
+        input.addEventListener('keydown', function(e) {
+          if (e.key === 'Backspace' && this.value === '' && index > 0) {
+            pinInputs[index - 1].focus();
+          }
+        });
+      });
+      
+      // Setup verify button
+      const verifyPinBtn = document.getElementById('verifyPinBtn');
+      verifyPinBtn.onclick = function() {
+        // Get PIN value
+        let pin = '';
+        pinInputs.forEach(input => {
+          pin += input.value;
+        });
+        
+        if (pin.length !== 4) {
+          showNotification('Please enter a complete 4-digit PIN', 'error');
+          return;
+        }
+        
+        // Simulate PIN verification
+        pinModal.classList.remove('show');
+        processInternationalTransfer();
+      };
+    }
+    
+    function processInternationalTransfer() {
+      showNotification('Processing international transfer...', 'info');
+      
+      // Simulate processing
+      setTimeout(() => {
+        // Show success screen
+        const successScreen = document.getElementById('successScreen');
+        const successText = document.getElementById('successText');
+        
+        // Get values
+        const amount = parseFloat(document.getElementById('intAmount').value) || 0;
+        const currency = document.getElementById('recipientCurrency').value;
+        const name = document.getElementById('recipientName').value;
+        
+        successText.textContent = `₦${amount.toFixed(2)} has been sent to ${name}. The transfer should arrive within 1-3 business days.`;
+        
+        successScreen.style.display = 'flex';
+        
+        // Reset form after delay
+        setTimeout(() => {
+          successScreen.style.display = 'none';
+          resetInternationalForm();
+        }, 5000);
+      }, 2000);
+    }
+    
+    function resetInternationalForm() {
+      // Reset form
+      document.getElementById('recipientCountry').value = '';
+      document.getElementById('recipientCurrency').value = '';
+      document.getElementById('recipientBank').value = '';
+      document.getElementById('recipientAccount').value = '';
+      document.getElementById('recipientName').value = '';
+      document.getElementById('intAmount').value = '';
+      
+      // Reset steps
+      document.getElementById('intStep1').classList.add('active');
+      document.getElementById('intStep2').classList.remove('active');
+      document.getElementById('intAccountConfirm').style.display = 'none';
+      document.getElementById('intAmountGroup').style.display = 'none';
+      document.getElementById('exchangeDisplay').style.display = 'none';
+      document.getElementById('intContinueBtn').style.display = 'none';
+    }
+    
+    function showNotification(message, type = 'info') {
+      const notification = document.getElementById('notification');
+      notification.textContent = message;
+      notification.classList.add('show');
+      
+      // Set color based on type
+      switch(type) {
+        case 'success':
+          notification.style.background = 'var(--accent)';
+          break;
+        case 'error':
+          notification.style.background = '#e74c3c';
+          break;
+        default:
+          notification.style.background = 'var(--bg-card)';
+      }
+      
+      // Hide after 3 seconds
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 3000);
+    }
+  </script>
+  
+  <!-- External JavaScript -->
+  <script src="./to-me.js"></script>
+</body>
+</html>

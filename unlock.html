@@ -41,9 +41,15 @@ body.light {
     flex-direction: column; 
     align-items: center; 
     justify-content: center; 
-    height: 100vh;
+    min-height: 100vh;
     padding: 20px;
+    margin: 0;
     transition: background-color 0.3s, color 0.3s;
+    box-sizing: border-box;
+  }
+  
+  * {
+    box-sizing: border-box;
   }
   
   .container {
@@ -58,24 +64,31 @@ body.light {
   
   .logo img {
     width: 180px;
+    max-width: 80%;
+    height: auto;
   }
   
   h2 {
     margin-bottom: 20px;
     color: var(--text-primary);
+    font-size: clamp(1.5rem, 5vw, 2rem);
+  }
+  
+  p {
+    font-size: clamp(0.875rem, 2.5vw, 1rem);
   }
   
   .otp-box { 
     display: flex; 
-    gap: 15px; 
+    gap: clamp(8px, 3vw, 15px); 
     justify-content: center;
     margin-bottom: 30px;
   }
   
   .otp-box input { 
-    width: 45px; 
-    height: 55px; 
-    font-size: 24px; 
+    width: clamp(35px, 8vw, 45px); 
+    height: clamp(45px, 10vw, 55px); 
+    font-size: clamp(18px, 4vw, 24px); 
     text-align: center; 
     border: 1px solid var(--border);
     border-radius: 8px;
@@ -105,20 +118,21 @@ body.light {
   .timer { 
     margin: 20px 0;
     color: var(--text-secondary);
-    font-size: 14px;
+    font-size: clamp(0.75rem, 2vw, 0.875rem);
   }
   
   button { 
     margin-top: 10px;
-    padding: 12px 24px; 
+    padding: clamp(10px, 2.5vw, 12px) clamp(20px, 5vw, 24px); 
     border: none; 
     border-radius: 30px; 
     background: var(--accent-secondary); 
     color: white; 
-    font-size: 16px;
+    font-size: clamp(0.875rem, 3vw, 1rem);
     font-weight: bold;
     cursor: pointer;
     transition: background-color 0.2s;
+    width: 100%;
   }
   
   button:hover:not(:disabled) {
@@ -132,7 +146,7 @@ body.light {
   
   .error-message {
     color: #ff4d4f;
-    font-size: 14px;
+    font-size: clamp(0.75rem, 2vw, 0.875rem);
     margin-top: 15px;
     display: none;
   }
@@ -140,8 +154,9 @@ body.light {
   .back-btn {
     display: flex;
     align-items: center;
+    justify-content: center;
     color: var(--text-secondary);
-    font-size: 14px;
+    font-size: clamp(0.75rem, 2vw, 0.875rem);
     margin-top: 20px;
     cursor: pointer;
     text-decoration: none;
@@ -154,12 +169,53 @@ body.light {
   .footer {
     position: fixed;
     bottom: 20px;
-    font-size: 12px;
+    font-size: clamp(0.625rem, 1.5vw, 0.75rem);
     color: var(--text-muted);
+    width: 100%;
+    text-align: center;
   }
   
   .footer b {
     color: var(--text-primary);
+  }
+  
+  /* Media Queries for better responsiveness */
+  @media (max-width: 480px) {
+    .container {
+      max-width: 90%;
+    }
+    
+    .logo {
+      margin-bottom: 20px;
+    }
+    
+    .logo img {
+      width: 150px;
+    }
+    
+    h2 {
+      margin-bottom: 15px;
+    }
+    
+    .otp-box {
+      margin-bottom: 20px;
+    }
+  }
+  
+  @media (min-width: 768px) {
+    .container {
+      max-width: 500px;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    body {
+      padding: 30px;
+    }
+    
+    .container {
+      max-width: 600px;
+    }
   }
 </style>
 <!-- Add this to the <head> of all your HTML pages -->
@@ -224,11 +280,9 @@ document.addEventListener('DOMContentLoaded', () => {
     <i class="fas fa-arrow-left"></i> Back to Login
   </a>
 </div>
-
 <div class="footer">
   Licensed by the <b>CBN</b> and insured by the <b>NDIC</b>
 </div>
-
 <script>
   const otpLength = 6;
   const otpBox = document.getElementById("otpInputs");
@@ -397,6 +451,8 @@ document.addEventListener('DOMContentLoaded', () => {
     notification.style.padding = "12px 24px";
     notification.style.borderRadius = "30px";
     notification.style.zIndex = "1000";
+    notification.style.width = "90%";
+    notification.style.maxWidth = "400px";
     notification.textContent = "OTP has been resent to your phone";
     document.body.appendChild(notification);
     

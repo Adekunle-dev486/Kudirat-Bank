@@ -7,89 +7,144 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <script src="https://unpkg.com/html5-qrcode"></script>
   <style>
+    :root {
+      /* Dark mode variables (default) */
+      --bg-primary: #0e0e0e;
+      --bg-secondary: #1a1a1a;
+      --bg-tertiary: #1f1f1f;
+      --bg-quaternary: #121212;
+      --text-primary: white;
+      --text-secondary: #aaa;
+      --border-color: #222;
+      --border-secondary: #333;
+      --accent-color: #00ffae;
+      --input-bg: #000;
+    }
+
+    /* Light mode variables */
+    [data-theme="light"] {
+      --bg-primary: #f8f9fa;
+      --bg-secondary: #ffffff;
+      --bg-tertiary: #f1f3f5;
+      --bg-quaternary: #e9ecef;
+      --text-primary: #212529;
+      --text-secondary: #6c757d;
+      --border-color: #dee2e6;
+      --border-secondary: #ced4da;
+      --accent-color: #00a878;
+      --input-bg: #ffffff;
+    }
+
     body {
       margin: 0; padding: 0;
-      background-color: #0e0e0e;
-      color: white;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
       font-family: "Segoe UI", sans-serif;
+      transition: background-color 0.3s, color 0.3s;
     }
     .header {
-      background-color: #1a1a1a;
+      background-color: var(--bg-secondary);
       padding: 12px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid #222;
+      border-bottom: 1px solid var(--border-color);
+      transition: background-color 0.3s, border-color 0.3s;
     }
     .header h2 { margin: 0; font-size: 1rem; }
     .header a {
-      color: #00ffae; text-decoration: none;
+      color: var(--accent-color); 
+      text-decoration: none;
       font-size: 0.9rem;
+      transition: color 0.3s;
     }
     .input-section {
-      background-color: #1f1f1f;
+      background-color: var(--bg-tertiary);
       margin: 12px;
       padding: 14px;
       border-radius: 10px;
       display: flex;
       align-items: center;
+      transition: background-color 0.3s;
     }
     .input-section input {
-      background: #000;
-      border: none;
+      background: var(--input-bg);
+      border: 1px solid var(--border-secondary);
       padding: 12px;
-      color: white;
+      color: var(--text-primary);
       flex: 1;
       border-radius: 8px;
       font-size: 1rem;
+      transition: background-color 0.3s, border-color 0.3s, color 0.3s;
     }
     .input-section i {
       margin-left: 10px;
-      color: #00ffae;
+      color: var(--accent-color);
       cursor: pointer;
+      transition: color 0.3s;
+    }
+    .theme-toggle {
+      background: none;
+      border: none;
+      color: var(--accent-color);
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 5px;
+      border-radius: 50%;
+      transition: background-color 0.3s;
+    }
+    .theme-toggle:hover {
+      background-color: var(--bg-tertiary);
     }
     .tabs {
       display: flex;
       justify-content: space-around;
       margin-top: 12px;
-      background-color: #121212;
+      background-color: var(--bg-quaternary);
+      transition: background-color 0.3s;
     }
     .tabs div {
       flex: 1;
       text-align: center;
       padding: 10px;
       cursor: pointer;
+      color: var(--text-secondary);
+      transition: color 0.3s;
     }
     .tabs .active {
-      color: #00ffae;
-      border-bottom: 2px solid #00ffae;
+      color: var(--accent-color);
+      border-bottom: 2px solid var(--accent-color);
     }
     .recents {
       padding: 12px;
     }
     .contact {
       padding: 10px 0;
-      border-bottom: 1px solid #333;
+      border-bottom: 1px solid var(--border-secondary);
       position: relative;
+      transition: border-color 0.3s;
     }
     .contact span {
       display: block;
       font-size: 0.95rem;
+      color: var(--text-secondary);
+      transition: color 0.3s;
     }
     .fav-star {
       position: absolute;
       right: 0;
       top: 15px;
       font-size: 1rem;
-      color: gray;
+      color: var(--text-secondary);
       cursor: pointer;
+      transition: color 0.3s;
     }
     .view-all {
       text-align: center;
       margin: 12px 0;
     }
     .see-others {
-      background-color: #1f1f1f;
+      background-color: var(--bg-tertiary);
       margin: 12px;
       padding: 12px;
       border-radius: 10px;
@@ -97,10 +152,12 @@
       align-items: center;
       gap: 12px;
       cursor: pointer;
+      transition: background-color 0.3s;
     }
     .see-others i {
       font-size: 1.5rem;
-      color: #00ffae;
+      color: var(--accent-color);
+      transition: color 0.3s;
     }
     #qrModal {
       position: fixed;
@@ -128,29 +185,28 @@
   </style>
 </head>
 <body>
-
 <div class="header">
   <a href="dashboard.html"><i class="fas fa-arrow-left"></i></a>
   <h2>Transfer to Kudirat Account</h2>
-  <a href="#">History</a>
+  <div style="display: flex; align-items: center; gap: 15px;">
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+      <i class="fas fa-moon"></i>
+    </button>
+    <a href="#">History</a>
+  </div>
 </div>
-
 <div class="input-section">
   <input type="text" id="recipientInput" placeholder="Phone No./Kudirat Account No./Name">
   <i class="fas fa-qrcode" onclick="openQRScanner()"></i>
 </div>
-
 <div class="tabs">
   <div class="active" onclick="switchTab('recents')">Recents</div>
   <div onclick="switchTab('favourites')">Favourites</div>
 </div>
-
 <div class="recents" id="contactList"></div>
-
 <div class="view-all">
-  <button onclick="viewAll()" style="background:#00ffae;color:#000;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;">View All</button>
+  <button onclick="viewAll()" style="background:var(--accent-color);color:var(--bg-primary);border:none;padding:8px 16px;border-radius:8px;cursor:pointer;">View All</button>
 </div>
-
 <div class="see-others" onclick="alert('Accessing your contact list soon...')">
   <i class="fas fa-address-book"></i>
   <div>
@@ -158,41 +214,61 @@
     <small>Send money to your contacts for free</small>
   </div>
 </div>
-
 <!-- QR Scanner Modal -->
 <div id="qrModal">
   <div id="qr-reader"></div>
   <i class="fas fa-times close-btn" onclick="closeQRScanner()"></i>
 </div>
-
 <script>
+  // Theme toggle functionality
+  const themeToggle = document.getElementById('themeToggle');
+  const themeIcon = themeToggle.querySelector('i');
+  
+  // Check for saved theme preference or default to dark mode
+  const currentTheme = localStorage.getItem('theme') || 'dark';
+  if (currentTheme === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+    themeIcon.classList.remove('fa-moon');
+    themeIcon.classList.add('fa-sun');
+  }
+  
+  themeToggle.addEventListener('click', () => {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    if (currentTheme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'light');
+      themeIcon.classList.remove('fa-moon');
+      themeIcon.classList.add('fa-sun');
+      localStorage.setItem('theme', 'light');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+      themeIcon.classList.remove('fa-sun');
+      themeIcon.classList.add('fa-moon');
+      localStorage.setItem('theme', 'dark');
+    }
+  });
+  
   let currentTab = "recents";
   let showAll = false;
   const contactList = document.getElementById("contactList");
   const input = document.getElementById("recipientInput");
-
   input.addEventListener("input", function () {
     const value = this.value.replace(/\s+/g, '');
     const allUsers = JSON.parse(localStorage.getItem("kudiratUsers") || "[]");
     const found = allUsers.find(user =>
       user.number.replace(/\s+/g, '') === value || user.name.toLowerCase() === value.toLowerCase()
     );
-
     if (found) {
       const confirmAmount = prompt(`Send to ${found.name}\nEnter Amount:`);
       if (confirmAmount) {
         const note = prompt("Add a note (optional):");
         const pin = prompt("Enter your PIN:");
-
         let user = JSON.parse(localStorage.getItem("kudiratUser"));
         if (user && user.balance >= Number(confirmAmount)) {
           user.balance -= Number(confirmAmount);
           localStorage.setItem("kudiratUser", JSON.stringify(user));
-
           let tx = JSON.parse(localStorage.getItem("kudiratTransfers") || "[]");
           tx.unshift({ name: found.name, number: found.number, amount: confirmAmount, note, time: new Date().toLocaleString() });
           localStorage.setItem("kudiratTransfers", JSON.stringify(tx));
-
           alert(`✅ ₦${confirmAmount} sent to ${found.name}`);
           input.value = "";
         } else {
@@ -201,7 +277,6 @@
       }
     }
   });
-
   function renderContacts(data) {
     contactList.innerHTML = "";
     const visibleContacts = showAll ? data : data.slice(0, 3);
@@ -222,7 +297,6 @@
     const viewAllBtn = document.querySelector(".view-all");
     viewAllBtn.style.display = data.length > 3 && !showAll ? "block" : "none";
   }
-
   function switchTab(tab) {
     currentTab = tab;
     showAll = false;
@@ -234,7 +308,6 @@
       : JSON.parse(localStorage.getItem("kudiratFavourites") || "[]");
     renderContacts(data);
   }
-
   function viewAll() {
     showAll = true;
     const data = currentTab === 'recents'
@@ -242,7 +315,6 @@
       : JSON.parse(localStorage.getItem("kudiratFavourites") || "[]");
     renderContacts(data);
   }
-
   function addToFavourites(name, number) {
     let favs = JSON.parse(localStorage.getItem("kudiratFavourites") || "[]");
     if (!favs.find(f => f.number === number)) {
@@ -254,7 +326,6 @@
       alert(`${name} is already in your favourites ⭐`);
     }
   }
-
   let html5QrCode;
   function openQRScanner() {
     document.getElementById("qrModal").style.display = "flex";
@@ -270,16 +341,13 @@
       error => {}
     );
   }
-
   function closeQRScanner() {
     html5QrCode.stop().then(() => {
       html5QrCode.clear();
       document.getElementById("qrModal").style.display = "none";
     });
   }
-
   switchTab("recents");
 </script>
-
 </body>
 </html>

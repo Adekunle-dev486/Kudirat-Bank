@@ -6,14 +6,63 @@
   <title>Data – Kudirat Wallet</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
   <style>
+    /* Theme Variables */
+    :root {
+      --bg-primary: #121212;
+      --bg-secondary: #1e1e1e;
+      --bg-card: #1e1e1e;
+      --bg-input: #1e1e1e;
+      --bg-modal: #1e1e1e;
+      --bg-highlight: rgba(0, 255, 174, 0.1);
+      --text-primary: #ffffff;
+      --text-secondary: #bbbbbb;
+      --text-muted: #999999;
+      --accent: #00ffae;
+      --accent-hover: #0a3d26;
+      --border: #333333;
+      --shadow: rgba(0, 0, 0, 0.5);
+      --success-bg: #0f5132;
+      --error-bg: #ff4d4f;
+      --mtn-logo-bg: #FFCC00;
+      --airtel-logo-bg: #EF1C25;
+      --glo-logo-bg: #27AE60;
+      --mobile-logo-bg: #00B4D8;
+      --unknown-logo-bg: #555555;
+    }
+    
+    /* Light Mode */
+    body.light {
+      --bg-primary: #f5f5f5;
+      --bg-secondary: #ffffff;
+      --bg-card: #ffffff;
+      --bg-input: #f8f9fa;
+      --bg-modal: #ffffff;
+      --bg-highlight: rgba(0, 177, 106, 0.1);
+      --text-primary: #333333;
+      --text-secondary: #666666;
+      --text-muted: #999999;
+      --accent: #00b16a;
+      --accent-hover: #00a05f;
+      --border: #e0e0e0;
+      --shadow: rgba(0, 0, 0, 0.1);
+      --success-bg: #0f5132;
+      --error-bg: #ff4d4f;
+      --mtn-logo-bg: #FFCC00;
+      --airtel-logo-bg: #EF1C25;
+      --glo-logo-bg: #27AE60;
+      --mobile-logo-bg: #00B4D8;
+      --unknown-logo-bg: #cccccc;
+    }
+    
     body {
       margin: 0;
       font-family: "Segoe UI", sans-serif;
-      background-color: #121212;
-      color: #fff;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
       display: flex;
       flex-direction: column;
       min-height: 100vh;
+      transition: background-color 0.3s, color 0.3s;
     }
     
     header {
@@ -21,8 +70,9 @@
       align-items: center;
       justify-content: space-between;
       padding: 16px;
-      background: #1e1e1e;
-      border-bottom: 1px solid #333;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      transition: background-color 0.3s, border-color 0.3s;
     }
     
     header h1 {
@@ -33,13 +83,13 @@
     .back-btn {
       background: none;
       border: none;
-      color: #fff;
+      color: var(--text-primary);
       font-size: 20px;
       cursor: pointer;
     }
     
     .history-link {
-      color: #00ffae;
+      color: var(--accent);
       text-decoration: none;
       font-size: 14px;
     }
@@ -51,11 +101,12 @@
     .phone-input-container {
       display: flex;
       align-items: center;
-      background: #1e1e1e;
+      background: var(--bg-card);
       border-radius: 8px;
-      border: 1px solid #333;
+      border: 1px solid var(--border);
       padding: 16px;
       margin-bottom: 12px;
+      transition: background-color 0.3s, border-color 0.3s;
     }
     
     .network-logo {
@@ -72,27 +123,27 @@
     }
     
     .mtn-logo {
-      background-color: #FFCC00;
+      background-color: var(--mtn-logo-bg);
       color: #000;
     }
     
     .airtel-logo {
-      background-color: #EF1C25;
+      background-color: var(--airtel-logo-bg);
       color: #fff;
     }
     
     .glo-logo {
-      background-color: #27AE60;
+      background-color: var(--glo-logo-bg);
       color: #fff;
     }
     
     .mobile-logo {
-      background-color: #00B4D8;
+      background-color: var(--mobile-logo-bg);
       color: #fff;
     }
     
     .unknown-logo {
-      background-color: #555;
+      background-color: var(--unknown-logo-bg);
       color: #fff;
     }
     
@@ -100,17 +151,17 @@
       flex: 1;
       background: none;
       border: none;
-      color: #fff;
+      color: var(--text-primary);
       font-size: 16px;
       outline: none;
     }
     
     .phone-input::placeholder {
-      color: #999;
+      color: var(--text-muted);
     }
     
     .check-btn {
-      background: #0f5132;
+      background: var(--accent);
       color: #fff;
       border: none;
       border-radius: 50%;
@@ -122,24 +173,26 @@
       cursor: pointer;
       margin-left: 12px;
       flex-shrink: 0;
+      transition: background-color 0.2s;
     }
     
     .check-btn:hover {
-      background: #0a3d26;
+      background: var(--accent-hover);
     }
     
     .network-info {
       display: flex;
       align-items: center;
-      background: #1e1e1e;
+      background: var(--bg-card);
       border-radius: 8px;
-      border: 1px solid #333;
+      border: 1px solid var(--border);
       padding: 12px 16px;
+      transition: background-color 0.3s, border-color 0.3s;
     }
     
     .network-name {
       font-size: 14px;
-      color: #bbb;
+      color: var(--text-secondary);
       margin-left: 8px;
     }
     
@@ -151,40 +204,40 @@
     }
     
     .data-card {
-      background: #1e1e1e;
+      background: var(--bg-card);
       padding: 12px;
       text-align: center;
       border-radius: 8px;
-      border: 1px solid #333;
+      border: 1px solid var(--border);
       cursor: pointer;
       transition: all 0.2s;
     }
     
     .data-card:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 4px 12px var(--shadow);
     }
     
     .data-card.selected {
-      border-color: #00ffae;
-      background: rgba(0, 255, 174, 0.1);
+      border-color: var(--accent);
+      background: var(--bg-highlight);
     }
     
     .data-size {
       font-size: 18px;
       font-weight: 600;
-      color: #00ffae;
+      color: var(--accent);
       margin-bottom: 4px;
     }
     
     .data-price {
       font-size: 14px;
-      color: #fff;
+      color: var(--text-primary);
     }
     
     .data-validity {
       font-size: 12px;
-      color: #999;
+      color: var(--text-muted);
       margin-top: 4px;
     }
     
@@ -197,15 +250,16 @@
     .custom-data input {
       flex: 1;
       padding: 12px;
-      background: #1e1e1e;
-      border: 1px solid #333;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
       border-radius: 8px;
-      color: #fff;
+      color: var(--text-primary);
+      transition: background-color 0.3s, border-color 0.3s;
     }
     
     .custom-data button {
       padding: 0 24px;
-      background: #0f5132;
+      background: var(--accent);
       color: #fff;
       border: none;
       border-radius: 8px;
@@ -215,37 +269,38 @@
     }
     
     .custom-data button:hover {
-      background: #0a3d26;
+      background: var(--accent-hover);
     }
     
     .custom-data button:disabled {
-      background: #555;
+      background: var(--text-muted);
       cursor: not-allowed;
     }
     
     .section {
-      background: #1e1e1e;
+      background: var(--bg-card);
       margin: 12px;
       padding: 16px;
       border-radius: 8px;
-      border: 1px solid #333;
+      border: 1px solid var(--border);
+      transition: background-color 0.3s, border-color 0.3s;
     }
     
     .section h2 {
       font-size: 16px;
       margin-top: 0;
       margin-bottom: 12px;
-      color: #bbb;
+      color: var(--text-secondary);
     }
     
     .section p {
       font-size: 14px;
       margin-bottom: 8px;
-      color: #999;
+      color: var(--text-muted);
     }
     
     .section a {
-      color: #00ffae;
+      color: var(--accent);
       text-decoration: none;
       font-weight: 500;
     }
@@ -255,22 +310,23 @@
       display: flex;
       justify-content: space-around;
       padding: 12px 0;
-      border-top: 1px solid #333;
-      background: #1e1e1e;
+      border-top: 1px solid var(--border);
+      background: var(--bg-secondary);
       margin-top: auto;
+      transition: background-color 0.3s, border-color 0.3s;
     }
     
     .nav-item {
       display: flex;
       flex-direction: column;
       align-items: center;
-      color: #999;
+      color: var(--text-muted);
       text-decoration: none;
       font-size: 12px;
     }
     
     .nav-item.active {
-      color: #00ffae;
+      color: var(--accent);
     }
     
     .nav-item i {
@@ -293,12 +349,13 @@
     }
     
     .modal-content {
-      background: #1e1e1e;
+      background: var(--bg-modal);
       border-radius: 12px;
       width: 90%;
       max-width: 350px;
       padding: 24px;
-      border: 1px solid #333;
+      border: 1px solid var(--border);
+      transition: background-color 0.3s, border-color 0.3s;
     }
     
     .modal-title {
@@ -316,11 +373,11 @@
     }
     
     .modal-detail-label {
-      color: #bbb;
+      color: var(--text-secondary);
     }
     
     .modal-detail-value {
-      color: #fff;
+      color: var(--text-primary);
       font-weight: 500;
     }
     
@@ -341,13 +398,18 @@
     }
     
     .cancel-btn {
-      background: #333;
-      color: #fff;
+      background: var(--bg-input);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
     }
     
     .confirm-btn {
-      background: #0f5132;
+      background: var(--accent);
       color: white;
+    }
+    
+    .confirm-btn:hover {
+      background: var(--accent-hover);
     }
     
     /* Toast Notification */
@@ -356,15 +418,15 @@
       bottom: 80px;
       left: 50%;
       transform: translateX(-50%) translateY(100px);
-      background-color: #1e1e1e;
-      color: #fff;
+      background-color: var(--bg-card);
+      color: var(--text-primary);
       padding: 12px 24px;
       border-radius: 30px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 4px 12px var(--shadow);
       z-index: 1000;
       opacity: 0;
       transition: transform 0.3s, opacity 0.3s;
-      border: 1px solid #333;
+      border: 1px solid var(--border);
     }
     
     .toast.show {
@@ -373,15 +435,56 @@
     }
     
     .toast-success {
-      background-color: #0f5132;
+      background-color: var(--success-bg);
       color: white;
     }
     
     .toast-error {
-      background-color: #ff4d4f;
+      background-color: var(--error-bg);
       color: white;
     }
   </style>
+  <!-- Theme Management System -->
+  <script>
+    // Theme Management System
+    const ThemeManager = {
+      init() {
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        this.applyTheme(savedTheme);
+        
+        // Set initial toggle state if toggle exists on page
+        const darkModeToggle = document.getElementById('darkMode');
+        if (darkModeToggle) {
+          darkModeToggle.checked = savedTheme === 'dark';
+        }
+      },
+      
+      applyTheme(theme) {
+        if (theme === 'light') {
+          document.body.classList.add('light');
+        } else {
+          document.body.classList.remove('light');
+        }
+        localStorage.setItem('theme', theme);
+      },
+      
+      toggle() {
+        const currentTheme = document.body.classList.contains('light') ? 'light' : 'dark';
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        this.applyTheme(newTheme);
+        
+        // Update toggle state if it exists
+        const darkModeToggle = document.getElementById('darkMode');
+        if (darkModeToggle) {
+          darkModeToggle.checked = newTheme === 'dark';
+        }
+      }
+    };
+    // Initialize theme on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      ThemeManager.init();
+    });
+  </script>
 </head>
 <body>
   <header>
@@ -461,7 +564,7 @@
       <i class="fas fa-home"></i>
       <span>Home</span>
     </a>
-    <a href="history.html" class="nav-item">
+    <a href="transaction.html" class="nav-item">
       <i class="fas fa-history"></i>
       <span>History</span>
     </a>
@@ -469,7 +572,7 @@
       <i class="fas fa-wallet"></i>
       <span>Finance</span>
     </a>
-    <a href="#" class="nav-item">
+    <a href="setteing.html" class="nav-item">
       <i class="fas fa-user"></i>
       <span>Profile</span>
     </a>

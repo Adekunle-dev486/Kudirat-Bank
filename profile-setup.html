@@ -96,6 +96,13 @@ body.light {
     display: none;
     text-align: center;
   }
+  .success {
+    color: var(--accent-secondary);
+    font-size: 13px;
+    margin-bottom: 10px;
+    display: none;
+    text-align: center;
+  }
   .note {
     font-size: 12px;
     color: var(--text-muted);
@@ -153,6 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
   <h2>Complete Your Profile</h2>
   <p>Please enter your details to continue</p>
   <div class="error" id="errorMsg">Please fill all fields correctly.</div>
+  <div class="success" id="successMsg">Profile saved successfully!</div>
   
   <div class="input-group">
     <label class="input-label" for="fullName">Full Name</label>
@@ -221,6 +229,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const pinInput = document.getElementById("pin");
   const saveBtn = document.getElementById("saveBtn");
   const errorMsg = document.getElementById("errorMsg");
+  const successMsg = document.getElementById("successMsg");
   
   function validateForm() {
     const fullName = fullNameInput.value.trim();
@@ -260,6 +269,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (!(fullName.length >= 3 && /^\d{11}$/.test(bvn) && /^\d{11}$/.test(nin) && dob && /^\d{4}$/.test(pin))) {
       errorMsg.textContent = "Please fill all fields correctly.";
       errorMsg.style.display = "block";
+      successMsg.style.display = "none";
       return;
     }
     
@@ -273,31 +283,51 @@ window.addEventListener('DOMContentLoaded', () => {
       users[userIndex].bvn = bvn;
       users[userIndex].nin = nin;
       users[userIndex].dob = dob;
-      users[userIndex].pin = pin; // Transaction PIN (4-digit)
+      // Ensure PIN is stored as a string for consistent comparison
+      users[userIndex].pin = String(pin); // Transaction PIN (4-digit)
       users[userIndex].profileComplete = true;
+      
+      // Set initial balance if not already set
+      if (!users[userIndex].balance) {
+        users[userIndex].balance = 10000; // Default balance
+      }
+      
+      // Initialize transactions array if not already set
+      if (!users[userIndex].transactions) {
+        users[userIndex].transactions = [];
+      }
       
       // Update session timestamp
       localStorage.setItem("sessionTimestamp", Date.now().toString());
+      
+      // Also update current user in localStorage
+      localStorage.setItem("kudiratUser", JSON.stringify(users[userIndex]));
     } else {
       // This should not happen if the flow is correct, but handle just in case
-      users.push({
+      const newUser = {
         number: phone,
         fullName,
         bvn,
         nin,
         dob,
-        pin, // Transaction PIN (4-digit)
+        pin: String(pin), // Transaction PIN (4-digit)
         verified: true,
-        profileComplete: true
-      });
+        profileComplete: true,
+        balance: 10000, // Default balance
+        transactions: []
+      };
+      
+      users.push(newUser);
+      
+      // Also update current user in localStorage
+      localStorage.setItem("kudiratUser", JSON.stringify(newUser));
     }
     
     localStorage.setItem("kudiratUsers", JSON.stringify(users));
     
     // Show success message
-    errorMsg.textContent = "Profile saved successfully!";
-    errorMsg.style.color = "var(--accent-secondary)";
-    errorMsg.style.display = "block";
+    successMsg.textContent = "Profile saved successfully!";
+    successMsg.style.display = "block";
     
     // Redirect to PIN setup after a short delay
     setTimeout(() => {
